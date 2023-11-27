@@ -4,19 +4,26 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule , routingComponenets} from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AdminSignInComponent } from './admin-sign-in/admin-sign-in.component';
 import {HttpClientModule} from '@angular/common/http'
+import { AdminSignInComponent } from './admin-sign-in/admin-sign-in.component';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    routingComponenets
+    routingComponenets,
+    HomeComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
