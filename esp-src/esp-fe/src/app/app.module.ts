@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule , routingComponenets} from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AdminSignInComponent } from './admin-sign-in/admin-sign-in.component';
+import {HttpClientModule} from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { AdminSignInComponent } from './admin-sign-in/admin-sign-in.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
