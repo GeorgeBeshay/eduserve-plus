@@ -6,7 +6,23 @@
         Sign In
       </ng-template>
       <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Student ID</label>
+          <input type="text" formControlName="id" />
+          <div *ngIf="signInForm.get('id')?.hasError('required') && signInForm.get('id')?.touched" class="input-error">
+            Student ID is required.
+          </div>
+        </div>
 
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" formControlName="password" />
+          <div *ngIf="signInForm.get('password')?.hasError('required') && signInForm.get('password')?.touched" class="input-error">
+            Password is required.
+          </div>
+        </div>
+
+        <button mat-raised-button type="submit" [disabled]="signInForm.invalid">Sign In</button>
       </form>
     </mat-tab>
 

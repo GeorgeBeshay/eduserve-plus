@@ -29,6 +29,15 @@ export class StudentComponent implements OnInit{
   }
 
   onSubmit() {
+    if (this.signInForm.valid) {
+      const id = this.signInForm.value.id;
+      const password = this.signInForm.value.password;
+
+      // Placeholder: Simulate authentication logic
+      console.log('Signing in with ID:', id, 'and password:', password);
+
+      // call API
+    }
   }
 
   onSignUp() {
