@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatTabChangeEvent} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-admin',
@@ -14,13 +13,15 @@ export class AdminComponent implements OnInit{
 
   constructor(private formBuilder: FormBuilder) {
     this.signInForm = this.formBuilder.group({
-      email: ['', Validators.required],
+      id: ['', Validators.required],
       password: ['', Validators.required]
     });
 
     this.signUpForm = this.formBuilder.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required]
+      id: ['', Validators.required],
+      password: ['', Validators.required],
+      newPassword: ['', Validators.required],
+      confirmNewPassword: ['', Validators.required]
     });
   }
 
@@ -30,12 +31,28 @@ export class AdminComponent implements OnInit{
 
   onSubmit() {
     if (this.signInForm.valid) {
-      // Perform sign-in logic using this.authForm.value.email and this.authForm.value.password
+      const id = this.signInForm.value.id;
+      const password = this.signInForm.value.password;
+
+      // Placeholder: Simulate authentication logic
+      console.log('Signing in with ID:', id, 'and password:', password);
+
+      // call API
     }
   }
 
   onSignUp() {
-    // Redirect to sign-up page or implement sign-up logic
+    if (this.signUpForm.valid) {
+      const id = this.signUpForm.value.id
+      const password = this.signUpForm.value.password;
+      const newPassword = this.signUpForm.value.newPassword;
+      const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
+
+      // Placeholder: Simulate authentication logic
+      console.log('Signing in with ID:', id, ', password:', password,
+        ', new password:', newPassword,
+        'and confirm password: ', confirmNewPassword);
+    }
   }
 
   onTabChanged(event: number) {
