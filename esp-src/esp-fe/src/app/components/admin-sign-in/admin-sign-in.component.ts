@@ -12,6 +12,7 @@ export class AdminSignInComponent {
   constructor(private adminService: AdminService){}
   form = new Admin('','')
   onSubmit() {
+    console.log(this.form)
     this.adminService.signIn(this.form)
     .subscribe(
       data => console.log('success', data),
