@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule , routingComponenets} from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule} from '@angular/common/http'
-import { AdminSignInComponent } from './admin-sign-in/admin-sign-in.component';
+import { AdminSignInComponent } from './components/admin-sign-in/admin-sign-in.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './components/home/home.component';
