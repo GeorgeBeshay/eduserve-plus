@@ -1,0 +1,23 @@
+<div class="holder">
+  <mat-tab-group (selectedIndexChange)="onTabChanged($event)">
+    <!-- Sign In Tab -->
+    <mat-tab label="Sign In">
+      <ng-template mat-tab-label>
+        Sign In
+      </ng-template>
+      <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+
+      </form>
+    </mat-tab>
+
+    <!-- Sign Up Tab -->
+    <mat-tab label="Sign Up">
+      <ng-template mat-tab-label>
+        Sign Up
+      </ng-template>
+      <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</div>
