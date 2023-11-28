@@ -10,6 +10,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './components/home/home.component';
 import { AboutComponent } from './components/about/about.component';
 import { StudentSignUpComponent } from './components/student-sign-up/student-sign-up.component';
+import { StudentComponent } from './components/student/student.component';
+import { AdminComponent } from './components/admin/admin.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import {ReactiveFormsModule} from "@angular/forms";
+import {MatButtonModule} from "@angular/material/button";
+import { InstructorComponent } from './components/instructor/instructor.component';
 
 @NgModule({
   declarations: [
@@ -17,14 +23,20 @@ import { StudentSignUpComponent } from './components/student-sign-up/student-sig
     routingComponenets,
     HomeComponent,
     AboutComponent,
-    StudentSignUpComponent
+    StudentSignUpComponent,
+    StudentComponent,
+    AdminComponent,
+    InstructorComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatTabsModule,
+    ReactiveFormsModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
