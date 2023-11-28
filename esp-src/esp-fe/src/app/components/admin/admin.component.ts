@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { AdminService } from './admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -7,15 +8,12 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit{
-  signInForm: FormGroup;
+  // signInForm: FormGroup;
   signUpForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
-    this.signInForm = this.formBuilder.group({
-      id: ['', Validators.required],
-      password: ['', Validators.required]
-    });
+  signinform = new Admin('','')
 
+  constructor(private formBuilder: FormBuilder,private adminService: AdminService) {
     this.signUpForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required],
@@ -28,16 +26,13 @@ export class AdminComponent implements OnInit{
     // Any initialization logic
   }
 
-  onSubmit() {
-    if (this.signInForm.valid) {
-      const id = this.signInForm.value.id;
-      const password = this.signInForm.value.password;
-
-      // Placeholder: Simulate authentication logic
-      console.log('Signing in with ID:', id, 'and password:', password);
-
-      // call API
-    }
+  SignIn() {
+    console.log(this.signinform)
+    this.adminService.signIn(this.signinform)
+    .subscribe(
+      data => console.log('success', data),
+      error => console.log('error',error)
+    )
   }
 
   onSignUp() {
@@ -58,4 +53,11 @@ export class AdminComponent implements OnInit{
     console.log('Tab changed to index:', event);
     // Perform actions based on the selected tab index, if needed
   }
+}
+
+export class Admin {
+  constructor(
+      public username: string,
+      public password: string
+  ){}
 }

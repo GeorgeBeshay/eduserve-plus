@@ -1,6 +1,6 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Admin } from './admin';
+import { Admin } from './admin.component';
 
 @Injectable({
   providedIn: 'root'

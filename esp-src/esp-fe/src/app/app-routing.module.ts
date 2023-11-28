@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {HomeComponent} from "./components/home/home.component";
 import {AboutComponent} from "./components/about/about.component";
-import { AdminSignInComponent } from './components/admin-sign-in/admin-sign-in.component';
-import { StudentSignUpComponent } from './components/student-sign-up/student-sign-up.component';
 import {StudentComponent} from "./components/student/student.component";
 import {AdminComponent} from "./components/admin/admin.component";
 
@@ -18,14 +16,6 @@ const routes: Routes = [
   {
     component: AboutComponent,
     path: 'about'
-  },
-  {
-    component: AdminSignInComponent,
-    path: 'admin'
-  },
-  {
-    component: StudentSignUpComponent,
-    path: 'student-signup'
   },
   {
 
@@ -43,4 +33,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-export const routingComponenets = [AdminSignInComponent,StudentSignUpComponent]
+export const routingComponenets = []
