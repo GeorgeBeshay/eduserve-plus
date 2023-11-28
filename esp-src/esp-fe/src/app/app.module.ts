@@ -5,18 +5,19 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule , routingComponenets} from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule} from '@angular/common/http'
-import { AdminSignInComponent } from './components/admin-sign-in/admin-sign-in.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './components/home/home.component';
 import { AboutComponent } from './components/about/about.component';
+import { StudentSignUpComponent } from './components/student-sign-up/student-sign-up.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     routingComponenets,
     HomeComponent,
-    AboutComponent
+    AboutComponent,
+    StudentSignUpComponent
   ],
   imports: [
     BrowserModule,
