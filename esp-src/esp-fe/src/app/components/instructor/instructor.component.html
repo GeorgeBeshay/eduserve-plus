@@ -6,7 +6,7 @@
         Sign In
       </ng-template>
       <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
-
+          
       </form>
     </mat-tab>
 
@@ -16,7 +16,92 @@
         Sign Up
       </ng-template>
       <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+        <div class="form-group">
+          <label>Instructor ID</label>
+          <input type="text" formControlName="id" />
+          <div *ngIf="signUpForm.get('id')?.hasError('required') && signUpForm.get('id')?.touched" class="input-error">
+            Instructor ID is required.
+          </div>
+        </div>
 
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" formControlName="password" />
+          <div *ngIf="signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched" class="input-error">
+            Password is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" formControlName="newPassword" />
+          <div *ngIf="signUpForm.get('newPassword')?.hasError('required') && signUpForm.get('newPassword')?.touched" class="input-error">
+            New Password is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" formControlName="confirmNewPassword" />
+          <div *ngIf="signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched" class="input-error">
+            Password Confirmation is required.
+          </div>
+        </div>
+
+        <div class="form-group"> 
+          <label class="col-md-4 control-label">Department</label>
+            <div class="col-md-4 selectContainer">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+            <select name="department" class="form-control selectpicker" ngModel>
+              <option value="">Select your Department/Office</option>
+              <option value="1">Department of Engineering Mathematics and Physics </option>
+              <option value="2">Department of Computers and Systems Engineering</option>
+              <option value="3">Department of Electronics and Communication Engineering</option>
+              <option value="4">Department of Electrical Engineering</option>
+              <option value="5">Department of Architectural Engineering</option>
+              <option value="6">Department of Structural Engineering</option>
+              <option value="7">Department of Irrigation Engineering and Hydraulics</option>
+              <option value="8">Department of Sanitary Engineering</option>
+              <option value="9">Department of Transportation Engineering</option>
+              <option value="10">Department of Mechanical Engineering</option>
+              <option value="11">Department of Production Engineering</option>
+              <option value="12">Department of Chemical Engineering</option>
+              <option value="13">Department of Marine Engineering and Naval Architecture</option>
+              <option value="14">Department of Textile Engineering</option>
+              <option value="15">Department of Nuclear and Radiation Engineering</option>
+            </select>
+          </div>
+        </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-4 control-label">E-Mail</label>  
+            <div class="col-md-4 inputGroupContainer">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                <input formControlName="email" pattern="###@###.com" name="email" placeholder="E-Mail Address" class="form-control"  type="text" >
+                <div *ngIf="signUpForm.get('email')?.hasError('is-invalid') && signUpForm.get('email')?.touched" class="input-error">
+                  Password Confirmation is required.
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-4 control-label">Contact No.</label>  
+            <div class="col-md-4 inputGroupContainer">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
+          <input type="tel"  pattern="^\d{10}$" name="contact_no" placeholder="(01#########)" required #name="ngModel" [class.is-invalid]="name.invalid && name.touched" class="form-control" type="tel" ngModel>
+          <div *ngIf="signUpForm.get('tel')?.hasError('is-invalid') && signUpForm.get('password')?.touched" class="input-error">
+            Please Provide a correct contact no.
+          </div>
+            </div>
+          </div>
+        </div>
+
+        <button mat-raised-button type="submit" [disabled]="signUpForm.invalid">Sign Up</button>
       </form>
     </mat-tab>
   </mat-tab-group>
