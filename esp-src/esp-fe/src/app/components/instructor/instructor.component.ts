@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
-  selector: 'app-student',
-  templateUrl: './student.component.html',
-  styleUrls: ['./student.component.css']
+  selector: 'app-instructor',
+  templateUrl: './instructor.component.html',
+  styleUrls: ['./instructor.component.css']
 })
-export class StudentComponent implements OnInit{
+export class InstructorComponent implements OnInit {
   signInForm: FormGroup;
   signUpForm: FormGroup;
 

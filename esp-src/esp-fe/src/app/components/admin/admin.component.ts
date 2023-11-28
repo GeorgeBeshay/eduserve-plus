@@ -9,7 +9,6 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class AdminComponent implements OnInit{
   signInForm: FormGroup;
   signUpForm: FormGroup;
-  selectedIndex = 0; // Variable to control the selected tab index
 
   constructor(private formBuilder: FormBuilder) {
     this.signInForm = this.formBuilder.group({

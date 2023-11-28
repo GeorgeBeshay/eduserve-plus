@@ -11,6 +11,7 @@ import { AdminComponent } from './components/admin/admin.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from "@angular/material/button";
+import { InstructorComponent } from './components/instructor/instructor.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {MatButtonModule} from "@angular/material/button";
     HomeComponent,
     AboutComponent,
     StudentComponent,
-    AdminComponent
+    AdminComponent,
+    InstructorComponent
   ],
   imports: [
     BrowserModule,
