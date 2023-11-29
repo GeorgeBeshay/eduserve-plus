@@ -12,6 +12,8 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from "@angular/material/button";
 import { InstructorComponent } from './components/instructor/instructor.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import { InstructorComponent } from './components/instructor/instructor.componen
     BrowserAnimationsModule,
     MatTabsModule,
     ReactiveFormsModule,
-    MatButtonModule
+    MatButtonModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
