@@ -8,7 +8,7 @@ export class AdminService {
 
   signInurl = 'http://localhost:8081/esp-server/admin-controller/signIn'
   signUpurl = 'http://localhost:8081/esp-server/admin-controller/signUp'
-  
+
   constructor(private _http:HttpClient) { }
 
   signIn(ID:string, password:string){
@@ -16,7 +16,7 @@ export class AdminService {
   }
 
   signUp(ID:string, password:string, newPassword:string, confirmNewPassword:string){
-    return this._http.post<boolean>(`${this.signUpurl}`,{ID,password,newPassword,confirmNewPassword},{responseType:'json'});
+    return this._http.post<boolean>(`${this.signUpurl}`,new Admin(ID,password,newPassword,confirmNewPassword),{responseType:'json'});
   }
 
 }
