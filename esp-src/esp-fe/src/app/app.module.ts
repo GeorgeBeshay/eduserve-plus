@@ -13,7 +13,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from "@angular/material/button";
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-
+import {FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -25,6 +25,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     InstructorComponent
   ],
   imports: [
+    HttpClientModule,
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
