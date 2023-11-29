@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { Student, StudentService } from 'src/app/services/student.service';
 
 @Component({
   selector: 'app-student',
@@ -10,7 +11,7 @@ export class StudentComponent implements OnInit{
   signInForm: FormGroup;
   signUpForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private service:StudentService) {
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required]
@@ -45,6 +46,11 @@ export class StudentComponent implements OnInit{
       console.log('Signing in with ID:', id, 'and password:', password);
 
       // call API
+      this.service.signIn(id,password)
+      .subscribe((body) => {
+        alert(body)
+      })
+
     }
   }
 
@@ -63,6 +69,8 @@ export class StudentComponent implements OnInit{
       const email = this.signUpForm.value.email
       const gender = this.signUpForm.value.gender
 
+      const student = new Student(id,password,newPassword,confirmNewPassword,fullName,ssn,dateOfBirth,address,phone,landline,email,gender)
+
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, ', password:', password,
         ', new password:', newPassword,
@@ -75,7 +83,17 @@ export class StudentComponent implements OnInit{
         ', landline: ', landline,
         ', email: ', email,
         ', gender: ', gender);
+
+        //cal API
+        console.log("hi")
+        console.log(student)
+        this.service.signUp(student)
+        .subscribe((body) => {
+          alert(body)
+        })
     }
+
+    
   }
 
   onTabChanged(event: number) {

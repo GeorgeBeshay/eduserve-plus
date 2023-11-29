@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
+import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -10,7 +11,7 @@ export class AdminComponent implements OnInit{
   signInForm: FormGroup;
   signUpForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: NonNullableFormBuilder, private service:AdminService) {
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required]
@@ -36,7 +37,12 @@ export class AdminComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      // call API
+      // call API  
+      this.service.signIn(id,password)
+      .subscribe((body) => {
+        alert(body)
+      })
+
     }
   }
 
@@ -51,6 +57,12 @@ export class AdminComponent implements OnInit{
       console.log('Signing in with ID:', id, ', password:', password,
         ', new password:', newPassword,
         'and confirm password: ', confirmNewPassword);
+
+        //call API
+        this.service.signUp(id,password,newPassword,confirmNewPassword)
+        .subscribe((body) => {
+            alert(body)
+        })
     }
   }
 
