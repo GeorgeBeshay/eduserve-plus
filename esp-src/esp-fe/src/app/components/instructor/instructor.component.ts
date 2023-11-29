@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators, FormsModule} from "@angular/forms";
-import { InstructorService } from './instructor.service';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+
 @Component({
   selector: 'app-instructor',
   templateUrl: './instructor.component.html',
@@ -9,7 +9,7 @@ import { InstructorService } from './instructor.service';
 export class InstructorComponent implements OnInit {
   signInForm: FormGroup;
   signUpForm: FormGroup;
-  constructor(private formBuilder: FormBuilder, private instructorservice: InstructorService) {
+  constructor(private formBuilder: FormBuilder) {
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required]
@@ -37,17 +37,15 @@ export class InstructorComponent implements OnInit {
   onSignUp() {
     console.log(this.signUpForm.value)
     if (this.signUpForm.valid) {
-      const name = this.signUpForm.value.name;
+      // const name = this.signUpForm.value.name;
       const id = this.signUpForm.value.id;
       const password = this.signUpForm.value.password;
       const newPassword = this.signUpForm.value.newPassword;
       const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
       // Placeholder: Simulate authentication logic
-      this.instructorservice.SignUp(this.signUpForm.value).subscribe(
-        data => console.log('success',data),
-        
-        
-      )
+      // this.instructorservice.SignUp(this.signUpForm.value).subscribe(
+      //   data => console.log('success',data),
+      // )
       console.log('Signing in with ID:', id, ', password:', password,
         ', new password:', newPassword,
         'and confirm password: ', confirmNewPassword);
