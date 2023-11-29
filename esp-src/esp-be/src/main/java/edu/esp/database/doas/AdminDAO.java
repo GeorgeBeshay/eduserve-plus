@@ -1,9 +1,7 @@
 package edu.esp.database.doas;
 
 import edu.esp.system_entities.system_users.Admin;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import edu.esp.system_entities.system_users.Instructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -43,7 +41,7 @@ public class AdminDAO {
 
             return rowsAffected > 0;
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            System.out.println("\u001B[35m" + "Error had occurred in admin record insertion: " + ex.getMessage() + "\u001B[0m");
             return false; // Return a meaningful response indicating failure
         }
     }
