@@ -3,6 +3,9 @@ package edu.esp.database.doas;
 import edu.esp.system_entities.system_users.Student;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+
 public class StudentDAO {
 
     private final JdbcTemplate jdbcTemplate;
@@ -11,8 +14,19 @@ public class StudentDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void createStudent() {
+    public boolean createStudent(Student newStudent) {
+        try {
+            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                    .withTableName("student");
 
+            BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(newStudent);
+            int rowsAffected = jdbcInsert.execute(parameterSource);
+
+            return rowsAffected > 0;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return false; // Return a meaningful response indicating failure
+        }
     }
 
     public Student readStudentById(int id) {
