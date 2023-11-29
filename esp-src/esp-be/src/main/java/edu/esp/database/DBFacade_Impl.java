@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class DBFacade_Impl {
 
     private final JdbcTemplate jdbcTemplate;
-    private final StudentDA
+    private final StudentDAO studentDAO;
     private final InstructorDAO instructorDAO;
     private final AdminDAO adminDAO;
 
