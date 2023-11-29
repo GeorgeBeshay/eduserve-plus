@@ -122,4 +122,36 @@ public class StudentDAOTests {
         assertTrue(this.studentDAO.deleteStudentById(2));
         assertFalse(this.studentDAO.deleteStudentById(2));
     }
+
+
+    @Test
+    @DisplayName("Student DAO - Sign up a student by moving from unregistered students to complete students table")
+    public void signUpStudent1() {
+        Student registeredStudent = new Student(); // Create a student object with test data
+        registeredStudent.setStudentId(1545);
+        registeredStudent.setStudentName("Signed Up Student");
+        registeredStudent.setDepartmentId((byte) 3);
+        assertTrue(this.studentDAO.signUpStudent(1545, 989, registeredStudent));
+    }
+
+    @Test
+    @DisplayName("Student DAO - Sign up a student whose id is not in the unregistered table")
+    public void signUpStudent2() {
+        Student registeredStudent = new Student(); // Create a student object with test data
+        registeredStudent.setStudentId(155);
+        registeredStudent.setStudentName("Unregistered Student");
+        registeredStudent.setDepartmentId((byte) 2);
+        assertFalse(this.studentDAO.signUpStudent(155, 754, registeredStudent));
+    }
+
+    @Test
+    @DisplayName("Student DAO - Sign up a student with a valid id but invalid temporary password")
+    public void signUpStudent3() {
+        Student registeredStudent = new Student(); // Create a student object with test data
+        registeredStudent.setStudentId(123456);
+        registeredStudent.setStudentName("Fake Student");
+        registeredStudent.setDepartmentId((byte) 1);
+        assertFalse(this.studentDAO.signUpStudent(123456, 414, registeredStudent));
+    }
+
 }

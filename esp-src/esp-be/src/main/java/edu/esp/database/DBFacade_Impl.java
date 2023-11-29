@@ -67,4 +67,12 @@ public class DBFacade_Impl {
     public boolean deleteAdmin(int adminId){
         return this.adminDAO.deleteAdminById(adminId);
     }
+
+    public boolean signUpInstructor(byte id, int hash, Instructor instructor) {
+        return this.instructorDAO.signUpInstructor(id, hash, instructor);
+    }
+
+    public boolean signUpStudent(byte id, int hash, Student student) {
+        return this.studentDAO.signUpStudent(id, hash, student);
+    }
 }
