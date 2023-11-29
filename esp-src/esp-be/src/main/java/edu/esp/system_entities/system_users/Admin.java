@@ -47,4 +47,14 @@ public class Admin {
     public void setCreatorAdminId(byte creatorAdminId) {
         this.creatorAdminId = creatorAdminId;
     }
+
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "adminId=" + adminId +
+                ", adminPwHash=" + adminPwHash +
+                ", adminName='" + adminName + '\'' +
+                ", creatorAdminId=" + creatorAdminId +
+                '}';
+    }
 }
