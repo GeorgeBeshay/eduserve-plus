@@ -17,8 +17,8 @@ public class InstructorDAO {
         try {
             String sql = """
                 SELECT *
-                FROM sys_admin
-                WHERE admin_id = %d
+                FROM instructor
+                WHERE instructor_id = %d
                 """.formatted(id);
             BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
             rowMapper.setPrimitivesDefaultedForNullValue(true); // to deal with null primitive data types.
@@ -26,7 +26,7 @@ public class InstructorDAO {
 //            System.out.println(instructor);
             return instructor;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error in readInstructorByID: " + e.getMessage());
             return null;
         }
     }
