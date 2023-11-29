@@ -24,7 +24,7 @@ public class StudentDAO {
 
             return rowsAffected > 0;
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            System.out.println("\u001B[35m" + "Error had occurred in student record insertion: " + ex.getMessage() + "\u001B[0m");
             return false; // Return a meaningful response indicating failure
         }
     }
