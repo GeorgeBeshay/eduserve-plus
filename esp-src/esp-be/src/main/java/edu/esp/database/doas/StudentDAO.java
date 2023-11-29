@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 public class StudentDAO {
 
@@ -79,6 +80,36 @@ public class StudentDAO {
         catch (Exception e) {
             System.out.println("Error in selectAllStudents: " + e.getMessage());
             return null;
+        }
+    }
+
+    public boolean signUpStudent(int id, int tempHash, Student registeredStudent){
+        try{
+            int passwordHash;
+            // Retrieve ID and temporary password hash from unregistered students table
+            SqlRowSet unregisteredStudent = jdbcTemplate.queryForRowSet("""
+                    SELECT *
+                    FROM unregistered_student
+                    WHERE student_id = %d
+                    """.formatted(id));
+            // If no such record exists, reject operation
+            if (unregisteredStudent.next())
+                passwordHash = unregisteredStudent.getInt("student_temp_pw_hash");
+            else
+                return false;
+            // If the input temporary hash is not the same as the unregistered password hash, reject operation
+            if (tempHash != passwordHash) return false;
+            // Delete the record from the unregistered students table
+            if (jdbcTemplate.update("""
+                    DELETE FROM unregistered_student
+                    WHERE student_id = %d
+                    """.formatted(id)) <= 0) return false;
+            // Add record to students table
+            createStudent(registeredStudent);
+            return true;
+        }catch (Exception e){
+            System.out.println("\u001B[35m" + "Error had occurred in student sign up: " + e.getMessage() + "\u001B[0m");
+            return false; // Return a meaningful response indicating failure
         }
     }
 }

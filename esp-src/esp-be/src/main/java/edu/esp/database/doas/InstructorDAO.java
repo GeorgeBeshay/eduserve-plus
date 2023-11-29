@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import java.util.List;
 
@@ -78,6 +79,36 @@ public class InstructorDAO {
         }catch (Exception e){
             System.out.println(e.getMessage());
             return false;
+        }
+    }
+
+    public boolean signUpInstructor(byte id, int tempHash, Instructor registeredInstructor){
+        try{
+            int passwordHash;
+            // Retrieve ID and temporary password hash from unregistered instructors table
+            SqlRowSet unregisteredInstructor = jdbcTemplate.queryForRowSet("""
+                    SELECT *
+                    FROM unregistered_instructor
+                    WHERE instructor_id = %d
+                    """.formatted(id));
+            // If no such record exists, reject operation
+            if (unregisteredInstructor.next())
+                passwordHash = unregisteredInstructor.getInt("Instructor_temp_pw_hash");
+            else
+                return false;
+            // If the input temporary hash is not the same as the unregistered password hash, reject operation
+            if (tempHash != passwordHash) return false;
+            // Delete the record from the unregistered instructors table
+            if (jdbcTemplate.update("""
+                    DELETE FROM unregistered_instructor
+                    WHERE instructor_id = %d
+                    """.formatted(id)) <= 0) return false;
+            // Add record to instructors table
+            createInstructor(registeredInstructor);
+            return true;
+        }catch (Exception e){
+            System.out.println("\u001B[35m" + "Error had occurred in instructor sign up: " + e.getMessage() + "\u001B[0m");
+            return false; // Return a meaningful response indicating failure
         }
     }
 }

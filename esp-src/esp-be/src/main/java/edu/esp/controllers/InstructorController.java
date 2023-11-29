@@ -4,6 +4,7 @@ import edu.esp.system_entities.system_users.Instructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
+@ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
 @RequestMapping("/esp-server/instructor-controller/")

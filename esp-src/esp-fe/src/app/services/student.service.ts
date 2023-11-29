@@ -11,8 +11,8 @@ export class StudentService {
   
   constructor(private _http:HttpClient) { }
 
-  signIn(ID:string, password:string){
-    return this._http.post<boolean>(`${this.signInurl}`,{ID,password},{responseType:'json'});
+  signIn(studentId:string, studentPwHash:string){
+    return this._http.post<boolean>(`${this.signInurl}`,{studentId,studentPwHash},{responseType:'json'});
   }
 
   signUp(student:Student){

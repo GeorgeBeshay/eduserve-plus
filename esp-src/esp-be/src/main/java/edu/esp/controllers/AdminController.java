@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-
+@ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/esp-server/admin-controller/")

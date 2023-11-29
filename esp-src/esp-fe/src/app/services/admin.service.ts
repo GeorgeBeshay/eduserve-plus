@@ -11,8 +11,8 @@ export class AdminService {
 
   constructor(private _http:HttpClient) { }
 
-  signIn(ID:string, password:string){
-    return this._http.post<boolean>(`${this.signInurl}`,{ID,password},{responseType:'json'});
+  signIn(adminId:string, adminPwHash:string){
+    return this._http.post<boolean>(`${this.signInurl}`,{adminId,adminPwHash},{responseType:'json'});
   }
 
   signUp(ID:string, password:string, newPassword:string, confirmNewPassword:string){

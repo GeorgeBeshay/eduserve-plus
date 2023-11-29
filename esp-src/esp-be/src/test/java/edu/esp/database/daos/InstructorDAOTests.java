@@ -112,4 +112,34 @@ public class InstructorDAOTests {
         assertTrue(this.instructorDAO.deleteInstructorById(3));
         assertFalse(this.instructorDAO.deleteInstructorById(3));
     }
+
+    @Test
+    @DisplayName("Instructor DAO - Sign up an instructor by moving from unregistered instructors to complete instructors table")
+    public void signUpInstructor1() {
+        Instructor registeredInstructor = new Instructor(); // Create an instructor object with test data
+        registeredInstructor.setInstructorId((byte) 15);
+        registeredInstructor.setInstructorName("Signed Up Instructor");
+        registeredInstructor.setDepartmentId((byte) 2);
+        assertTrue(this.instructorDAO.signUpInstructor((byte)15, 999, registeredInstructor));
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - Sign up an instructor whose id is not in the unregistered table")
+    public void signUpInstructor2() {
+        Instructor registeredInstructor = new Instructor(); // Create an instructor object with test data
+        registeredInstructor.setInstructorId((byte) 14);
+        registeredInstructor.setInstructorName("Unregistered Instructor");
+        registeredInstructor.setDepartmentId((byte) 2);
+        assertFalse(this.instructorDAO.signUpInstructor((byte)14, 999, registeredInstructor));
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - Sign up an instructor with a valid id but invalid temporary password")
+    public void signUpInstructor3() {
+        Instructor registeredInstructor = new Instructor(); // Create an instructor object with test data
+        registeredInstructor.setInstructorId((byte) 16);
+        registeredInstructor.setInstructorName("Fake Instructor");
+        registeredInstructor.setDepartmentId((byte) 3);
+        assertFalse(this.instructorDAO.signUpInstructor((byte)16, 404, registeredInstructor));
+    }
 }
