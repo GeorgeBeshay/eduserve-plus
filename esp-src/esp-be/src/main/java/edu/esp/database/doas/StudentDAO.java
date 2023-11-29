@@ -56,8 +56,12 @@ public class StudentDAO {
     public void deleteStudentById(int id){
 
     }
-    public List<Student> SelectAll(){
+    public List<Student> SelectAll() {
         String sql = "SELECT * FROM student";
-        return jdbcTemplate.query(sql,rowMapper);
+        BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
+        rowMapper.setPrimitivesDefaultedForNullValue(true);
+        return jdbcTemplate.query(sql, rowMapper);
+
+
     }
 }
