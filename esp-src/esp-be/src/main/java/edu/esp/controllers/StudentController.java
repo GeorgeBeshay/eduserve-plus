@@ -1,29 +1,27 @@
-package edu.esp.be;
+package edu.esp.controllers;
 
+import edu.esp.system_entities.system_users.Student;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.text.ParseException;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
-@RequestMapping("/student")
+@RequestMapping("/esp-server/student-controller/")
 public class StudentController {
 
-    @PostMapping("/login")
+    @PostMapping("/signIn")
     @ResponseBody
-    public Boolean login(@RequestBody Student student) throws IOException, ParseException {
+    public Boolean signIn(@RequestBody Student student) {
         //check if the username and password are correct
         //and send message to the front
         System.out.println(student.toString());
         return true;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/signUp")
     @ResponseBody
-    public Boolean signup(@RequestBody Student student) throws IOException, ParseException {
+    public Boolean signUp(@RequestBody Student student) {
         //check if the username and password are correct
-        //update the password in data base
+        //update the password in database
         //and send message to the front
         System.out.println(student.toString());
         return true;
