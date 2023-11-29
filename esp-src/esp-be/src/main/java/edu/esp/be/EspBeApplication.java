@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.sql.DataSource;
 
-@ComponentScan(basePackages = {"edu.esp.be", "edu.esp.database", "edu.esp.system_entities"})
+@ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
+
 @CrossOrigin(origins = "http://localhost:4200")
 @SpringBootApplication
 public class EspBeApplication implements CommandLineRunner {

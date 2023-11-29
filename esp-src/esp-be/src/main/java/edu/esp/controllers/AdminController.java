@@ -1,9 +1,10 @@
 package edu.esp.controllers;
 
 import edu.esp.system_entities.system_users.Admin;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
-
+@ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
 @RequestMapping("/esp-server/admin-controller/")
