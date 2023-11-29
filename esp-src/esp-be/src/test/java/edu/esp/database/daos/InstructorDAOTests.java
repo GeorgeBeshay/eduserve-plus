@@ -59,7 +59,7 @@ public class InstructorDAOTests {
     }
 
     @Test
-    @DisplayName("Instructor DAO - Invalid Insertion Test Case (id = -1)")
+    @DisplayName("Instructor DAO - Invalid Insertion Test Case with duplicate id")
     public void testCreateInstructor_Failure_duplicate_id(){
 
         Instructor newInstructor = new Instructor();
@@ -86,4 +86,22 @@ public class InstructorDAOTests {
         assertNull(instructor);
     }
 
+    @Test
+    @DisplayName("Instructor DAO - delete valid instructor with ID = 2")
+    public void deleteInstructorById1() {
+        assertTrue(this.instructorDAO.deleteInstructorById(2));
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - delete invalid instructor with ID = 10")
+    public void deleteInstructorById2() {
+        assertFalse(this.instructorDAO.deleteInstructorById(10));
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - delete valid instructor with ID = 3, then try to delete the same instructor again")
+    public void deleteInstructorById3() {
+        assertTrue(this.instructorDAO.deleteInstructorById(3));
+        assertFalse(this.instructorDAO.deleteInstructorById(3));
+    }
 }

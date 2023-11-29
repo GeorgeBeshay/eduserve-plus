@@ -45,4 +45,18 @@ public class InstructorDAO {
             return false; // Return a meaningful response indicating failure
         }
     }
+
+    public boolean deleteInstructorById(int id) {
+        try{
+            String sql = """
+                    DELETE FROM instructor
+                    WHERE instructor_id = %d
+                    """.formatted(id);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return rowsAffected > 0;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

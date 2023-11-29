@@ -51,7 +51,17 @@ public class StudentDAO {
 
     }
 
-    public void deleteStudentById(int id){
-
+    public boolean deleteStudentById(int id){
+        try{
+            String sql = """
+                    DELETE FROM student
+                    WHERE student_id = %d
+                    """.formatted(id);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return rowsAffected > 0;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }

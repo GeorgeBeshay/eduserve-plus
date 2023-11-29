@@ -46,4 +46,17 @@ public class AdminDAO {
         }
     }
 
+    public boolean deleteAdminById(int id) {
+        try{
+            String sql = """
+                    DELETE FROM sys_admin
+                    WHERE admin_id = %d
+                    """.formatted(id);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return rowsAffected > 0;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

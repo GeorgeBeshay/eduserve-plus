@@ -75,4 +75,22 @@ public class AdminDAOTests {
         assertNull(admin);
     }
 
+    @Test
+    @DisplayName("Admin DAO - delete valid admin with ID = 2")
+    public void deleteAdminById1() {
+        assertTrue(this.adminDAO.deleteAdminById(2));
+    }
+
+    @Test
+    @DisplayName("Admin DAO - delete invalid admin with ID = 5")
+    public void deleteAdminById2() {
+        assertFalse(this.adminDAO.deleteAdminById(2));
+    }
+
+    @Test
+    @DisplayName("Admin DAO - delete valid admin with ID = 3, then try to delete the same admin again")
+    public void deleteStudentById3() {
+        assertTrue(this.adminDAO.deleteAdminById(3));
+        assertFalse(this.adminDAO.deleteAdminById(3));
+    }
 }
