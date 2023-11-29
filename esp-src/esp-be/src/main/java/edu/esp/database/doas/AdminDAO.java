@@ -26,7 +26,7 @@ public class AdminDAO {
 //            System.out.println(admin);
             return admin;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error in readAdminByID: " + e.getMessage());
             return null;
         }
     }

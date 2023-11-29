@@ -13,8 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = EspBeApplication.class)
 public class AdminDAOTests {
@@ -57,6 +56,23 @@ public class AdminDAOTests {
         newAdmin.setCreatorAdminId((byte) 1);
 
         assertFalse(this.adminDAO.createAdmin(newAdmin));
+    }
+
+    @Test
+    @DisplayName("Admin DAO - read Admin with ID = 1")
+    public void testReadAdminById1() {
+        Admin admin = this.adminDAO.readAdminById(1);
+
+        assertNotNull(admin);
+        assertEquals(1, admin.getAdminId());
+    }
+
+    @Test
+    @DisplayName("Admin DAO - read invalid Admin with ID = -1")
+    public void testReadAdminById2() {
+        Admin admin = this.adminDAO.readAdminById(-1);
+
+        assertNull(admin);
     }
 
 }

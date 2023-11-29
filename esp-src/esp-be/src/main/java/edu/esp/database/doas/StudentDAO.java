@@ -43,7 +43,7 @@ public class StudentDAO {
             return st;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error in readStudentByID: " + e.getMessage());
             return null;
         }
     }

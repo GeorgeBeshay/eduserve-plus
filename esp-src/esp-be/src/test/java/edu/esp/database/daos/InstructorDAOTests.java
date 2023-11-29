@@ -13,8 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = EspBeApplication.class)
 public class InstructorDAOTests {
@@ -68,6 +67,23 @@ public class InstructorDAOTests {
         newInstructor.setDepartmentId((byte) 1);
 
         assertFalse(this.instructorDAO.createInstructor(newInstructor));
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - Read record of ID = 1")
+    public void testReadInstructorById1() {
+        Instructor instructor = this.instructorDAO.readInstructorById(1);
+
+        assertNotNull(instructor);
+        assertEquals(1, instructor.getInstructorId());
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - Read invalid record of ID = -1")
+    public void testReadInstructorById2() {
+        Instructor instructor = this.instructorDAO.readInstructorById(-1);
+
+        assertNull(instructor);
     }
 
 }

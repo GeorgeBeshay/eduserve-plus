@@ -13,8 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = EspBeApplication.class)
 public class StudentDAOTests {
@@ -78,6 +77,23 @@ public class StudentDAOTests {
         assertFalse(this.studentDAO.createStudent(newStudent));     // duplicate record
 
         // delete the inserted student record.
+    }
+
+    @Test
+    @DisplayName("Student DAO - Read record of ID = 1")
+    public void testReadStudentById1() {
+        Student student = this.studentDAO.readStudentById(1);
+
+        assertNotNull(student);
+        assertEquals(1, student.getStudentId());
+    }
+
+    @Test
+    @DisplayName("Student DAO - Read invalid record of ID = -1")
+    public void testReadStudentById2() {
+        Student student = this.studentDAO.readStudentById(-1);
+
+        assertNull(student);
     }
 
 }
