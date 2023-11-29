@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators, FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-instructor',
@@ -20,7 +20,9 @@ export class InstructorComponent implements OnInit {
       id: ['', Validators.required],
       password: ['', Validators.required],
       newPassword: ['', Validators.required],
-      confirmNewPassword: ['', Validators.required]
+      confirmNewPassword: ['', Validators.required],
+      email: ['',Validators.required],
+      department: ['',Validators.required]
     });
   }
 
@@ -32,6 +34,18 @@ export class InstructorComponent implements OnInit {
   }
 
   onSignUp() {
+    console.log(this.signUpForm.value)
+    if (this.signUpForm.valid) {
+      const name = this.signUpForm.value.name;
+      const id = this.signUpForm.value.id;
+      const password = this.signUpForm.value.password;
+      const newPassword = this.signUpForm.value.newPassword;
+      const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
+      // Placeholder: Simulate authentication logic
+      console.log('Signing in with ID:', id, ', password:', password,
+        ', new password:', newPassword,
+        'and confirm password: ', confirmNewPassword);
+    }
   }
 
   onTabChanged(event: number) {

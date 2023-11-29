@@ -49,11 +49,8 @@
         </div>
 
         <div class="form-group"> 
-          <label class="col-md-4 control-label">Department</label>
-            <div class="col-md-4 selectContainer">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
-            <select name="department" class="form-control selectpicker" ngModel>
+          <label>Department</label>
+            <select  formControlName="department" type="select">
               <option value="">Select your Department/Office</option>
               <option value="1">Department of Engineering Mathematics and Physics </option>
               <option value="2">Department of Computers and Systems Engineering</option>
@@ -72,34 +69,24 @@
               <option value="15">Department of Nuclear and Radiation Engineering</option>
             </select>
           </div>
-        </div>
-        </div>
+        
 
         <div class="form-group">
-          <label class="col-md-4 control-label">E-Mail</label>  
-            <div class="col-md-4 inputGroupContainer">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                <input formControlName="email" pattern="###@###.com" name="email" placeholder="E-Mail Address" class="form-control"  type="text" >
+          <label>E-Mail</label>  
+                <input type="email" formControlName="email" pattern="###@###.com" name="email" >
                 <div *ngIf="signUpForm.get('email')?.hasError('is-invalid') && signUpForm.get('email')?.touched" class="input-error">
-                  Password Confirmation is required.
+                  Email is required.
                 </div>
             </div>
-          </div>
-        </div>
 
         <div class="form-group">
-          <label class="col-md-4 control-label">Contact No.</label>  
-            <div class="col-md-4 inputGroupContainer">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
+          <label>Contact No.</label>  
           <input type="tel"  pattern="^\d{10}$" name="contact_no" placeholder="(01#########)" required #name="ngModel" [class.is-invalid]="name.invalid && name.touched" class="form-control" type="tel" ngModel>
           <div *ngIf="signUpForm.get('tel')?.hasError('is-invalid') && signUpForm.get('password')?.touched" class="input-error">
             Please Provide a correct contact no.
           </div>
-            </div>
-          </div>
-        </div>
+         </div>
+
 
         <button mat-raised-button type="submit" [disabled]="signUpForm.invalid">Sign Up</button>
       </form>
