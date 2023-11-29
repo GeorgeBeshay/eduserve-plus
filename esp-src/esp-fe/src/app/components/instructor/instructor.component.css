@@ -1,0 +1,23 @@
+/* YourComponent.css or styles.css */
+
+.form-group {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px; /* Adjust as needed for spacing between form groups */
+  max-width: 500px; /* Set a maximum width for the form groups */
+}
+
+label {
+  margin-bottom: 5px; /* Adjust as needed for spacing between label and input */
+}
+
+input {
+  width: 100%; /* Force the input fields to take full width within their container */
+  box-sizing: border-box; /* Include padding and border within the width */
+  padding: 5px;
+}
+
+.input-error {
+  color: red;
+}
