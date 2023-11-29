@@ -6,7 +6,23 @@
         Sign In
       </ng-template>
       <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
-          
+        <div class="form-group">
+          <label>Instructor ID</label>
+          <input type="text" formControlName="id" />
+          <div *ngIf="signInForm.get('id')?.hasError('required') && signInForm.get('id')?.touched" class="input-error">
+            Instructor ID is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" formControlName="password" />
+          <div *ngIf="signInForm.get('password')?.hasError('required') && signInForm.get('password')?.touched" class="input-error">
+            Password is required.
+          </div>
+        </div>
+
+        <button mat-raised-button type="submit" [disabled]="signInForm.invalid">Sign In</button>
       </form>
     </mat-tab>
 
@@ -48,7 +64,7 @@
           </div>
         </div>
 
-        <div class="form-group"> 
+        <div class="form-group">
             <label>Department</label>
               <select formControlName="department" type="select" >
                 <option value=0>Select your Department/Office</option>
@@ -72,10 +88,10 @@
           <div *ngIf="signUpForm.get('department')?.hasError('required') && signUpForm.get('department')?.touched " class="input-error">
             Please Select a department.
           </div>
-        
+
 
         <div class="form-group">
-          <label>E-Mail</label>  
+          <label>E-Mail</label>
                 <input type="email" formControlName="email" />
         </div>
         <div *ngIf="signUpForm.get('email')?.hasError('required') && signUpForm.get('email')?.touched " class="input-error">
@@ -83,7 +99,7 @@
         </div>
 
         <div class="form-group">
-          <label>Contact No.</label>  
+          <label>Contact No.</label>
           <input type="text" formControlName="contact_no">
         </div>
         <button mat-raised-button type="submit" [disabled]="signUpForm.invalid" >Sign Up</button>
