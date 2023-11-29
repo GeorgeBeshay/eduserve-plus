@@ -69,7 +69,7 @@ export class StudentComponent implements OnInit{
       const email = this.signUpForm.value.email
       const gender = this.signUpForm.value.gender
 
-      const student = new Student(id,password,newPassword,confirmNewPassword,fullName,ssn,dateOfBirth,address,phone,landline,email,gender)
+      const student = new Student(id,password,"","","",fullName,ssn,dateOfBirth,address,phone,landline,gender,email)
 
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, ', password:', password,
