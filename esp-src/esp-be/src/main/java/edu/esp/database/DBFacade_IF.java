@@ -4,7 +4,7 @@ import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
 
-public interface DBFacade {
+public interface DBFacade_IF {
     // will be refactored
     Student loadStudentData(int studentId);
     Instructor loadInstructorData(int instructorId);

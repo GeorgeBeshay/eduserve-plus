@@ -77,4 +77,17 @@ public class Instructor {
     public void setOfficeHours(String officeHours) {
         this.officeHours = officeHours;
     }
+
+    @Override
+    public String toString() {
+        return "Instructor{" +
+                "instructorId=" + instructorId +
+                ", instructorPwHash=" + instructorPwHash +
+                ", departmentId=" + departmentId +
+                ", instructorName='" + instructorName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", officeHours='" + officeHours + '\'' +
+                '}';
+    }
 }
