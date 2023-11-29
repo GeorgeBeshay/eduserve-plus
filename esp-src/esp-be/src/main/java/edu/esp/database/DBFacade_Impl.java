@@ -14,18 +14,36 @@ import org.springframework.stereotype.Component;
 public class DBFacade_Impl {
 
     private final JdbcTemplate jdbcTemplate;
-    private final StudentDAO studentDAO;
-    private final AdminDAO adminDAO;
+    private final StudentDA
     private final InstructorDAO instructorDAO;
+    private final AdminDAO adminDAO;
 
     @Autowired
     public DBFacade_Impl(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
         this.studentDAO = new StudentDAO(this.jdbcTemplate);
-        this.adminDAO = new AdminDAO(this.jdbcTemplate);
         this.instructorDAO = new InstructorDAO(this.jdbcTemplate);
+        this.adminDAO = new AdminDAO(this.jdbcTemplate);
+    }        
+   
+    public boolean createStudent(Student st){     // to be modified to take the correct student object.
+        boolean operationsResult = this.studentDAO.createStudent(st);
+        System.out.println(operationsResult);
+        return operationsResult;
     }
-
+  
+    public boolean createAdmin(Admin admin){
+        boolean operationResult = this.adminDAO.createAdmin(admin);
+        System.out.println(operationResult);
+        return operationResult;
+    }
+  
+    public boolean createInstructor(Instructor instructor){
+        boolean operationResult = this.instructorDAO.createInstructor(instructor);
+        System.out.println(operationResult);
+        return operationResult;
+    }
+    
     public Student loadStudentData(int studentId){
         return this.studentDAO.readStudentById(studentId);
     }
