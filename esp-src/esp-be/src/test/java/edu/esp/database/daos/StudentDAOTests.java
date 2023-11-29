@@ -104,4 +104,22 @@ public class StudentDAOTests {
         assertNotEquals(null,students);
     }
 
+    @Test
+    @DisplayName("Student DAO - delete valid student with ID = 3")
+    public void deleteStudentById1() {
+        assertTrue(this.studentDAO.deleteStudentById(3));
+    }
+
+    @Test
+    @DisplayName("Student DAO - delete invalid student with ID = 19")
+    public void deleteStudentById2() {
+        assertFalse(this.studentDAO.deleteStudentById(19));
+    }
+
+    @Test
+    @DisplayName("Student DAO - delete valid student with ID = 2, then try to delete the same student again")
+    public void deleteStudentById3() {
+        assertTrue(this.studentDAO.deleteStudentById(2));
+        assertFalse(this.studentDAO.deleteStudentById(2));
+    }
 }

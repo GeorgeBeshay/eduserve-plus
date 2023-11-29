@@ -55,4 +55,16 @@ public class DBFacade_Impl {
     public Instructor loadInstructorData(int instructorId) {
         return this.instructorDAO.readInstructorById(instructorId);
     }
+
+    public boolean deleteStudent(int studentId){
+        return this.studentDAO.deleteStudentById(studentId);
+    }
+
+    public boolean deleteInstructor(int instructorId){
+        return this.instructorDAO.deleteInstructorById(instructorId);
+    }
+
+    public boolean deleteAdmin(int adminId){
+        return this.adminDAO.deleteAdminById(adminId);
+    }
 }
