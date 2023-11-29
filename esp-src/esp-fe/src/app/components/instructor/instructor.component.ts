@@ -28,16 +28,7 @@ export class InstructorComponent implements OnInit {
     // Any initialization logic
   }
 
-  onSignIn() {
-    if (this.signInForm.valid) {
-      const id = this.signInForm.value.id;
-      const password = this.signInForm.value.password;
-
-      // Placeholder: Simulate authentication logic
-      console.log('Signing in with ID:', id, 'and password:', password);
-
-      // call API
-    }
+  onSubmit() {
   }
 
   onSignUp() {
