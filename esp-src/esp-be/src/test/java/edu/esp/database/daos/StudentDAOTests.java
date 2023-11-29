@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,6 +95,13 @@ public class StudentDAOTests {
         Student student = this.studentDAO.readStudentById(-1);
 
         assertNull(student);
+    }
+    @Test
+    @DisplayName("Student DAO - select all students")
+    public void testSelectAll(){
+        List<Student> students = this.studentDAO.SelectAll();
+
+        assertNotEquals(null,students);
     }
 
 }
