@@ -53,19 +53,17 @@ public class AdminDAO {
         }
     }
 
-    RowMapper<Admin> rowMapper = (rs, rowNum) -> {
-        Admin admin = new Admin();
-        admin.setAdminId(rs.getByte("admin_id"));
-        admin.setAdminPwHash(rs.getInt("admin_pw_hash"));
-        admin.setCreatorAdminId(rs.getByte("creator_admin_id"));
-        admin.setAdminName(rs.getString("admin_name"));
-        return admin;
-    };
     public List<Admin> SelectAll() {
-        String sql = "SELECT * FROM sys_admin";
-        BeanPropertyRowMapper<Admin> rowMapper = new BeanPropertyRowMapper<>(Admin.class);
-        rowMapper.setPrimitivesDefaultedForNullValue(true);
-        return jdbcTemplate.query(sql, rowMapper);
+        try {
+            String sql = "SELECT * FROM sys_admin";
+            BeanPropertyRowMapper<Admin> rowMapper = new BeanPropertyRowMapper<>(Admin.class);
+            rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query(sql, rowMapper);
+        }
+        catch (Exception e) {
+            System.out.println("Error in selectAllAdmins: " + e.getMessage());
+            return null;
+        }
 
     }
 

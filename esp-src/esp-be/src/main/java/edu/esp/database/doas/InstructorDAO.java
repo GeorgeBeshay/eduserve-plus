@@ -54,21 +54,16 @@ public class InstructorDAO {
         }
     }
 
-    RowMapper<Instructor> rowMapper = (rs, rowNum) -> {
-        Instructor instructor = new Instructor();
-        instructor.setInstructorId(rs.getByte("instructor_id"));
-        instructor.setInstructorPwHash(rs.getInt("instructor_pw_hash"));
-        instructor.setDepartmentId(rs.getByte("dpt_id"));
-        instructor.setPhone(rs.getString("phone"));
-        instructor.setEmail(rs.getString("email"));
-        instructor.setOfficeHours(rs.getString("office_hrs"));
-        return instructor;
-    };
     public List<Instructor> SelectAll() {
-        String sql = "SELECT * FROM instructor";
-        BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
-        rowMapper.setPrimitivesDefaultedForNullValue(true);
-        return jdbcTemplate.query(sql, rowMapper);
-
+        try {
+            String sql = "SELECT * FROM instructor";
+            BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
+            rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query(sql, rowMapper);
+        }
+        catch (Exception e) {
+            System.out.println("Error in selectAllInstructors: " + e.getMessage());
+            return null;
+        }
     }
 }

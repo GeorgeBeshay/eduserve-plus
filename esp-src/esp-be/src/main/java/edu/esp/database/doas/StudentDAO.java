@@ -14,23 +14,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 public class StudentDAO {
 
     private final JdbcTemplate jdbcTemplate;
-    RowMapper<Student> rowMapper = (rs, rowNum) -> {
-        Student student = new Student();
-        student.setStudentId(rs.getByte("student_id"));
-        student.setStudentPwHash(rs.getInt("Student_pw_hash"));
-        student.setDepartmentId(rs.getByte("dpt_id"));
-        student.setStudentLevel(rs.getByte("student_level"));
-        student.setGpa(rs.getFloat("gpa"));
-        student.setStudentName(rs.getString("student_name"));
-        student.setSsn(rs.getString("ssn"));
-        student.setBirthDate(rs.getDate("bdate"));
-        student.setStudentAddress(rs.getString("student_address"));
-        student.setPhone(rs.getString("phone"));
-        student.setLandline(rs.getString("landline"));
-        student.setGender(rs.getBoolean("gender"));
-        student.setEmail(rs.getString("email"));
-        return student;
-    };
 
     public StudentDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -77,11 +60,15 @@ public class StudentDAO {
 
     }
     public List<Student> SelectAll() {
-        String sql = "SELECT * FROM student";
-        BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
-        rowMapper.setPrimitivesDefaultedForNullValue(true);
-        return jdbcTemplate.query(sql, rowMapper);
-
-
+        try {
+            String sql = "SELECT * FROM student";
+            BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
+            rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query(sql, rowMapper);
+        }
+        catch (Exception e) {
+            System.out.println("Error in selectAllStudents: " + e.getMessage());
+            return null;
+        }
     }
 }
