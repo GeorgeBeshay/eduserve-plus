@@ -59,7 +59,7 @@
         <div class="form-group">
           <label>Confirm Password</label>
           <input type="password" formControlName="confirmNewPassword" />
-          <div *ngIf="signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched" class="input-error">
+          <div *ngIf="signUpForm.get('confirmNewPassword')?.hasError('required') && signUpForm.get('confirmNewPassword')?.touched" class="input-error">
             Password Confirmation is required.
           </div>
         </div>
