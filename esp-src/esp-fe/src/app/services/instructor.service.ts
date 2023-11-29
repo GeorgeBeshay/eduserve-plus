@@ -6,11 +6,14 @@ import { of } from 'rxjs';
 })
 export class InstructorService {
 
+  signInurl = 'http://localhost:8081/esp-server/instructor-controller/signIn'
+  signUpurl = 'http://localhost:8081/esp-server/instructor-controller/signUp'
+
   constructor() { }
 }
 
 export class Instructor {
-  
+
   instructorId: string
   instructorPwHash: string
   departmentId: string

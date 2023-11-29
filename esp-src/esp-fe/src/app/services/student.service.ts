@@ -6,16 +6,17 @@ import { Injectable } from '@angular/core';
 })
 export class StudentService {
 
-  loginurl = 'http://localhost:8080/student/login'
-  signupurl = 'http://localhost:8080/student/signup'
+  signInurl = 'http://localhost:8081/esp-server/student-controller/signIn'
+  signUpurl = 'http://localhost:8081/esp-server/student-controller/signUp'
+  
   constructor(private _http:HttpClient) { }
 
   signIn(ID:string, password:string){
-    return this._http.post<boolean>(`${this.loginurl}`,{ID,password},{responseType:'json'});
+    return this._http.post<boolean>(`${this.signInurl}`,{ID,password},{responseType:'json'});
   }
 
   signUp(student:Student){
-    return this._http.post<boolean>(`${this.signupurl}`,student,{responseType:'json'});
+    return this._http.post<boolean>(`${this.signUpurl}`,student,{responseType:'json'});
   }
 
 }
