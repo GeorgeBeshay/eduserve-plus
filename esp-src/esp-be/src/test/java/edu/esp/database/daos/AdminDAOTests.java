@@ -49,7 +49,7 @@ public class AdminDAOTests {
     }
 
     @Test
-    @DisplayName("Admin DAO - Invalid Insertion Test Case (id = -1)")
+    @DisplayName("Admin DAO - Invalid Insertion Test Case (duplicate id)")
     public void testCreateAdmin_Failure_duplicate_id(){
 
         Admin newAdmin = new Admin();
