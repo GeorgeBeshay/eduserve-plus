@@ -86,14 +86,14 @@ export class StudentComponent implements OnInit{
 
         //cal API
         console.log("hi")
-        console.log(student)
-        this.service.signUp(student)
-        .subscribe((body) => {
-          alert(body)
-        })
+        // console.log(student)
+        // this.service.signUp(student)
+        // .subscribe((body) => {
+        //   alert(body)
+        // })
     }
 
-    
+
   }
 
   onTabChanged(event: number) {

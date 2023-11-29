@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
 @RequestMapping("/esp-server/instructor-controller/")
+@ComponentScan(basePackages = {"edu.esp.be", "edu.esp.database", "edu.esp.system_entities", "edu.esp.controllers"})
 public class InstructorController {
 
     @PostMapping("/signIn")
