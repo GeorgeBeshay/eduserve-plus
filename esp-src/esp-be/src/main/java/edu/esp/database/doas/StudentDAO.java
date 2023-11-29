@@ -16,16 +16,22 @@ public class StudentDAO {
     }
 
     public Student readStudentById(int id) {
-        String sql = """
+        try {
+            String sql = """
                 SELECT *
                 FROM student
                 WHERE student_id = %d
                 """.formatted(id);
-        BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
-        rowMapper.setPrimitivesDefaultedForNullValue(true);     // to deal with null primitive data types.
-        Student st = jdbcTemplate.queryForObject(sql, rowMapper);
-        System.out.println(st);
-        return st;
+            BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
+            rowMapper.setPrimitivesDefaultedForNullValue(true);     // to deal with null primitive data types.
+            Student st = jdbcTemplate.queryForObject(sql, rowMapper);
+//            System.out.println(st);
+            return st;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     public void updateStudent(){
 
