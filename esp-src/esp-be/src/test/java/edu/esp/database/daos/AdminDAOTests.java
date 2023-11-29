@@ -3,14 +3,12 @@ package edu.esp.database.daos;
 import edu.esp.be.EspBeApplication;
 import edu.esp.database.doas.AdminDAO;
 import edu.esp.system_entities.system_users.Admin;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,5 +72,15 @@ public class AdminDAOTests {
 
         assertNull(admin);
     }
+    @Test
+    @DisplayName("Admin DAO - select all admins")
+    public void testSelectAll(){
+        List<Admin> admins = this.adminDAO.SelectAll();
+
+        assertNotEquals(null,admins);
+    }
+
+
 
 }
+

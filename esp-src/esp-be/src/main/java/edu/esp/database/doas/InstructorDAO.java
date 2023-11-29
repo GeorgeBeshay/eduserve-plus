@@ -2,11 +2,19 @@ package edu.esp.database.doas;
 
 import edu.esp.system_entities.system_users.Instructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+
+import edu.esp.system_entities.system_users.Admin;
+import edu.esp.system_entities.system_users.Instructor;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.core.RowMapper;
+
+import java.util.List;
 
 public class InstructorDAO {
+
     private final JdbcTemplate jdbcTemplate;
 
     public InstructorDAO(JdbcTemplate jdbcTemplate) {
@@ -30,7 +38,7 @@ public class InstructorDAO {
             return null;
         }
     }
-  
+
     public boolean createInstructor(Instructor newInstructor) {
         try {
             SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
@@ -43,6 +51,19 @@ public class InstructorDAO {
         } catch (Exception ex) {
             System.out.println("\u001B[35m" + "Error had occurred in admin record insertion: " + ex.getMessage() + "\u001B[0m");
             return false; // Return a meaningful response indicating failure
+        }
+    }
+
+    public List<Instructor> SelectAll() {
+        try {
+            String sql = "SELECT * FROM instructor";
+            BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
+            rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query(sql, rowMapper);
+        }
+        catch (Exception e) {
+            System.out.println("Error in selectAllInstructors: " + e.getMessage());
+            return null;
         }
     }
 }
