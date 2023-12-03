@@ -48,7 +48,7 @@ public class DBFacade_Impl {
         return this.studentDAO.readStudentById(studentId);
     }
 
-    public Admin loadAdmin(int adminId) {
+    public Admin loadAdmin(byte adminId) {
         return this.adminDAO.readAdminById(adminId);
     }
 
@@ -64,15 +64,15 @@ public class DBFacade_Impl {
         return this.instructorDAO.deleteInstructorById(instructorId);
     }
 
-    public boolean deleteAdmin(int adminId){
+    public boolean deleteAdmin(byte adminId){
         return this.adminDAO.deleteAdminById(adminId);
     }
 
-    public boolean signUpInstructor(byte id, int hash, Instructor instructor) {
+    public boolean signUpInstructor(int id, int hash, Instructor instructor) {
         return this.instructorDAO.signUpInstructor(id, hash, instructor);
     }
 
-    public boolean signUpStudent(byte id, int hash, Student student) {
+    public boolean signUpStudent(int id, int hash, Student student) {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
 }
