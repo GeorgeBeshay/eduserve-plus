@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
-import { AdminService } from 'src/app/services/admin.service';
+import { Admin, AdminService } from 'src/app/services/admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -29,7 +29,7 @@ export class AdminComponent implements OnInit{
     // Any initialization logic
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.signInForm.valid) {
       const id = this.signInForm.value.id;
       const password = this.signInForm.value.password;
@@ -37,34 +37,36 @@ export class AdminComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      // call API  
-      this.service.signIn(id,password)
-      .subscribe((body) => {
-        alert(body)
-      })
+      let isSucess: boolean | null = await this.service.signIn(id, password);
+
+      if (isSucess) {
+        alert("The admin has been signIn successfully")
+      } else {
+        alert("The ID or the password is not correct")
+      }
 
     }
   }
 
-  onSignUp() {
-    if (this.signUpForm.valid) {
-      const id = this.signUpForm.value.id
-      const password = this.signUpForm.value.password;
-      const newPassword = this.signUpForm.value.newPassword;
-      const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
+  // onSignUp() {
+  //   if (this.signUpForm.valid) {
+  //     const id = this.signUpForm.value.id
+  //     const password = this.signUpForm.value.password;
+  //     const newPassword = this.signUpForm.value.newPassword;
+  //     const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
 
-      // Placeholder: Simulate authentication logic
-      console.log('Signing in with ID:', id, ', password:', password,
-        ', new password:', newPassword,
-        'and confirm password: ', confirmNewPassword);
+  //     // Placeholder: Simulate authentication logic
+  //     console.log('Signing in with ID:', id, ', password:', password,
+  //       ', new password:', newPassword,
+  //       'and confirm password: ', confirmNewPassword);
 
-        //call API
-        this.service.signUp(id,password,newPassword,confirmNewPassword)
-        .subscribe((body) => {
-            alert(body)
-        })
-    }
-  }
+  //       //call API
+  //       this.service.signUp(id,password,newPassword,confirmNewPassword)
+  //       .subscribe((body) => {
+  //           alert(body)
+  //       })
+  //   }
+  // }
 
   onTabChanged(event: number) {
     console.log('Tab changed to index:', event);

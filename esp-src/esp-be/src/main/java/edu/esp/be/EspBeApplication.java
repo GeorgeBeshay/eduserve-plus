@@ -1,6 +1,6 @@
 package edu.esp.be;
 
-import edu.esp.database.DBFacade_Impl;
+import edu.esp.database.DBFacadeImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,11 +15,11 @@ import javax.sql.DataSource;
 @SpringBootApplication
 public class EspBeApplication implements CommandLineRunner {
 
-	private final DBFacade_Impl dbFacade;
+	private final DBFacadeImp dbFacade;
 	private final ApplicationContext applicationContext;
 
 	@Autowired
-	public EspBeApplication(DBFacade_Impl dbFacade, ApplicationContext applicationContext){
+	public EspBeApplication(DBFacadeImp dbFacade, ApplicationContext applicationContext){
 		this.dbFacade = dbFacade;
 		this.applicationContext = applicationContext;
 		DataSource ds = (DataSource) this.applicationContext.getBean(DataSource.class);		// in case of being needed
@@ -28,7 +28,7 @@ public class EspBeApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EspBeApplication.class, args);
-		System.out.println("Working fine ..");
+		System.out.println("Ready to serve ..");
 	}
 	@Override
 	public void run(String... args) throws Exception {

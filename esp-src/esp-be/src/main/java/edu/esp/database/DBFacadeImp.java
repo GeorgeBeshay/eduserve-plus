@@ -1,8 +1,8 @@
 package edu.esp.database;
 
-import edu.esp.database.doas.AdminDAO;
-import edu.esp.database.doas.InstructorDAO;
-import edu.esp.database.doas.StudentDAO;
+import edu.esp.database.daos.AdminDAO;
+import edu.esp.database.daos.InstructorDAO;
+import edu.esp.database.daos.StudentDAO;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DBFacade_Impl {
+public class DBFacadeImp {
 
     private final JdbcTemplate jdbcTemplate;
     private final StudentDAO studentDAO;
@@ -19,29 +19,23 @@ public class DBFacade_Impl {
     private final AdminDAO adminDAO;
 
     @Autowired
-    public DBFacade_Impl(JdbcTemplate jdbcTemplate){
+    public DBFacadeImp(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
         this.studentDAO = new StudentDAO(this.jdbcTemplate);
         this.instructorDAO = new InstructorDAO(this.jdbcTemplate);
         this.adminDAO = new AdminDAO(this.jdbcTemplate);
     }        
    
-    public boolean createStudent(Student st){     // to be modified to take the correct student object.
-        boolean operationsResult = this.studentDAO.createStudent(st);
-        System.out.println(operationsResult);
-        return operationsResult;
+    public boolean createStudent(Student st){
+        return this.studentDAO.createStudent(st);
     }
   
     public boolean createAdmin(Admin admin){
-        boolean operationResult = this.adminDAO.createAdmin(admin);
-        System.out.println(operationResult);
-        return operationResult;
+        return this.adminDAO.createAdmin(admin);
     }
   
     public boolean createInstructor(Instructor instructor){
-        boolean operationResult = this.instructorDAO.createInstructor(instructor);
-        System.out.println(operationResult);
-        return operationResult;
+        return this.instructorDAO.createInstructor(instructor);
     }
     
     public Student loadStudentData(int studentId){
