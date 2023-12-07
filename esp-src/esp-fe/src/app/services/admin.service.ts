@@ -31,9 +31,7 @@ export class AdminService {
     return null;
   }
 
-  signUp(ID:string, password:string, newPassword:string, confirmNewPassword:string){
-    return this.http.post<boolean>(`${this.URL}signUp`, new Admin(ID, password, newPassword, confirmNewPassword), {responseType:'json'});
-  }
+  
 
 }
 

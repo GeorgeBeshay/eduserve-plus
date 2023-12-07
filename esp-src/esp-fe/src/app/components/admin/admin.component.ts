@@ -48,25 +48,25 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  onSignUp() {
-    if (this.signUpForm.valid) {
-      const id = this.signUpForm.value.id
-      const password = this.signUpForm.value.password;
-      const newPassword = this.signUpForm.value.newPassword;
-      const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
+  // onSignUp() {
+  //   if (this.signUpForm.valid) {
+  //     const id = this.signUpForm.value.id
+  //     const password = this.signUpForm.value.password;
+  //     const newPassword = this.signUpForm.value.newPassword;
+  //     const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
 
-      // Placeholder: Simulate authentication logic
-      console.log('Signing in with ID:', id, ', password:', password,
-        ', new password:', newPassword,
-        'and confirm password: ', confirmNewPassword);
+  //     // Placeholder: Simulate authentication logic
+  //     console.log('Signing in with ID:', id, ', password:', password,
+  //       ', new password:', newPassword,
+  //       'and confirm password: ', confirmNewPassword);
 
-        //call API
-        this.service.signUp(id,password,newPassword,confirmNewPassword)
-        .subscribe((body) => {
-            alert(body)
-        })
-    }
-  }
+  //       //call API
+  //       this.service.signUp(id,password,newPassword,confirmNewPassword)
+  //       .subscribe((body) => {
+  //           alert(body)
+  //       })
+  //   }
+  // }
 
   onTabChanged(event: number) {
     console.log('Tab changed to index:', event);
