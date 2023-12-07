@@ -1,22 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  signInurl = 'http://localhost:8081/esp-server/admin-controller/signIn'
-  signUpurl = 'http://localhost:8081/esp-server/admin-controller/signUp'
+  URL = 'http://localhost:8081/esp-server/admin-endpoint/'
 
-  constructor(private _http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  signIn(adminId:string, adminPwHash:string){
-    return this._http.post<boolean>(`${this.signInurl}`,{adminId,adminPwHash},{responseType:'json'});
+  // signIn(adminId:string, adminPwHash:string){
+  //   return this._http.get<boolean>(`${this.signInurl}`, new Admin(adminId, adminPwHash, "", ""), {responseType:'json'});
+  // }
+
+  // Sign In Request (either the full user data will return or not, in case of unsuccessful authentication )
+  async signIn(adminId: string, password: string){
+    let admin = new Admin(adminId, "", "", "")
+    try {
+      return await firstValueFrom(
+        this.http.post<boolean>(this.URL + 'signIn', {"admin": admin, "password": password}, {responseType:'json'})   // returns the user object.
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return null;
   }
 
   signUp(ID:string, password:string, newPassword:string, confirmNewPassword:string){
-    return this._http.post<boolean>(`${this.signUpurl}`,new Admin(ID,password,newPassword,confirmNewPassword),{responseType:'json'});
+    return this.http.post<boolean>(`${this.URL}signUp`, new Admin(ID, password, newPassword, confirmNewPassword), {responseType:'json'});
   }
 
 }

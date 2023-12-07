@@ -1,7 +1,6 @@
 package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
-import edu.esp.database.doas.InstructorDAO;
 import edu.esp.system_entities.system_users.Instructor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

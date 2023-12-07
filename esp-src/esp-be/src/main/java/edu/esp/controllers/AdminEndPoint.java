@@ -2,6 +2,7 @@ package edu.esp.controllers;
 
 import edu.esp.services.AdminServices;
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
 @RestController
@@ -26,13 +29,13 @@ public class AdminEndPoint {
         this.adminServices = new AdminServices(this.jdbcTemplate);
     }
 
-    @GetMapping("signIn")
+    @PostMapping("signIn")
     @ResponseBody
-    public ResponseEntity<Boolean> signIn (@RequestBody Admin admin) {
+    public ResponseEntity<Boolean> signIn (@RequestBody Map<String, Object> requestMap) {
 
         Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to sign in .. processing the request ..", -1);
 
-        return (this.adminServices.signIn(admin))
+        return (this.adminServices.signIn(requestMap))
                 ? new ResponseEntity<>(true, HttpStatus.OK)
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }

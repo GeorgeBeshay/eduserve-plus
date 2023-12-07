@@ -1,8 +1,8 @@
 package edu.esp.database;
 
-import edu.esp.database.doas.AdminDAO;
-import edu.esp.database.doas.InstructorDAO;
-import edu.esp.database.doas.StudentDAO;
+import edu.esp.database.daos.AdminDAO;
+import edu.esp.database.daos.InstructorDAO;
+import edu.esp.database.daos.StudentDAO;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
