@@ -2,12 +2,10 @@ package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Instructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-
 import java.util.List;
 
 public class InstructorDAO {
@@ -46,7 +44,7 @@ public class InstructorDAO {
 
             return rowsAffected > 0;
         } catch (Exception ex) {
-            System.out.println("\u001B[35m" + "Error had occurred in admin record insertion: " + ex.getMessage() + "\u001B[0m");
+            System.out.println("\u001B[35m" + "Error had occurred in instructor record insertion: " + ex.getMessage() + "\u001B[0m");
             return false; // Return a meaningful response indicating failure
         }
     }
@@ -78,7 +76,7 @@ public class InstructorDAO {
         }
     }
 
-    public boolean signUpInstructor(byte id, int tempHash, Instructor registeredInstructor){
+    public boolean signUpInstructor(int id, int tempHash, Instructor registeredInstructor){
         try{
             int passwordHash;
             // Retrieve ID and temporary password hash from unregistered instructors table
