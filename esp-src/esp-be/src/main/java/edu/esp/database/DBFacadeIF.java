@@ -4,8 +4,9 @@ import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
 
-public interface DBFacade_IF {
+public interface DBFacadeIF {
     // will be refactored
+    boolean createAdmin(Admin admin);
     Student loadStudentData(int studentId);
     Instructor loadInstructorData(int instructorId);
     Admin loadAdmin(int adminId);
