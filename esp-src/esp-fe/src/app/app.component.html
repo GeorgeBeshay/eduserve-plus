@@ -1,0 +1,27 @@
+<body>
+  <header>
+    <div class="header-content">
+      <div class="background-img"></div>
+      <div class="overlay"></div>
+      <h1>EduServe Plus</h1>
+      <p>Your Student-Centric Academic Platform</p>
+    </div>
+  </header>
+
+  <nav>
+    <a routerLink="home" routerLinkActive="selected">Home</a>
+    <a routerLink="about" routerLinkActive="selected">About</a>
+    <a routerLink="student" routerLinkActive="selected">Student</a>
+    <a routerLink="admin" routerLinkActive="selected">Admin</a>
+    <a routerLink="instructor" routerLinkActive="selected">Instructor</a>
+  </nav>
+
+
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 EduServe Plus. All rights reserved.</p>
+  </footer>
+</body>

@@ -1,0 +1,72 @@
+<div class="holder">
+  <mat-tab-group (selectedIndexChange)="onTabChanged($event)">
+    <!-- Sign In Tab -->
+    <mat-tab label="Sign In">
+      <ng-template mat-tab-label>
+        Sign In
+      </ng-template>
+      <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Admin ID</label>
+          <input type="text" formControlName="id" />
+          <div *ngIf="signInForm.get('id')?.hasError('required') && signInForm.get('id')?.touched" class="input-error">
+            Admin ID is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" formControlName="password" />
+          <div *ngIf="signInForm.get('password')?.hasError('required') && signInForm.get('password')?.touched" class="input-error">
+            Password is required.
+          </div>
+        </div>
+
+        <button mat-raised-button type="submit" [disabled]="signInForm.invalid">Sign In</button>
+      </form>
+    </mat-tab>
+
+    <!-- Sign Up Tab
+    <mat-tab label="Sign Up">
+      <ng-template mat-tab-label>
+        Sign Up
+      </ng-template>
+      <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+        <div class="form-group">
+          <label>Admin ID</label>
+          <input type="text" formControlName="id" />
+          <div *ngIf="signUpForm.get('id')?.hasError('required') && signUpForm.get('id')?.touched" class="input-error">
+            Admin ID is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" formControlName="password" />
+          <div *ngIf="signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched" class="input-error">
+            Password is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" formControlName="newPassword" />
+          <div *ngIf="signUpForm.get('newPassword')?.hasError('required') && signUpForm.get('newPassword')?.touched" class="input-error">
+            New Password is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" formControlName="confirmNewPassword" />
+          <div *ngIf="signUpForm.get('confirmNewPassword')?.hasError('required') && signUpForm.get('confirmNewPassword')?.touched" class="input-error">
+            Password Confirmation is required.
+          </div>
+        </div>
+
+        <button mat-raised-button type="submit" [disabled]="signUpForm.invalid">Sign Up</button>
+      </form>
+    </mat-tab> -->
+    
+  </mat-tab-group>
+</div>
