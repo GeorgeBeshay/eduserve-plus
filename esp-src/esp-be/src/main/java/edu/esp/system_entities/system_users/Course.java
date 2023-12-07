@@ -1,13 +1,13 @@
 package edu.esp.system_entities.system_users;
 
 public class Course {
-    private byte courseCode;
+    private String courseCode;
     private String courseName;
     private String courseDescription;
     private byte offeringDpt;
     private byte creditHrs;
 
-    public Course(byte courseCode, String courseName, String courseDescription, byte offeringDpt, byte creditHrs) {
+    public Course(String courseCode, String courseName, String courseDescription, byte offeringDpt, byte creditHrs) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.courseDescription = courseDescription;
@@ -26,11 +26,11 @@ public class Course {
                 '}';
     }
 
-    public byte getCourseCode() {
+    public String getCourseCode() {
         return courseCode;
     }
 
-    public void setCourseCode(byte courseCode) {
+    public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
     }
 
