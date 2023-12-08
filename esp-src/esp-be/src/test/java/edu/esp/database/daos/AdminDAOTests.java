@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.util.List;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -145,5 +146,6 @@ public class AdminDAOTests {
         assertTrue(this.adminDAO.deleteAdminById(setupIds[5]));
         assertTrue(this.adminDAO.deleteAdminById(setupIds[4]));
     }
+
 }
 

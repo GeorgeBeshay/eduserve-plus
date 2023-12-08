@@ -3,12 +3,16 @@ package edu.esp.database;
 import edu.esp.database.daos.AdminDAO;
 import edu.esp.database.daos.InstructorDAO;
 import edu.esp.database.daos.StudentDAO;
+import edu.esp.database.daos.CourseDAO;
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DBFacadeImp {
@@ -17,6 +21,7 @@ public class DBFacadeImp {
     private final StudentDAO studentDAO;
     private final InstructorDAO instructorDAO;
     private final AdminDAO adminDAO;
+    private final CourseDAO CourseDAO;
 
     @Autowired
     public DBFacadeImp(JdbcTemplate jdbcTemplate){
@@ -24,6 +29,7 @@ public class DBFacadeImp {
         this.studentDAO = new StudentDAO(this.jdbcTemplate);
         this.instructorDAO = new InstructorDAO(this.jdbcTemplate);
         this.adminDAO = new AdminDAO(this.jdbcTemplate);
+        this.CourseDAO = new CourseDAO(this.jdbcTemplate);
     }        
    
     public boolean createStudent(Student st){
@@ -68,5 +74,9 @@ public class DBFacadeImp {
 
     public boolean signUpStudent(int id, int hash, Student student) {
         return this.studentDAO.signUpStudent(id, hash, student);
+    }
+
+    public boolean addNewCourse( Course newCourse ){
+        return this.CourseDAO.addNewCourse( newCourse );
     }
 }
