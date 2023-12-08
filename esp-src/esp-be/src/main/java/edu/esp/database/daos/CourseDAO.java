@@ -1,7 +1,9 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_uni_objs.Course;
+import edu.esp.system_entities.system_users.Admin;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -22,19 +24,25 @@ public class CourseDAO {
 
     @Transactional
     public boolean addNewCourse(Course newCourse) {
-        List<String> preqId = newCourse.getPrerequisite();
         try {
+            List<String> preqId = newCourse.getPrerequisite();
+            if(preqId!=null && !preqId.isEmpty()) {
+                boolean flag = checkPrereq(preqId);
+                if (!flag){
+                    return false;
+                }
+            }
 
             insertIntoCourseTable(newCourse);
             if(preqId!=null && !preqId.isEmpty()) {
                 batchInsertIntoCoursePrereqTable(newCourse.getCourseCode(), preqId);
             }
-            return true;
-
         } catch (Exception e){
-
             return false;
         }
+
+        return true;
+
     }
 
 
@@ -67,5 +75,16 @@ public class CourseDAO {
             }
         });
 
+    }
+
+    private boolean checkPrereq(List<String> preq){
+        String sqlQuery = "SELECT course_code FROM course";
+        List<String> preqList = jdbcTemplate.queryForList(sqlQuery, String.class);
+        for (String pre:preq) {
+            if(!preqList.contains(pre)){
+                return false;
+            }
+        }
+        return true;
     }
 }
