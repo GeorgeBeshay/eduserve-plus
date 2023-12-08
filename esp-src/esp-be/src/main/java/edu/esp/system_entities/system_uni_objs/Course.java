@@ -1,4 +1,4 @@
-package edu.esp.system_entities.system_users;
+package edu.esp.system_entities.system_uni_objs;
 
 public class Course {
     private String courseCode;
