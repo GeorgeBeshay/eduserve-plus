@@ -102,7 +102,7 @@ public class CourseDAOTests {
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course_prereq WHERE course_code = 'CS55';
-                DELETE FROM course WHERE course_code = 'CS55' OR course_code = 'CS-1' OR course_code = 'CS-2';
+                DELETE FROM course WHERE course_code IN ('CS55', 'CS-1', 'CS-2');
                 """
         );
 
