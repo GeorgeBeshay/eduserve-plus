@@ -2,7 +2,6 @@ package edu.esp.system_entities.system_users;
 
 public class Instructor {
     private int instructorId;
-    private int Instructor_temp_pw_hash;
     private int instructorPwHash;
     private byte departmentId;
     private String instructorName;
@@ -11,10 +10,7 @@ public class Instructor {
     private String officeHours;
 
     public Instructor() {}
-    public Instructor(int instructorId, int instructorOTP){
-        this.instructorId = instructorId;
-        this.Instructor_temp_pw_hash = instructorOTP;
-    }
+
 
     public Instructor(int instructorId,int instructorPwHash, byte departmentId, String instructorName,
                       String phone, String email, String officeHours) {
@@ -83,13 +79,8 @@ public class Instructor {
         this.officeHours = officeHours;
     }
 
-    public int getInstructor_temp_pw_hash() {
-        return Instructor_temp_pw_hash;
-    }
 
-    public void setInstructor_temp_pw_hash(int instructorOTP) {
-        this.Instructor_temp_pw_hash = instructorOTP;
-    }
+
 
     @Override
     public String toString() {

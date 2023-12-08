@@ -147,17 +147,7 @@ public class AdminDAOTests {
         assertTrue(this.adminDAO.deleteAdminById(setupIds[5]));
         assertTrue(this.adminDAO.deleteAdminById(setupIds[4]));
     }
-    @Test
-    @DisplayName("Admin DAO - adding an unregistered instructor to the database")
-    public void TestAddingUnregisteredInstructor(){
-        assertTrue(this.adminDAO.AddUnregisteredInstructors(1,463));
-    }
-    @Test
-    @DisplayName("Admin DAO - adding duplicate unregistered instructor to the database")
-    public void TestAddingDuplicateUnregisteredInstructor(){
-        this.adminDAO.AddUnregisteredInstructors(2,567);
-        assertFalse(this.adminDAO.AddUnregisteredInstructors(2,567));
-    }
+
 //    Error: instructorDAO is null :(
 //    @Test
 //    @DisplayName("Admin DAO - testing database trigger to delete an unregistered instructor when it gets registered (signs up)")

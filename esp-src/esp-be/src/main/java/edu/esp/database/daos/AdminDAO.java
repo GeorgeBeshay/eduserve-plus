@@ -16,31 +16,6 @@ public class AdminDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    /**
-     *
-     * @param InstructorId instructor's id as listed in university's real system
-     * @param OTP the one time password given to the instructor so he can sign up to the system and choose a password later
-     * @return true if the instructor registrations was successful, false otherwise
-     */
-    public boolean AddUnregisteredInstructors(int InstructorId, int OTP ){
-        try {
-            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                    .withTableName("unregistered_instructor");
-            Instructor instructor = new Instructor(InstructorId,OTP);
-
-
-            BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(instructor);
-            int rowsAffected = jdbcInsert.execute(parameterSource);
-
-            return rowsAffected > 0;
-        } catch(Exception exception){
-            System.out.println("\u001B[35m" + "Error had occurred in registering new instructor to database record " + exception.getMessage() + "\u001B[0m");
-            return false ; // Return a meaningful response indicating failure
-
-    }
-}
-
-
     public Admin readAdminById(byte id) {
         try {
             String sql = """
@@ -101,21 +76,7 @@ public class AdminDAO {
             return false;
         }
     }
-    public Instructor ReadUnregisteredInstructor(int InstructorId, int InstructorOTP){
-        try{
-            String sql = """
-                    SELECT *
-                    FROM unregistered_instructor
-                    WHERE instructor_id = %d""".formatted(InstructorId);
-            BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true);
-            Instructor instructor = jdbcTemplate.queryForObject(sql, rowMapper);
-            return instructor;
-        }catch (Exception e) {
-            System.out.println("Error in ReadUnregisteredInstructorByID: " + e.getMessage());
-            return null;
-        }
-    }
+
 
 
 }
