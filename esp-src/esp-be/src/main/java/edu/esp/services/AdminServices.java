@@ -91,14 +91,14 @@ public class AdminServices {
      * @param newCourse the course object of the new course having the prerequisite List.
      * @return True if the course is added successful, otherwise False.
      */
-    public boolean addNewCourse(Course newCourse){
+    public boolean addNewCourse ( Course newCourse ){
         // call the DB to add that course
-        if(dbFacade.addNewCourse(newCourse)){
-            Logger.logMsgFrom(this.getClass().getName(),"the course added successfully",0);
+        if ( dbFacade.addNewCourse( newCourse ) ){
+            Logger.logMsgFrom( this.getClass().getName(),"the course added successfully",0 );
             return true;
         }
-        else{
-            Logger.logMsgFrom(this.getClass().getName(),"the course didn't be added",1);
+        else {
+            Logger.logMsgFrom( this.getClass().getName(),"the course didn't be added",1 );
             return false;
         }
     }

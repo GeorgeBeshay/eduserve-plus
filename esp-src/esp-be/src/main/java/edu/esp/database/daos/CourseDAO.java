@@ -17,25 +17,26 @@ public class CourseDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public CourseDAO(JdbcTemplate jdbcTemplate) {
+    public CourseDAO( JdbcTemplate jdbcTemplate ) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
 
     @Transactional
-    public boolean addNewCourse(Course newCourse) {
+    public boolean addNewCourse( Course newCourse ) {
+
         try {
             List<String> preqId = newCourse.getPrerequisite();
-            if(preqId!=null && !preqId.isEmpty()) {
-                boolean flag = checkPrereq(preqId);
-                if (!flag){
+            if ( preqId!=null && !preqId.isEmpty() ) {
+                boolean flag = checkPrereq( preqId );
+                if ( !flag ){
                     return false;
                 }
             }
 
-            insertIntoCourseTable(newCourse);
-            if(preqId!=null && !preqId.isEmpty()) {
-                batchInsertIntoCoursePrereqTable(newCourse.getCourseCode(), preqId);
+            insertIntoCourseTable( newCourse );
+            if ( preqId!=null && !preqId.isEmpty() ) {
+                batchInsertIntoCoursePrereqTable( newCourse.getCourseCode(), preqId );
             }
         } catch (Exception e){
             return false;
@@ -46,7 +47,7 @@ public class CourseDAO {
     }
 
 
-    private void insertIntoCourseTable(Course newCourse){
+    private void insertIntoCourseTable( Course newCourse ){
 
         String sqlQuery = "INSERT INTO course (course_code, course_name, course_description," +
                 " offering_dpt, credit_hrs) VALUES (?, ?, ?, ?, ?)";
@@ -57,11 +58,11 @@ public class CourseDAO {
     }
 
 
-    private void batchInsertIntoCoursePrereqTable(String courseCode, List<String> prereq){
+    private void batchInsertIntoCoursePrereqTable( String courseCode, List<String> prereq ){
 
         String insertQuery = "INSERT INTO course_prereq (course_code, preq_id) VALUES (?, ?)";
 
-        jdbcTemplate.batchUpdate(insertQuery, new BatchPreparedStatementSetter() {
+        jdbcTemplate.batchUpdate( insertQuery, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
                 String prereqElement = prereq.get(i);
@@ -77,11 +78,11 @@ public class CourseDAO {
 
     }
 
-    private boolean checkPrereq(List<String> preq){
+    private boolean checkPrereq( List<String> preq ){
         String sqlQuery = "SELECT course_code FROM course";
-        List<String> preqList = jdbcTemplate.queryForList(sqlQuery, String.class);
-        for (String pre:preq) {
-            if(!preqList.contains(pre)){
+        List<String> preqList = jdbcTemplate.queryForList( sqlQuery, String.class );
+        for ( String pre : preq ) {
+            if ( !preqList.contains( pre ) ){
                 return false;
             }
         }

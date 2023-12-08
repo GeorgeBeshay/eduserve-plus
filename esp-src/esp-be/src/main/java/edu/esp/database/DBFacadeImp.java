@@ -76,7 +76,7 @@ public class DBFacadeImp {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
 
-    public boolean addNewCourse(Course newCourse){
-        return this.CourseDAO.addNewCourse(newCourse);
+    public boolean addNewCourse( Course newCourse ){
+        return this.CourseDAO.addNewCourse( newCourse );
     }
 }
