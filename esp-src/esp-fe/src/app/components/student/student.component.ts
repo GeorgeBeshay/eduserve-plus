@@ -37,7 +37,7 @@ export class StudentComponent implements OnInit{
     // Any initialization logic
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.signInForm.valid) {
       const id = this.signInForm.value.id;
       const password = this.signInForm.value.password;
@@ -45,12 +45,14 @@ export class StudentComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      // call API
-      this.service.signIn(id,password)
-      .subscribe((body) => {
-        alert(body)
-      })
+      let isSucess: boolean | null = await this.service.signIn(id, password);
 
+      if (isSucess) {
+        alert("The student has been signed in successfully")
+      } else {
+        alert("The ID or the password is not correct")
+      }
+      
     }
   }
 
