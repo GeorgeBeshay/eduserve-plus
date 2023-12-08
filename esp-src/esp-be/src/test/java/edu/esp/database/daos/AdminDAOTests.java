@@ -26,25 +26,25 @@ public class AdminDAOTests {
     @BeforeAll
     public void setUp(){
         this.adminDAO = new AdminDAO(jdbcTemplate);
-//
-//        jdbcTemplate.batchUpdate("""
-//            INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
-//            VALUES
-//                (%d, 65, 'Duplicate Test Admin', %d),
-//                (%d, 78, 'Read Test Admin', %d),
-//                (%d, 25, 'Delete Twice Test Admin', %d),
-//                (%d, 66, 'Delete Test Admin', %d),
-//                (%d, 456, 'Creator Test Admin', %d),
-//                (%d, 987, 'Created Test Admin', %d);
-//            """.formatted(
-//                setupIds[0], setupIds[0],
-//                setupIds[1], setupIds[0],
-//                setupIds[2], setupIds[2],
-//                setupIds[3], setupIds[0],
-//                setupIds[4], setupIds[0],
-//                setupIds[5], setupIds[4]
-//                )
-//        );
+
+        jdbcTemplate.batchUpdate("""
+            INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
+            VALUES
+                (%d, 65, 'Duplicate Test Admin', %d),
+                (%d, 78, 'Read Test Admin', %d),
+                (%d, 25, 'Delete Twice Test Admin', %d),
+                (%d, 66, 'Delete Test Admin', %d),
+                (%d, 456, 'Creator Test Admin', %d),
+                (%d, 987, 'Created Test Admin', %d);
+            """.formatted(
+                setupIds[0], setupIds[0],
+                setupIds[1], setupIds[0],
+                setupIds[2], setupIds[2],
+                setupIds[3], setupIds[0],
+                setupIds[4], setupIds[0],
+                setupIds[5], setupIds[4]
+                )
+        );
     }
 
     @AfterAll
