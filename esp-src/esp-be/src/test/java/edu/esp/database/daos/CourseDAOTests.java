@@ -45,8 +45,8 @@ public class CourseDAOTests {
         Course repeatedCourse = new Course("CS55","paradigms",
                 "bla bla", (byte) 1,(byte) 3);
 
-        assertTrue(CourseDAO.addNewCourse(course,null));
-        assertFalse(CourseDAO.addNewCourse(repeatedCourse,null));
+        assertTrue(CourseDAO.addNewCourse(course));
+        assertFalse(CourseDAO.addNewCourse(repeatedCourse));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
@@ -61,7 +61,7 @@ public class CourseDAOTests {
         Course course = new Course("CS55","programming1",
                 "bla bla", (byte) 1,(byte) 3);
         List<String> prereq = new ArrayList<>();
-        assertTrue(CourseDAO.addNewCourse(course,prereq));
+        assertTrue(CourseDAO.addNewCourse(course));
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
                 """
@@ -74,7 +74,7 @@ public class CourseDAOTests {
 
         Course course = new Course("CS55","programming1",
                 "bla bla", (byte) 1,(byte) 3);
-        assertTrue(CourseDAO.addNewCourse(course,null));
+        assertTrue(CourseDAO.addNewCourse(course));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
@@ -89,8 +89,8 @@ public class CourseDAOTests {
 
         Course pre1 = new Course("CS-1","math1","lkdmf",(byte) 1,(byte) 3);
         Course pre2 = new Course("CS-2","math2","lkdmf",(byte) 1,(byte) 3);
-        CourseDAO.addNewCourse(pre1,null);
-        CourseDAO.addNewCourse(pre2,null);
+        CourseDAO.addNewCourse(pre1);
+        CourseDAO.addNewCourse(pre2);
 
 
         Course course = new Course("CS55","programming1",
@@ -98,7 +98,7 @@ public class CourseDAOTests {
         List<String> prereq = new ArrayList<>();
         prereq.add("CS-1");
         prereq.add("CS-2");
-        assertTrue(CourseDAO.addNewCourse(course,prereq));
+        assertTrue(CourseDAO.addNewCourse(course));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course_prereq WHERE course_code = 'CS55';

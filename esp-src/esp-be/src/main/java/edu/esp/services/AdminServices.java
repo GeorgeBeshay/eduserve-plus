@@ -88,13 +88,12 @@ public class AdminServices {
     /**
      * Implements the business logic for adding new course to DB.
      *
-     * @param newCourse the course object of the new course.
-     * @param prereqId the prerequisite courses "list of course Id".
+     * @param newCourse the course object of the new course having the prerequisite List.
      * @return True if the course is added successful, otherwise False.
      */
-    public boolean addNewCourse(Course newCourse, List<String> prereqId){
+    public boolean addNewCourse(Course newCourse){
         // call the DB to add that course
-        if(dbFacade.addNewCourse(newCourse,prereqId)){
+        if(dbFacade.addNewCourse(newCourse)){
             Logger.logMsgFrom(this.getClass().getName(),"the course added successfully",0);
             return true;
         }
