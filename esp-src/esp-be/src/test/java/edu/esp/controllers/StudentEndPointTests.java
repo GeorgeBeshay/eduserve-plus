@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.be.EspBeApplication;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Student;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -126,6 +123,11 @@ public class StudentEndPointTests {
         assertFalse(booleanResponse);
     }
 
+    @AfterEach
+    public void removeStudent() {
+        DBFacadeImp dbFacadeImp = new DBFacadeImp(jdbcTemplate);
+        dbFacadeImp.deleteStudent(100);
+    }
 
     private String asJsonString(final Object obj) {
         try {
