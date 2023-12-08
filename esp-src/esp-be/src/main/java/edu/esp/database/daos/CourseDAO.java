@@ -21,8 +21,8 @@ public class CourseDAO {
 
 
     @Transactional
-    public boolean addNewCourse(Course newCourse, List<String> preqId) {
-
+    public boolean addNewCourse(Course newCourse) {
+        List<String> preqId = newCourse.getPrerequisite();
         try {
 
             insertIntoCourseTable(newCourse);
@@ -40,11 +40,11 @@ public class CourseDAO {
 
     private void insertIntoCourseTable(Course newCourse){
 
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("course");
-
-        BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(newCourse);
-
-        simpleJdbcInsert.execute(parameterSource);
+        String sqlQuery = "INSERT INTO course (course_code, course_name, course_description," +
+                " offering_dpt, credit_hrs) VALUES (?, ?, ?, ?, ?)";
+        int rowAffected = this.jdbcTemplate.update(sqlQuery,newCourse.getCourseCode(),
+                newCourse.getCourseName(), newCourse.getCourseDescription(),
+                newCourse.getOfferingDpt(),newCourse.getCreditHrs());
 
     }
 
