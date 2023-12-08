@@ -4,11 +4,14 @@ import edu.esp.database.daos.AdminDAO;
 import edu.esp.database.daos.InstructorDAO;
 import edu.esp.database.daos.StudentDAO;
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.system_entities.system_users.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DBFacadeImp {
@@ -68,5 +71,9 @@ public class DBFacadeImp {
 
     public boolean signUpStudent(int id, int hash, Student student) {
         return this.studentDAO.signUpStudent(id, hash, student);
+    }
+
+    public boolean addNewCourse(Course newCourse, List<String> prereq){
+        return this.adminDAO.addNewCourse(newCourse, prereq);
     }
 }
