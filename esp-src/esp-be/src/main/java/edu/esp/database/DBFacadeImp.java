@@ -4,7 +4,7 @@ import edu.esp.database.daos.AdminDAO;
 import edu.esp.database.daos.InstructorDAO;
 import edu.esp.database.daos.StudentDAO;
 import edu.esp.system_entities.system_users.Admin;
-import edu.esp.system_entities.system_users.Course;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
 import org.springframework.beans.factory.annotation.Autowired;

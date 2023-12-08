@@ -1,7 +1,6 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Admin;
-import edu.esp.system_entities.system_users.Course;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

@@ -1,7 +1,7 @@
 package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
-import edu.esp.system_entities.system_users.Course;
+import edu.esp.system_entities.system_uni_objs.Course;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ package edu.esp.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
-import edu.esp.system_entities.system_users.Course;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
