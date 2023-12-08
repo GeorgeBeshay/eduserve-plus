@@ -22,15 +22,15 @@ public class CourseDAOTests {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    private AdminDAO adminDAO;
+    private CourseDAO CourseDAO;
 
     @BeforeAll
     public void setUp() {
-        this.adminDAO = new AdminDAO(jdbcTemplate);
+        this.CourseDAO = new CourseDAO(jdbcTemplate);
     }
 
     @Test
-    @DisplayName("Admin DAO - try to add new course with repeated id")
+    @DisplayName("Course DAO - try to add new course with repeated id")
     public void addNewCourseRepeatedId(){
 
         jdbcTemplate.batchUpdate("""
@@ -45,8 +45,8 @@ public class CourseDAOTests {
         Course repeatedCourse = new Course("CS55","paradigms",
                 "bla bla", (byte) 1,(byte) 3);
 
-        assertTrue(adminDAO.addNewCourse(course,null));
-        assertFalse(adminDAO.addNewCourse(repeatedCourse,null));
+        assertTrue(CourseDAO.addNewCourse(course,null));
+        assertFalse(CourseDAO.addNewCourse(repeatedCourse,null));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
@@ -55,13 +55,13 @@ public class CourseDAOTests {
     }
 
     @Test
-    @DisplayName("Admin DAO - try to add new course without prerequisite (prerequisite size is 0")
+    @DisplayName("Course DAO - try to add new course without prerequisite (prerequisite size is 0")
     public void addNewCourseWithoutPrereqSize0(){
 
         Course course = new Course("CS55","programming1",
                 "bla bla", (byte) 1,(byte) 3);
         List<String> prereq = new ArrayList<>();
-        assertTrue(adminDAO.addNewCourse(course,prereq));
+        assertTrue(CourseDAO.addNewCourse(course,prereq));
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
                 """
@@ -69,12 +69,12 @@ public class CourseDAOTests {
     }
 
     @Test
-    @DisplayName("Admin DAO - try to add new course without prerequisite (prerequisite is null")
+    @DisplayName("Course DAO - try to add new course without prerequisite (prerequisite is null")
     public void addNewCourseWithoutPrereqIsNull(){
 
         Course course = new Course("CS55","programming1",
                 "bla bla", (byte) 1,(byte) 3);
-        assertTrue(adminDAO.addNewCourse(course,null));
+        assertTrue(CourseDAO.addNewCourse(course,null));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
@@ -84,13 +84,13 @@ public class CourseDAOTests {
     }
 
     @Test
-    @DisplayName("Admin DAO - try to add new course with valid prerequisite")
+    @DisplayName("Course DAO - try to add new course with valid prerequisite")
     public void addNewCourseWithValidPrereq(){
 
         Course pre1 = new Course("CS-1","math1","lkdmf",(byte) 1,(byte) 3);
         Course pre2 = new Course("CS-2","math2","lkdmf",(byte) 1,(byte) 3);
-        adminDAO.addNewCourse(pre1,null);
-        adminDAO.addNewCourse(pre2,null);
+        CourseDAO.addNewCourse(pre1,null);
+        CourseDAO.addNewCourse(pre2,null);
 
 
         Course course = new Course("CS55","programming1",
@@ -98,7 +98,7 @@ public class CourseDAOTests {
         List<String> prereq = new ArrayList<>();
         prereq.add("CS-1");
         prereq.add("CS-2");
-        assertTrue(adminDAO.addNewCourse(course,prereq));
+        assertTrue(CourseDAO.addNewCourse(course,prereq));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course_prereq WHERE course_code = 'CS55';
