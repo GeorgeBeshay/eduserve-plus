@@ -61,6 +61,7 @@ public class CourseDAOTests {
         Course course = new Course("CS55","programming1",
                 "bla bla", (byte) 1,(byte) 3);
         List<String> prereq = new ArrayList<>();
+        course.setPrerequisite(prereq);
         assertTrue(CourseDAO.addNewCourse(course));
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course WHERE course_code = 'CS55';
@@ -74,6 +75,7 @@ public class CourseDAOTests {
 
         Course course = new Course("CS55","programming1",
                 "bla bla", (byte) 1,(byte) 3);
+        course.setPrerequisite(null);
         assertTrue(CourseDAO.addNewCourse(course));
 
         jdbcTemplate.batchUpdate("""
@@ -98,7 +100,34 @@ public class CourseDAOTests {
         List<String> prereq = new ArrayList<>();
         prereq.add("CS-1");
         prereq.add("CS-2");
+        course.setPrerequisite(prereq);
         assertTrue(CourseDAO.addNewCourse(course));
+
+        jdbcTemplate.batchUpdate("""
+                DELETE FROM course_prereq WHERE course_code = 'CS55';
+                DELETE FROM course WHERE course_code IN ('CS55', 'CS-1', 'CS-2');
+                """
+        );
+
+    }
+
+    @Test
+    @DisplayName("Course DAO - try to add new course with invalid prerequisite 'roll back'")
+    public void addNewCourseWithInvalidPrereq(){
+
+        Course pre1 = new Course("CS-1","math1","lkdmf",(byte) 1,(byte) 3);
+
+        CourseDAO.addNewCourse(pre1);
+
+        Course course = new Course("CS55","programming1",
+                "bla bla", (byte) 1,(byte) 3);
+
+        List<String> prereq = new ArrayList<>();
+        prereq.add("CS-1");
+        prereq.add("CS-2");
+        course.setPrerequisite(prereq);
+
+        assertFalse(CourseDAO.addNewCourse(course));
 
         jdbcTemplate.batchUpdate("""
                 DELETE FROM course_prereq WHERE course_code = 'CS55';
