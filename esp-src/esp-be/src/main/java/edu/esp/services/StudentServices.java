@@ -60,4 +60,30 @@ public class StudentServices {
         Logger.logMsgFrom(this.getClass().getName(), "Student password is incorrect.", 1);
         return false;
     }
+
+    public Boolean signUp(Map<String, Object> requestMap) {
+        // Extract the student object from the map and the password then convert it to be hashed
+        Student student = (new ObjectMapper()).convertValue(requestMap.get("student"), Student.class);
+        int hashedPassword = Hasher.hash((String) requestMap.get("password"));
+        int hashedOTPPassword = Hasher.hash((String) requestMap.get("OTPPassword"));
+
+        if (student == null) {
+            Logger.logMsgFrom(this.getClass().getName(), "Student object sent was null.", 1);
+            return false;
+        }
+        // -1 returned from hash function in case of there is problem in hashing
+        if (hashedPassword == -1 || hashedOTPPassword == -1) {
+            Logger.logMsgFrom(this.getClass().getName(), "Student password can't be hashed.", 1);
+            return false;
+        }
+        student.setStudentPwHash(hashedPassword);
+
+        if (dbFacade.signUpStudent(student.getStudentId(), hashedOTPPassword, student)) {
+            Logger.logMsgFrom(this.getClass().getName(), "New Student was successfully registered.", 0);
+            return true;
+        }
+
+        Logger.logMsgFrom(this.getClass().getName(), "New Student failed to be registered.", 1);
+        return false;
+    }
 }

@@ -39,11 +39,11 @@ public class StudentEndPoint {
 
     @PostMapping("/signUp")
     @ResponseBody
-    public Boolean signUp(@RequestBody Student student) {
-        //check if the username and password are correct
-        //update the password in database
-        //and send message to the front
-        System.out.println(student.toString());
-        return true;
+    public ResponseEntity<Boolean> signUp(@RequestBody Map<String, Object> requestMap) {
+        Logger.logMsgFrom(this.getClass().getName(), "An Student has requested to sign up .. processing the request ..", -1);
+
+        return (this.studentServices.signUp(requestMap))
+                ? new ResponseEntity<>(true, HttpStatus.OK)
+                : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
 }

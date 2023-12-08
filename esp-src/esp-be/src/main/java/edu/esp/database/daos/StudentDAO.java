@@ -101,8 +101,8 @@ public class StudentDAO {
                     WHERE student_id = %d
                     """.formatted(id)) <= 0) return false;
             // Add record to students table
-            createStudent(registeredStudent);
-            return true;
+            return createStudent(registeredStudent);
+
         }catch (Exception e){
             System.out.println("\u001B[35m" + "Error had occurred in student sign up: " + e.getMessage() + "\u001B[0m");
             return false; // Return a meaningful response indicating failure
