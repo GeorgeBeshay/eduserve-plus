@@ -4,6 +4,7 @@ package edu.esp.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -80,6 +81,9 @@ public class AdminServices {
 
         Logger.logMsgFrom(this.getClass().getName(), "Admin password is incorrect.", 1);
         return false;
+    }
+    public boolean RegisterNewInstructor(UnregisteredInstructor unregisteredInstructor){
+        return this.dbFacade.RegisterNewInstructor(unregisteredInstructor);
     }
 
 }

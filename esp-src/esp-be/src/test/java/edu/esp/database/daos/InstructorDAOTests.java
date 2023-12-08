@@ -162,4 +162,15 @@ public class InstructorDAOTests {
         registeredInstructor.setDepartmentId((byte) 3);
         assertFalse(this.instructorDAO.signUpInstructor(setupIds[4], 404, registeredInstructor));
     }
+    @Test
+    @DisplayName("Admin DAO - adding an unregistered instructor to the database")
+    public void TestAddingUnregisteredInstructor(){
+        assertTrue(this.instructorDAO.AddUnregisteredInstructors(7,463));
+    }
+    @Test
+    @DisplayName("Admin DAO - adding duplicate unregistered instructor to the database")
+    public void TestAddingDuplicateUnregisteredInstructor(){
+        this.instructorDAO.AddUnregisteredInstructors(2,567);
+        assertFalse(this.instructorDAO.AddUnregisteredInstructors(2,567));
+    }
 }

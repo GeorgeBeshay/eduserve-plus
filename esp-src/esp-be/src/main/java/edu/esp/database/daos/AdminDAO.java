@@ -1,6 +1,7 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.system_entities.system_users.Instructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -75,6 +76,7 @@ public class AdminDAO {
             return false;
         }
     }
+
 
 
 }
