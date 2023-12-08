@@ -37,7 +37,7 @@ public class CourseDAO {
         }
     }
 
-    @Transactional
+
     private void insertIntoCourseTable(Course newCourse){
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("course");
@@ -48,7 +48,7 @@ public class CourseDAO {
 
     }
 
-    @Transactional
+
     private void batchInsertIntoCoursePrereqTable(String courseCode, List<String> prereq){
 
         String insertQuery = "INSERT INTO course_prereq (course_code, preq_id) VALUES (?, ?)";
