@@ -93,11 +93,11 @@ public class InstructorDAO {
             // If the input temporary hash is not the same as the unregistered password hash, reject operation
             if (tempHash != passwordHash) return false;
             // Delete the record from the unregistered instructors table
-            if (jdbcTemplate.update("""
-                    DELETE FROM unregistered_instructor
-                    WHERE instructor_id = %d
-                    """.formatted(id)) <= 0) return false;
-            // Add record to instructors table
+//            if (jdbcTemplate.update("""
+//                    DELETE FROM unregistered_instructor
+//                    WHERE instructor_id = %d
+//                    """.formatted(id)) <= 0) return false;
+            // Add record to instructors table and rely on the DB trigger to delete that record from the unregistered_instructors
             createInstructor(registeredInstructor);
             return true;
         }catch (Exception e){
