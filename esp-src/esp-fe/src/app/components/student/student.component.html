@@ -41,7 +41,7 @@
         </div>
 
         <div class="form-group">
-          <label>Password</label>
+          <label>OTP Password</label>
           <input type="password" formControlName="password" />
           <div *ngIf="signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched" class="input-error">
             Password is required.
@@ -62,6 +62,7 @@
           <div *ngIf="signUpForm.get('confirmNewPassword')?.hasError('required') && signUpForm.get('confirmNewPassword')?.touched" class="input-error">
             Password Confirmation is required.
           </div>
+          <div *ngIf="signUpForm.get('newPassword')?.value !== signUpForm.get('confirmNewPassword')?.value" class="input-error">Passwords do not match.</div>
         </div>
 
         <div class="form-group">
@@ -117,6 +118,9 @@
           <input type="email" formControlName="email" />
           <div *ngIf="signUpForm.get('email')?.hasError('required') && signUpForm.get('email')?.touched" class="input-error">
             Email is required.
+          </div>
+          <div *ngIf="signUpForm.get('email')?.hasError('email') && signUpForm.get('email')?.touched" class="input-error">
+            Please enter a valid email address.
           </div>
         </div>
 
