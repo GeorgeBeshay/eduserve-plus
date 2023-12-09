@@ -27,7 +27,7 @@ public class StudentEndPoint {
         this.studentServices = new StudentServices(this.jdbcTemplate);
     }
 
-    @PostMapping("/signIn")
+    @PostMapping("signIn")
     @ResponseBody
     public ResponseEntity<Boolean> signIn(@RequestBody Map<String, Object> requestMap) {
         Logger.logMsgFrom(this.getClass().getName(), "An Student has requested to sign in .. processing the request ..", -1);
@@ -37,7 +37,7 @@ public class StudentEndPoint {
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("signUp")
     @ResponseBody
     public ResponseEntity<Boolean> signUp(@RequestBody Map<String, Object> requestMap) {
         Logger.logMsgFrom(this.getClass().getName(), "An Student has requested to sign up .. processing the request ..", -1);
