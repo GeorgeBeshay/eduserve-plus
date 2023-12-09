@@ -30,7 +30,7 @@ public class StudentEndPoint {
     @PostMapping("signIn")
     @ResponseBody
     public ResponseEntity<Boolean> signIn(@RequestBody Map<String, Object> requestMap) {
-        Logger.logMsgFrom(this.getClass().getName(), "An Student has requested to sign in .. processing the request ..", -1);
+        Logger.logMsgFrom(this.getClass().getName(), "A Student has requested to sign in .. processing the request ..", -1);
 
         return (this.studentServices.signIn(requestMap))
                 ? new ResponseEntity<>(true, HttpStatus.OK)
@@ -40,7 +40,7 @@ public class StudentEndPoint {
     @PostMapping("signUp")
     @ResponseBody
     public ResponseEntity<Boolean> signUp(@RequestBody Map<String, Object> requestMap) {
-        Logger.logMsgFrom(this.getClass().getName(), "An Student has requested to sign up .. processing the request ..", -1);
+        Logger.logMsgFrom(this.getClass().getName(), "A Student has requested to sign up .. processing the request ..", -1);
 
         return (this.studentServices.signUp(requestMap))
                 ? new ResponseEntity<>(true, HttpStatus.OK)
