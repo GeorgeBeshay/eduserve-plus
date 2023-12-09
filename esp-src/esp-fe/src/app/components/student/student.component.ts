@@ -45,9 +45,9 @@ export class StudentComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      let isSucess: boolean | null = await this.service.signIn(id, password);
+      let isSuccess: boolean | null = await this.service.signIn(id, password);
 
-      if (isSucess) {
+      if (isSuccess) {
         alert("The student has been signed in successfully")
       } else {
         alert("The ID or the password is not correct")
@@ -95,9 +95,9 @@ export class StudentComponent implements OnInit{
         ', gender: ', gender);
 
         //cal API
-        let isSucess: boolean | null = await this.service.signUp(student, password, newPassword);
+        let isSuccess: boolean | null = await this.service.signUp(student, password, newPassword);
 
-      if (isSucess) {
+      if (isSuccess) {
         alert("The student has been signed up successfully")
       } else {
         alert("The student can not sign up")
