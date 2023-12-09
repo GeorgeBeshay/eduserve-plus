@@ -76,7 +76,7 @@ public class StudentEndPointTests {
     }
 
     @Test
-    @DisplayName("Student Sign In - Authenticated Wrong Password")
+    @DisplayName("Student Sign In - Rejected Wrong Password")
     public void wrongPasswordSignIn() throws Exception {
 
         Student student = new Student();
@@ -104,7 +104,7 @@ public class StudentEndPointTests {
     }
 
     @Test
-    @DisplayName("Student Sign In - Authenticated Wrong id")
+    @DisplayName("Student Sign In - Rejected Wrong id")
     public void signInWithWrongID() throws Exception {
 
         Student student = new Student();
@@ -162,7 +162,7 @@ public class StudentEndPointTests {
     }
 
     @Test
-    @DisplayName("Student Sign Up - Authenticated wrong id")
+    @DisplayName("Student Sign Up - Rejected wrong id")
     public void signUpWrongID() throws Exception {
 
         Student student = new Student();
@@ -191,7 +191,7 @@ public class StudentEndPointTests {
     }
 
     @Test
-    @DisplayName("Student Sign Up - Authenticated wrong OTP password")
+    @DisplayName("Student Sign Up - Rejected wrong OTP password")
     public void signUpWrongOTPPassword() throws Exception {
 
         Student student = new Student();
