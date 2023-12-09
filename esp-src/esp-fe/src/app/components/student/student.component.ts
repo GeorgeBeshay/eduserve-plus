@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import { Student, StudentService } from 'src/app/services/student.service';
+import {StudentService} from 'src/app/services/student.service';
+import {Student} from "../../System Entities/Student";
 
 @Component({
   selector: 'app-student',
