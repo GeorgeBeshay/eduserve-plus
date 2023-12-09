@@ -31,7 +31,7 @@ export class StudentService {
   async signUp(student: Student, OTPPassword: string, password: string) {
 
     console.log("in service sign up");
-    
+
     try {
       return await firstValueFrom (
         this.http.post<boolean>(this.URL + 'signUp', {"student": student, "password": password, "OTPPassword": OTPPassword}, {responseType:'json'})
@@ -58,7 +58,7 @@ export class Student{
   gpa: string
   studentName: string
   ssn: string
-  birthDate: string
+  bdate: string
   studentAddress: string
   phone: string
   landline: string
@@ -66,8 +66,8 @@ export class Student{
   email: string
 
     constructor(studentId: string, departmentId: string, studentLevel: string, gpa: string,
-       studentName: string, ssn: string, birthDate: string, studentAddress: string, phone: string,
-       landline: string, gender: string, email: string){
+      studentName: string, ssn: string, bdate: string, studentAddress: string, phone: string,
+      landline: string, gender: string, email: string){
 
         this.studentId = studentId
         this.departmentId = departmentId
@@ -75,7 +75,7 @@ export class Student{
         this.gpa = gpa
         this.studentName = studentName
         this.ssn = ssn
-        this.birthDate = birthDate
+        this.bdate = bdate
         this.studentAddress = studentAddress
         this.phone = phone
         this.landline = landline

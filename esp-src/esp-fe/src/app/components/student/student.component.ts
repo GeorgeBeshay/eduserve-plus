@@ -58,7 +58,7 @@ export class StudentComponent implements OnInit{
 
   async onSignUp() {
     if (this.signUpForm.valid) {
-      
+
       const id = this.signUpForm.value.id
       const password = this.signUpForm.value.password;
       const newPassword = this.signUpForm.value.newPassword;
@@ -98,9 +98,9 @@ export class StudentComponent implements OnInit{
         let isSucess: boolean | null = await this.service.signUp(student, password, newPassword);
 
       if (isSucess) {
-        alert("The student has been signed in successfully")
+        alert("The student has been signed up successfully")
       } else {
-        alert("The ID or the password is not correct")
+        alert("The student can not sign up")
       }
     }
 
