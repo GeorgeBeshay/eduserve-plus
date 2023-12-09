@@ -2,11 +2,17 @@ package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.Instructor;
+import edu.esp.utilities.Logger;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class AdminDAO {
@@ -76,7 +82,5 @@ public class AdminDAO {
             return false;
         }
     }
-
-
 
 }
