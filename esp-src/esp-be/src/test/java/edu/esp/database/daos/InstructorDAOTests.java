@@ -2,6 +2,7 @@ package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
 import edu.esp.system_entities.system_users.Instructor;
+import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -163,14 +164,17 @@ public class InstructorDAOTests {
         assertFalse(this.instructorDAO.signUpInstructor(setupIds[4], 404, registeredInstructor));
     }
     @Test
-    @DisplayName("Admin DAO - adding an unregistered instructor to the database")
+    @DisplayName("Instructor DAO - adding an unregistered instructor to the database")
     public void TestAddingUnregisteredInstructor(){
-        assertTrue(this.instructorDAO.AddUnregisteredInstructors(7,463));
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(7,463);
+        assertTrue(this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor));
     }
     @Test
-    @DisplayName("Admin DAO - adding duplicate unregistered instructor to the database")
+    @DisplayName("Instructor DAO - adding duplicate unregistered instructor to the database")
     public void TestAddingDuplicateUnregisteredInstructor(){
-        this.instructorDAO.AddUnregisteredInstructors(2,567);
-        assertFalse(this.instructorDAO.AddUnregisteredInstructors(2,567));
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(2,567);
+        this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor);
+        assertFalse(this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor));
     }
+
 }

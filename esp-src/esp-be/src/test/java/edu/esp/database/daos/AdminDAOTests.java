@@ -148,18 +148,6 @@ public class AdminDAOTests {
         assertTrue(this.adminDAO.deleteAdminById(setupIds[4]));
     }
 
-//    Error: instructorDAO is null :(
-//    @Test
-//    @DisplayName("Admin DAO - testing database trigger to delete an unregistered instructor when it gets registered (signs up)")
-//    public void TestUnregisteredInstructorTriggerAfterSigningUp(){
-//        this.adminDAO.AddUnregisteredInstructors(2,456);
-//        assertNotNull(this.adminDAO.ReadUnregisteredInstructor(2,456));
-//        Instructor NewInstructor = new Instructor(2,456);
-//        this.instructorDAO.signUpInstructor(2,456,NewInstructor);
-//        //signUpInstructor will eventually insert a new instructor in the instructor table and the DB trigger will delete it from the unregistered_instructor table
-//        //so we check that when searching for that instructor in the table of the unregistered_instructor we will get a null value.
-//        assertNull(this.adminDAO.ReadUnregisteredInstructor(2,456));
-//
-//    }
+
 }
 

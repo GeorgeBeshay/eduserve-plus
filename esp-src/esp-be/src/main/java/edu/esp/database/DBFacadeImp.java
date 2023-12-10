@@ -70,7 +70,7 @@ public class DBFacadeImp {
     public boolean signUpStudent(int id, int hash, Student student) {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
-    public boolean RegisterNewInstructor(UnregisteredInstructor unregisteredInstructor){
-        return this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor.getInstructor_id(), unregisteredInstructor.getInstructor_temp_pw_hash());
+    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor){
+        return this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor);
     }
 }

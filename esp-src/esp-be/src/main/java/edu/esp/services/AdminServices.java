@@ -22,7 +22,7 @@ public class AdminServices {
     private final JdbcTemplate jdbcTemplate;
     private final DBFacadeImp dbFacade;       // TODO: Instantiate the object as of type DBFacadeIF instead.
 
-    public AdminServices(JdbcTemplate jdbcTemplate){
+    public AdminServices(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.dbFacade = new DBFacadeImp(this.jdbcTemplate);
     }
@@ -33,9 +33,9 @@ public class AdminServices {
      * @param admin The admin object to be registered.
      * @return True if the registration is successful, otherwise false.
      */
-    public boolean signUp (Admin admin) {
+    public boolean signUp(Admin admin) {
 
-        if( dbFacade.createAdmin(admin) ){
+        if (dbFacade.createAdmin(admin)) {
             Logger.logMsgFrom(this.getClass().getName(), "New admin was successfully registered.", 0);
             return true;
         }
@@ -50,7 +50,7 @@ public class AdminServices {
      * @param requestMap contains the admin object (without the password) to be signed in and the password before hashing
      * @return True if the authentication is successful, otherwise false.
      */
-    public boolean signIn (Map<String, Object> requestMap) {
+    public boolean signIn(Map<String, Object> requestMap) {
         // Extract Admin and password converted to hashed value
         Admin admin = (new ObjectMapper()).convertValue(requestMap.get("admin"), Admin.class);
         int hashedPassword = Hasher.hash((String) requestMap.get("password"));
@@ -82,8 +82,14 @@ public class AdminServices {
         Logger.logMsgFrom(this.getClass().getName(), "Admin password is incorrect.", 1);
         return false;
     }
-    public boolean RegisterNewInstructor(UnregisteredInstructor unregisteredInstructor){
-        return this.dbFacade.RegisterNewInstructor(unregisteredInstructor);
-    }
 
+    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
+        if (this.dbFacade.AddNewUnregisteredInstructor(unregisteredInstructor)) {
+            Logger.logMsgFrom(this.getClass().getName(), "New unregistered instructor was successfully added to the system.", 0);
+            return true;
+        }
+        Logger.logMsgFrom(this.getClass().getName(), "New Unregistered Instructor failed to be added to the system.", 1);
+        return false;
+
+    }
 }

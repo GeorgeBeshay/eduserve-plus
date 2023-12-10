@@ -12,7 +12,7 @@ public class Instructor {
     public Instructor() {}
 
 
-    public Instructor(int instructorId,int instructorPwHash, byte departmentId, String instructorName,
+    public Instructor(int instructorId, int instructorPwHash, byte departmentId, String instructorName,
                       String phone, String email, String officeHours) {
         this.instructorId = instructorId;
         this.instructorPwHash = instructorPwHash;
