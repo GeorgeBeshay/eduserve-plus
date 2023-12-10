@@ -60,7 +60,10 @@ export class AdminComponent implements OnInit{
 
   async addCourse () {
 
-    //initialize the course with this constructor.
+    // initialize the course with this constructor.
+    // inforce in the form that the courseCode has max 7 characters
+    // and Course name max 40 character
+    // and department id and creditHours are in the range of the byte [-128,127]
     let newCourse = new Course("CSEN 901", "Software Engineering", "This course is about software engineering", 1, 3, [])
 
 
