@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {Admin} from "../System Entities/Admin";
+import { Course } from '../System Entities/course';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,24 @@ export class AdminService {
     try {
       return await firstValueFrom(
         this.http.post<boolean>(this.URL + 'signIn', {"admin": admin, "password": password}, {responseType:'json'})   // returns the user object.
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return null;
+  }
+
+  async addCourse(newCourse: Course){
+    try {
+      // return response entity.
+      // in the body of the response entity, there is a boolean value.
+      // if added successfully return true.
+      // else return false.
+      return await firstValueFrom(
+        this.http.post<boolean>(this.URL + 'addCourse', newCourse, {responseType:'json'})  
       );
     } catch (error) {
       if(error instanceof HttpErrorResponse)
