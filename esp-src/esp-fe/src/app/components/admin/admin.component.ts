@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
 import {AdminService} from 'src/app/services/admin.service';
 import {Admin} from "../../System Entities/Admin";
+import { Course } from 'src/app/System Entities/course';
 
 @Component({
   selector: 'app-admin',
@@ -55,6 +56,23 @@ export class AdminComponent implements OnInit{
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
     console.log(this.selectedSection)
+  }
+
+  async addCourse () {
+
+    //initialize the course with this constructor.
+    let newCourse = new Course("CSEN 901", "Software Engineering", "This course is about software engineering", 1, 3, [])
+
+
+
+    let isSuccess: boolean | null = await this.service.addCourse(newCourse)
+
+    if(isSuccess){
+      alert("The course has been added successfully")
+    }
+    else{
+      alert("The course has not been added successfully")
+    }
   }
 
 }
