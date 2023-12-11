@@ -166,9 +166,10 @@ public class InstructorDAOTests {
     @Test
     @DisplayName("Instructor DAO - adding an unregistered instructor to the database")
     public void testAddingUnregisteredInstructor(){
-        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(7,463);
+        this.instructorDAO.deleteUnregisteredInstructorById(9999);
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(9999,463);
         assertTrue(this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor));
-        this.instructorDAO.deleteUnregisteredInstructorById(7);
+        this.instructorDAO.deleteUnregisteredInstructorById(9999);
     }
     @Test
     @DisplayName("Instructor DAO - adding duplicate unregistered instructor to the database")

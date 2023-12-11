@@ -26,7 +26,7 @@ public class InstructorDAO {
                 WHERE instructor_id = %d
                 """.formatted(id);
             BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
-//            rowMapper.setPrimitivesDefaultedForNullValue(true); // to deal with null primitive data types.
+            rowMapper.setPrimitivesDefaultedForNullValue(true); // to deal with null primitive data types.
             Instructor instructor = jdbcTemplate.queryForObject(sql, rowMapper);
 //            System.out.println(instructor);
             return instructor;
