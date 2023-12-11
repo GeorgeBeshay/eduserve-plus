@@ -20,26 +20,26 @@ public class DBFacadeImp {
     private final AdminDAO adminDAO;
 
     @Autowired
-    public DBFacadeImp(JdbcTemplate jdbcTemplate){
+    public DBFacadeImp(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.studentDAO = new StudentDAO(this.jdbcTemplate);
         this.instructorDAO = new InstructorDAO(this.jdbcTemplate);
         this.adminDAO = new AdminDAO(this.jdbcTemplate);
-    }        
-   
-    public boolean createStudent(Student st){
+    }
+
+    public boolean createStudent(Student st) {
         return this.studentDAO.createStudent(st);
     }
-  
-    public boolean createAdmin(Admin admin){
+
+    public boolean createAdmin(Admin admin) {
         return this.adminDAO.createAdmin(admin);
     }
-  
-    public boolean createInstructor(Instructor instructor){
+
+    public boolean createInstructor(Instructor instructor) {
         return this.instructorDAO.createInstructor(instructor);
     }
-    
-    public Student loadStudentData(int studentId){
+
+    public Student loadStudentData(int studentId) {
         return this.studentDAO.readStudentById(studentId);
     }
 
@@ -51,15 +51,15 @@ public class DBFacadeImp {
         return this.instructorDAO.readInstructorById(instructorId);
     }
 
-    public boolean deleteStudent(int studentId){
+    public boolean deleteStudent(int studentId) {
         return this.studentDAO.deleteStudentById(studentId);
     }
 
-    public boolean deleteInstructor(int instructorId){
+    public boolean deleteInstructor(int instructorId) {
         return this.instructorDAO.deleteInstructorById(instructorId);
     }
 
-    public boolean deleteAdmin(byte adminId){
+    public boolean deleteAdmin(byte adminId) {
         return this.adminDAO.deleteAdminById(adminId);
     }
 
@@ -70,7 +70,8 @@ public class DBFacadeImp {
     public boolean signUpStudent(int id, int hash, Student student) {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
-    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor){
+
+    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
         return this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor);
     }
 }
