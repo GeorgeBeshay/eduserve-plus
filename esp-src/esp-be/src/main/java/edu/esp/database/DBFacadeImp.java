@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class DBFacadeImp {
 
@@ -77,8 +75,8 @@ public class DBFacadeImp {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
 
-    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
-        return this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor);
+    public boolean addNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
+        return this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor);
 
     }
     public boolean addNewCourse( Course newCourse ){

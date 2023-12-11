@@ -12,7 +12,6 @@ import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -86,8 +85,8 @@ public class AdminServices {
         return false;
     }
 
-    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
-        if (this.dbFacade.AddNewUnregisteredInstructor(unregisteredInstructor)) {
+    public boolean addNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
+        if (this.dbFacade.addNewUnregisteredInstructor(unregisteredInstructor)) {
             Logger.logMsgFrom(this.getClass().getName(), "New unregistered instructor was successfully added to the system.", 0);
             return true;
         }

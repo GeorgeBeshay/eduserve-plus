@@ -2,6 +2,7 @@ package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
+import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -25,7 +26,7 @@ public class InstructorDAO {
                 WHERE instructor_id = %d
                 """.formatted(id);
             BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true); // to deal with null primitive data types.
+//            rowMapper.setPrimitivesDefaultedForNullValue(true); // to deal with null primitive data types.
             Instructor instructor = jdbcTemplate.queryForObject(sql, rowMapper);
 //            System.out.println(instructor);
             return instructor;
@@ -108,7 +109,7 @@ public class InstructorDAO {
      * @return true if the insertion of the unregistered instructor into the unregistered_instructor table succeeded,
      * false otherwise.
      */
-    public boolean AddUnregisteredInstructors(UnregisteredInstructor unregisteredInstructor ){
+    public boolean addUnregisteredInstructors(UnregisteredInstructor unregisteredInstructor ){
         try {
             SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                     .withTableName("unregistered_instructor");
@@ -120,12 +121,12 @@ public class InstructorDAO {
 
             return rowsAffected > 0;
         } catch(Exception exception){
-            System.out.println("\u001B[35m" + "Error had occurred in registering new instructor to database record " + exception.getMessage() + "\u001B[0m");
+            Logger.logMsgFrom(this.getClass().getName(),"Error occurred in adding a new unregistered instructor to the system.",1);
             return false ; // Return a meaningful response indicating failure
 
         }
     }
-    public UnregisteredInstructor ReadUnregisteredInstructor(int InstructorId){
+    public UnregisteredInstructor readUnregisteredInstructor(int InstructorId){
         try{
             String sql = """
                     SELECT *
@@ -136,8 +137,21 @@ public class InstructorDAO {
             UnregisteredInstructor unregisteredInstructor = jdbcTemplate.queryForObject(sql, rowMapper);
             return unregisteredInstructor;
         }catch (Exception e) {
-            System.out.println("Error in ReadUnregisteredInstructorByID: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(),"Error occurred in reading an unregistered instructor from the system.",1);
             return null;
+        }
+    }
+    public Boolean deleteUnregisteredInstructorById(int unregisteredInstructorId){
+        try{
+            String sql = """
+                    DELETE FROM unregistered_instructor
+                    WHERE instructor_id = %d
+                    """.formatted(unregisteredInstructorId);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return rowsAffected > 0;
+        }catch (Exception e){
+            Logger.logMsgFrom(this.getClass().getName(),"Error deleting an unregistered instructor by his id.",1);
+            return false;
         }
     }
 }
