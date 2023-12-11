@@ -94,8 +94,7 @@ public class InstructorDAO {
             // If the input temporary hash is not the same as the unregistered password hash, reject operation
             if (tempHash != passwordHash) return false;
             // Add record to instructors table and rely on the DB trigger to delete that record from the unregistered_instructors
-            createInstructor(registeredInstructor);
-            return true;
+            return createInstructor(registeredInstructor);
         } catch (Exception e) {
             System.out.println("\u001B[35m" + "Error had occurred in instructor sign up: " + e.getMessage() + "\u001B[0m");
             return false; // Return a meaningful response indicating failure
@@ -138,7 +137,7 @@ public class InstructorDAO {
         }
     }
 
-    public Boolean deleteUnregisteredInstructorById(int unregisteredInstructorId) {
+    public boolean deleteUnregisteredInstructorById(int unregisteredInstructorId) {
         try{
             String sql = """
                     DELETE FROM unregistered_instructor
