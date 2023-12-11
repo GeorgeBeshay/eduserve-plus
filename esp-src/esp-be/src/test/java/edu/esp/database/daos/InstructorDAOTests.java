@@ -19,103 +19,138 @@ public class InstructorDAOTests {
     private JdbcTemplate jdbcTemplate;
     private InstructorDAO instructorDAO;
     private final Random random = new Random();
-    private int insertedInstructorId1;
-    private final int[] setupIds = {1,2,3,4,5};
 
     @BeforeAll
     public void setUp() {
         this.instructorDAO = new InstructorDAO(jdbcTemplate);
-
-        jdbcTemplate.batchUpdate("""
-                INSERT INTO instructor (instructor_id, Instructor_pw_hash, dpt_id, instructor_name, phone, email, office_hrs)
-                VALUES
-                  (%d, 135790, 1, 'Prof. Anderson', '555-4321', 'prof.anderson@example.com', 'Monday 10am-12pm, Wednesday 2pm-4pm'),
-                  (%d, 246801, 2, 'Dr. Thompson', '555-6789', 'dr.thompson@example.com', 'Tuesday 9am-11am, Thursday 1pm-3pm'),
-                  (%d, 987123, 3, 'Prof. Williams', '555-9876', 'prof.williams@example.com', 'Friday 3pm-5pm, Saturday 10am-12pm');
-                            
-                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
-                VALUES
-                    (%d, 999),
-                    (%d, 120);
-                """.formatted(setupIds[0],setupIds[1],setupIds[2],setupIds[3], setupIds[4]));
     }
 
     @AfterAll
-    public void closingStatement(){
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM instructor WHERE instructor_id IN (%d, %d, %d);
-                DELETE FROM unregistered_instructor WHERE instructor_id IN (%d);
-                """.formatted(setupIds[0], setupIds[3], insertedInstructorId1, setupIds[4]));
+    public void closingStatement() {
         System.out.println("\u001B[32m" + "All Instructor DAO test cases have been executed." + "\u001B[0m");
     }
 
     @Test
     @DisplayName("Instructor DAO - Valid Insertion Test Case")
-    public void testCreateInstructorSuccess(){
-        insertedInstructorId1 = random.nextInt(100) + 6;
-        Instructor newInstructor = new Instructor(); // Create an instructor object with test data
-        newInstructor.setInstructorId(insertedInstructorId1);
-        newInstructor.setInstructorPwHash(354);
-        newInstructor.setDptId((byte) 1);
-        newInstructor.setInstructorName("Test Instructor One");
+    public void testCreateInstructorSuccess() {
+        // Create an instructor object with test data
+        int insertedInstructorId = random.nextInt(1, 100);
+        Instructor newInstructor = new Instructor(
+            insertedInstructorId, 354, (byte) 1,
+            "Test Instructor", null, "instructor1@uni.com", null
+        );
 
         assertTrue(this.instructorDAO.createInstructor(newInstructor));
+
+        // Delete inserted instructor
+        jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id = %d;".formatted(insertedInstructorId));
     }
 
     @Test
-    @DisplayName("Instructor DAO - Invalid Insertion Test Case (id = -1)")
-    public void testCreateInstructorFailureInvalidId(){
-        Instructor newInstructor = new Instructor(); // Create a Student object with test data
-
-        newInstructor.setInstructorId(-1);
-        newInstructor.setDptId((byte) 1);
-        newInstructor.setInstructorName("Invalid Insertion Instructor");
+    @DisplayName("Instructor DAO - Invalid Insertion Test Case with id = -1")
+    public void testCreateInstructorFailureInvalidId() {
+        // Create an instructor object with ID = -1
+        Instructor newInstructor = new Instructor(
+            -1, 504, (byte) 1,
+            "Invalid ID Instructor", null, "instructor2@uni.com", null
+        );
 
         assertFalse(this.instructorDAO.createInstructor(newInstructor));
     }
 
     @Test
     @DisplayName("Instructor DAO - Invalid Insertion Test Case with duplicate id")
-    public void testCreateInstructorFailureDuplicateId(){
+    public void testCreateInstructorFailureDuplicateId() {
+        // Create an instructor object with ID = -1
+        Instructor newInstructor1 = new Instructor(
+                3, 43055, (byte) 2,
+            "New Instructor", null, "instructor3@uni.com", null
+        );
+        // Create an instructor object with ID = -1
+        Instructor newInstructor2 = new Instructor(
+            3, 8928, (byte) 3,
+            "Duplicate ID Instructor", null, "instructor4@uni.com", null
+        );
 
-        Instructor newInstructor = new Instructor();
-        newInstructor.setInstructorId(setupIds[0]);     // setting duplicate id
-        newInstructor.setDptId((byte) 1);
-        newInstructor.setInstructorName("Duplicate Insertion Instructor");
+        assertTrue(this.instructorDAO.createInstructor(newInstructor1)); // Valid instructor
+        assertFalse(this.instructorDAO.createInstructor(newInstructor2)); // Instructor with duplicate ID
 
-        assertFalse(this.instructorDAO.createInstructor(newInstructor));
+        // Delete inserted instructor
+        jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id = 3;");
     }
 
     @Test
     @DisplayName("Instructor DAO - Read record of ID = 1")
     public void testReadInstructorByValidId() {
-        Instructor instructor = this.instructorDAO.readInstructorById(setupIds[0]);
+        // Insert a test instructor object
+        jdbcTemplate.batchUpdate("""
+                INSERT INTO instructor (instructor_id, Instructor_pw_hash, dpt_id, instructor_name, phone, email, office_hrs)
+                VALUES (1, 135790, 1, 'Prof. Anderson', '555-4321', 'prof.anderson@example.com', 'Monday 10am-12pm, Wednesday 2pm-4pm');
+                """);
 
-        assertNotNull(instructor);
-        assertEquals(setupIds[0], instructor.getInstructorId());
+        Instructor instructor = this.instructorDAO.readInstructorById(1);
+
+        assertEquals(1, instructor.getInstructorId());
+        assertEquals(135790, instructor.getInstructorPwHash());
+        assertEquals(1, instructor.getDptId());
         assertEquals("Prof. Anderson", instructor.getInstructorName());
+        assertEquals("555-4321", instructor.getPhone());
+        assertEquals("prof.anderson@example.com", instructor.getEmail());
+        assertEquals("Monday 10am-12pm, Wednesday 2pm-4pm", instructor.getOfficeHrs());
+
+        // Delete inserted instructor
+        jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id = 1;");
     }
 
     @Test
     @DisplayName("Instructor DAO - Read invalid record of ID = -1")
     public void testReadInstructorByInvalidId() {
         Instructor instructor = this.instructorDAO.readInstructorById(-1);
+
         assertNull(instructor);
     }
 
     @Test
     @DisplayName("Instructor DAO - Select all instructors")
-    public void testSelectAll(){
+    public void testSelectAll() {
+        // Insert a list of instructors
+        jdbcTemplate.batchUpdate("""
+                INSERT INTO instructor (instructor_id, Instructor_pw_hash, dpt_id, instructor_name, phone, email, office_hrs)
+                VALUES
+                  (1, 135790, 1, 'Prof. Anderson', '555-4321', 'prof.anderson@example.com', 'Monday 10am-12pm, Wednesday 2pm-4pm'),
+                  (2, 246801, 2, 'Dr. Thompson', '555-6789', 'dr.thompson@example.com', 'Tuesday 9am-11am, Thursday 1pm-3pm'),
+                  (3, 987123, 3, 'Prof. Williams', '555-9876', 'prof.williams@example.com', 'Friday 3pm-5pm, Saturday 10am-12pm');
+                """);
+
         List<Instructor> instructors = this.instructorDAO.SelectAll();
-        //we iterate over the returned list to assert that it reads well
-        System.out.println(instructors.toString());
-        assertEquals(2,instructors.get(1).getInstructorId());
+
+        assertNotNull(instructors);
+        assertTrue(instructors.size() >= 3); // Size is at least 3
+
+        // Check that the list contains the inserted IDs
+        boolean[] containsId = {false,false,false};
+        int id;
+        for (Instructor instructor : instructors) {
+            id = instructor.getInstructorId();
+            if (id == 1 || id == 2 || id == 3)
+                containsId[id-1] = true;
+        }
+        assertArrayEquals(new boolean[]{true,true,true}, containsId);
+
+        // Delete the instructor list
+        jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id IN (1,2,3);");
     }
 
     @Test
     @DisplayName("Instructor DAO - delete valid instructor with ID = 2")
     public void testDeleteInstructorByValidId() {
-        assertTrue(this.instructorDAO.deleteInstructorById(setupIds[1]));
+        // Insert an instructor with ID = 2
+        jdbcTemplate.update("""
+                INSERT INTO instructor (instructor_id, Instructor_pw_hash, dpt_id, instructor_name, phone, email, office_hrs)
+                VALUES (2, 246801, 2, 'Dr. Thompson', '555-6789', 'dr.thompson@example.com', 'Tuesday 9am-11am, Thursday 1pm-3pm');
+                """);
+
+        assertTrue(this.instructorDAO.deleteInstructorById(2));
     }
 
     @Test
@@ -127,76 +162,120 @@ public class InstructorDAOTests {
     @Test
     @DisplayName("Instructor DAO - delete valid instructor with ID = 3, then try to delete the same instructor again")
     public void testDeleteInstructorTwice() {
-        assertTrue(this.instructorDAO.deleteInstructorById(setupIds[2]));
-        assertFalse(this.instructorDAO.deleteInstructorById(setupIds[2]));
+        // Insert an instructor with ID = 3
+        jdbcTemplate.update("""
+                INSERT INTO instructor (instructor_id, Instructor_pw_hash, dpt_id, instructor_name, phone, email, office_hrs)
+                VALUES (3, 987123, 3, 'Prof. Williams', '555-9876', 'prof.williams@example.com', 'Friday 3pm-5pm, Saturday 10am-12pm');
+                """);
+
+        assertTrue(this.instructorDAO.deleteInstructorById(3));
+        assertFalse(this.instructorDAO.deleteInstructorById(3));
     }
 
     @Test
     @DisplayName("Instructor DAO - Sign up an instructor by moving from unregistered instructors to complete instructors table")
     public void testSignUpValidInstructor() {
-        Instructor registeredInstructor = new Instructor(); // Create an instructor object with test data
-        registeredInstructor.setInstructorId(setupIds[3]);
-        registeredInstructor.setInstructorPwHash(9847);
-        registeredInstructor.setInstructorName("Signed Up Instructor");
-        registeredInstructor.setDptId((byte) 2);
-        assertTrue(this.instructorDAO.signUpInstructor(setupIds[3], 999, registeredInstructor));
+        // Insert an unregistered instructor with ID = 4
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                VALUES
+                    (4, 999);
+                """);
+
+        // Create an instructor object with same ID and test data
+        Instructor registeredInstructor = new Instructor(
+            4, 9847, (byte) 2,
+            "Signed Up Instructor", null, "instructor5@uni.com", null
+        );
+
+        assertTrue(this.instructorDAO.signUpInstructor(4, 999, registeredInstructor));
+        // Check that the instructor does not exist anymore in the unregistered instructors table
+        assertNull(this.instructorDAO.readUnregisteredInstructorById(4));
+
+        // Delete the instructor used in the test
+        jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id = 4;");
     }
 
     @Test
     @DisplayName("Instructor DAO - Sign up an instructor whose id is not in the unregistered table")
     public void testSignUpInvalidInstructor() {
-        Instructor unregisteredInstructor = new Instructor(); // Create an instructor object with test data
-        unregisteredInstructor.setInstructorId(14);
-        unregisteredInstructor.setInstructorPwHash(1001);
-        unregisteredInstructor.setInstructorName("Unregistered Instructor");
-        unregisteredInstructor.setDptId((byte) 2);
-        assertFalse(this.instructorDAO.signUpInstructor(14, 987, unregisteredInstructor));
+        // Create an instructor object with test data
+        Instructor registeredInstructor = new Instructor(
+                14, 1001, (byte) 2,
+                "Unregistered Instructor", null, "instructor6@uni.com", null
+        );
+
+        assertFalse(this.instructorDAO.signUpInstructor(14, 987, registeredInstructor));
     }
 
     @Test
     @DisplayName("Instructor DAO - Sign up an instructor with a valid id but invalid temporary password")
     public void testSignUpInstructorInvalidPassword() {
-        Instructor registeredInstructor = new Instructor(); // Create an instructor object with test data
-        registeredInstructor.setInstructorId(setupIds[4]);
-        registeredInstructor.setInstructorPwHash(444);
-        registeredInstructor.setInstructorName("Fake Instructor");
-        registeredInstructor.setDptId((byte) 3);
-        assertFalse(this.instructorDAO.signUpInstructor(setupIds[4], 404, registeredInstructor));
-    }
-    @Test
-    @DisplayName("Instructor DAO - adding an unregistered instructor to the database")
-    public void testAddingUnregisteredInstructor(){
-        this.instructorDAO.deleteUnregisteredInstructorById(9999);
-        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(9999,463);
-        assertTrue(this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor));
-        this.instructorDAO.deleteUnregisteredInstructorById(9999);
-    }
-    @Test
-    @DisplayName("Instructor DAO - adding duplicate unregistered instructor to the database")
-    public void testAddingDuplicateUnregisteredInstructor(){
-        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(2,567);
-        this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor);
-        assertFalse(this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor));
-        this.instructorDAO.deleteUnregisteredInstructorById(2);
+        // Insert an unregistered instructor with ID = 5
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                VALUES
+                    (5, 120);
+                """);
+
+
+        // Create an instructor object with same ID and test data, but sign up with a wrong OTP
+        Instructor registeredInstructor = new Instructor(
+                5, 444, (byte) 2,
+                "Fake Instructor", null, "instructorfake@uni.com", null
+        );
+
+        assertFalse(this.instructorDAO.signUpInstructor(5, 404, registeredInstructor));
+
+        // Delete the unregistered instructor which was inserted
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = 5;");
     }
 
-//    @Test
-//    @DisplayName("Instructor DAO - adding unregistered instructor with invalid ID = -1") //TODO enforce DB constraint on unregistered_instructor id to be non-negative
-//    public void testAddingInvalidUnregisteredInstructor(){
-//        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(-1,4555);
-//        assertFalse(this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor));
-//    }
+    @Test
+    @DisplayName("Instructor DAO - adding an unregistered instructor to the database")
+    public void testCreateUnregisteredInstructor() {
+        // Create an unregistered instructor with test data
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(90,463);
+
+        assertTrue(this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor));
+
+        // Delete the unregistered instructor which was inserted
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = 90;");
+    }
+
+    @Test
+    @DisplayName("Instructor DAO - adding duplicate unregistered instructor to the database")
+    public void testCreateDuplicateUnregisteredInstructor() {
+        // Create an unregistered instructor with test data
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(2,567);
+
+        assertTrue(this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor));
+        assertFalse(this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor));
+
+        // Delete the unregistered instructor which was inserted
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = 2;");
+    }
+
     @Test
     @DisplayName("Instructor DAO - deleting an existing unregistered instructor")
-    public void testDeletingAnExistingUnregisteredInstructor(){
-        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(34,3333);
-        this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor);
+    public void testDeleteValidUnregisteredInstructor() {
+        // Insert an unregistered instructor with test data
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                VALUES
+                    (34, 3333);
+                """);
+
         assertTrue(this.instructorDAO.deleteUnregisteredInstructorById(34));
+        // Try to delete the same object again
+        assertFalse(this.instructorDAO.deleteUnregisteredInstructorById(34));
     }
+
     @Test
     @DisplayName("Instructor DAO - deleting an invalid unregistered instructor")
-    public void testDeletingAnInvalidUnregisteredInstructor(){
+    public void testDeleteInvalidUnregisteredInstructor() {
         assertFalse(this.instructorDAO.deleteUnregisteredInstructorById(10));
     }
 
+    //TODO enforce DB constraint on unregistered_instructor id to be non-negative
 }
