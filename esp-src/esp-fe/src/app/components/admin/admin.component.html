@@ -1,5 +1,5 @@
 <div class="holder">
-  <ng-container *ngIf="admin == null; else loggedIn">
+  <ng-container *ngIf="admin != null; else loggedIn">
     <div class="sign-in-form">
       <mat-tab-group>
         <!--     Sign In Tab -->
@@ -93,7 +93,11 @@
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 2">
-          This is the instructor creation page!
+          Upload your CSV file!
+          <form class="upload-csv-form" [formGroup]="AdminUploadInstructorsForm" (ngSubmit)="UploadInstructors()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
+            <button type="submit">Submit</button>
+          </form>
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 3">
