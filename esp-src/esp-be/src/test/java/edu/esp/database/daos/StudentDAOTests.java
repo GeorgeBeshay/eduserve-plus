@@ -110,7 +110,7 @@ public class StudentDAOTests {
         assertEquals("123 Main St", student.getStudentAddress());
         assertEquals("555-1234", student.getPhone());
         assertEquals("123-4567", student.getLandline());
-        assertTrue(student.isMale());
+        assertTrue(student.getGender());
         assertEquals("john.doe@example.com", student.getEmail());
 
         // Delete the student used in the test
