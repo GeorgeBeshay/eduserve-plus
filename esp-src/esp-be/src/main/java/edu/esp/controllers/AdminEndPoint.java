@@ -55,9 +55,9 @@ public class AdminEndPoint {
     }
     @PostMapping("CreateUnregisteredInstructor")
     @ResponseBody
-    public ResponseEntity<Boolean> RegisterInstructor(@RequestBody UnregisteredInstructor unregisteredInstructor){
-        Logger.logMsgFrom(this.getClass().getName(), "Client side requested to add a new unregister instructor .. processing the request ..", -1);
-        return (this.adminServices.RegisterNewInstructor(unregisteredInstructor))
+    public ResponseEntity<Boolean> registerInstructor(@RequestBody UnregisteredInstructor unregisteredInstructor){
+        Logger.logMsgFrom(this.getClass().getName(), "Client side requested to add a new unregistered instructor .. processing the request ..", -1);
+        return (this.adminServices.addNewUnregisteredInstructor(unregisteredInstructor))
                 ? new ResponseEntity<>(true,HttpStatus.OK)
                 : new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
     }

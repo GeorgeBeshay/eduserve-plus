@@ -2,6 +2,7 @@ package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
+import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -93,12 +94,6 @@ public class InstructorDAO {
                 return false;
             // If the input temporary hash is not the same as the unregistered password hash, reject operation
             if (tempHash != passwordHash) return false;
-            //the following part is replaced by the function of the trigger enforced in the database.
-            // Delete the record from the unregistered instructors table
-//            if (jdbcTemplate.update("""
-//                    DELETE FROM unregistered_instructor
-//                    WHERE instructor_id = %d
-//                    """.formatted(id)) <= 0) return false;
             // Add record to instructors table and rely on the DB trigger to delete that record from the unregistered_instructors
             createInstructor(registeredInstructor);
             return true;
@@ -107,42 +102,56 @@ public class InstructorDAO {
             return false; // Return a meaningful response indicating failure
         }
     }
+
     /**
      *
-     * @param instructor_id instructor's id as listed in university's real system
-     * @param instructor_temp_pw_hash the one time password given to the instructor so he can sign up to the system and choose a password later
-     * @return true if the instructor registrations was successful, false otherwise
+     * @param unregisteredInstructor Object is passed to the function to add it to the unregistered_instructor table in the database
+     * @return true if the insertion of the unregistered instructor into the unregistered_instructor table succeeded,
+     * false otherwise.
      */
-    public boolean AddUnregisteredInstructors(int instructor_id, int instructor_temp_pw_hash ){
+    public boolean addUnregisteredInstructors(UnregisteredInstructor unregisteredInstructor ){
         try {
             SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                     .withTableName("unregistered_instructor");
-            UnregisteredInstructor instructor = new UnregisteredInstructor(instructor_id,instructor_temp_pw_hash);
+//            UnregisteredInstructor instructor = new UnregisteredInstructor(instructor_id,instructor_temp_pw_hash);
 
 
-            BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(instructor);
+            BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(unregisteredInstructor);
             int rowsAffected = jdbcInsert.execute(parameterSource);
 
             return rowsAffected > 0;
         } catch(Exception exception){
-            System.out.println("\u001B[35m" + "Error had occurred in registering new instructor to database record " + exception.getMessage() + "\u001B[0m");
+            Logger.logMsgFrom(this.getClass().getName(),"Error occurred in adding a new unregistered instructor to the system.",1);
             return false ; // Return a meaningful response indicating failure
 
         }
     }
-    public Instructor ReadUnregisteredInstructor(int InstructorId){
+    public UnregisteredInstructor readUnregisteredInstructor(int InstructorId){
         try{
             String sql = """
                     SELECT *
                     FROM unregistered_instructor
                     WHERE instructor_id = %d""".formatted(InstructorId);
-            BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
+            BeanPropertyRowMapper<UnregisteredInstructor> rowMapper = new BeanPropertyRowMapper<>(UnregisteredInstructor.class);
             rowMapper.setPrimitivesDefaultedForNullValue(true);
-            Instructor instructor = jdbcTemplate.queryForObject(sql, rowMapper);
-            return instructor;
+            UnregisteredInstructor unregisteredInstructor = jdbcTemplate.queryForObject(sql, rowMapper);
+            return unregisteredInstructor;
         }catch (Exception e) {
-            System.out.println("Error in ReadUnregisteredInstructorByID: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(),"Error occurred in reading an unregistered instructor from the system.",1);
             return null;
+        }
+    }
+    public Boolean deleteUnregisteredInstructorById(int unregisteredInstructorId){
+        try{
+            String sql = """
+                    DELETE FROM unregistered_instructor
+                    WHERE instructor_id = %d
+                    """.formatted(unregisteredInstructorId);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return rowsAffected > 0;
+        }catch (Exception e){
+            Logger.logMsgFrom(this.getClass().getName(),"Error deleting an unregistered instructor by his id.",1);
+            return false;
         }
     }
 }
