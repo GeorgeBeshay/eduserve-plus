@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
+
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,4 +95,28 @@ public class AdminServices {
         return false;
 
     }
+
+    /**
+     * Implements the business logic for adding new course to DB.
+     *
+     * @param newCourse the course object of the new course having the prerequisite List.
+     * @return True if the course is added successful, otherwise False.
+     */
+    public boolean addNewCourse ( Course newCourse ){
+        // call the DB to add that course
+        if ( dbFacade.addNewCourse( newCourse ) ){
+            Logger.logMsgFrom( this.getClass().getName(),"the course added successfully",0 );
+            return true;
+        }
+        else {
+            Logger.logMsgFrom( this.getClass().getName(),"the course didn't be added",1 );
+            return false;
+        }
+    }
+
+
+
+
+
+
 }
