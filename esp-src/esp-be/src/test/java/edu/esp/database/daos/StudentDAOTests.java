@@ -141,6 +141,7 @@ public class StudentDAOTests {
         registeredStudent.setStudentPwHash(9832);
         registeredStudent.setStudentName("Signed Up Student");
         registeredStudent.setDepartmentId((byte) 3);
+        registeredStudent.setSsn("10020239");
         assertTrue(this.studentDAO.signUpStudent(setupIds[3], 505, registeredStudent));
     }
 
