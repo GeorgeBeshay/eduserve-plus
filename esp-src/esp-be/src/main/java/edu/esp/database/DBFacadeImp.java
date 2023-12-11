@@ -77,10 +77,10 @@ public class DBFacadeImp {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
 
-    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor){
+    public boolean AddNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
         return this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor);
 
-
+    }
     public boolean addNewCourse( Course newCourse ){
         return this.CourseDAO.addNewCourse( newCourse );
 
