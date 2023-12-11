@@ -133,10 +133,8 @@ public class AdminDAOTests {
         assertFalse(this.adminDAO.deleteAdminById((byte)5));
     }
 
-    // TODO This operation allows admins to just create other admins so they cannot be deleted,
-    // TODO so we need to have a default value set to 0 whenever a parent admin record is deleted.
     @Test
-    @DisplayName("Admin DAO - try to delete admin before the admin he created")
+    @DisplayName("Admin DAO - delete admin before the admin they created")
     public void testDeleteCreatorBeforeCreatedAdmin() {
         // Insert two admin object with ID = 7,8 where one has created the other
         jdbcTemplate.update("""
@@ -146,9 +144,10 @@ public class AdminDAOTests {
                     (8, 78, 'Created Admin', 7);
                 """);
 
-        assertFalse(this.adminDAO.deleteAdminById((byte)7));
-        assertTrue(this.adminDAO.deleteAdminById((byte)8));
+        // Created admins' creator admins are set to 0 by a trigger on parent record deletion
         assertTrue(this.adminDAO.deleteAdminById((byte)7));
+        assertEquals(0, this.adminDAO.readAdminById((byte)8).getCreatorAdminId());
+        assertTrue(this.adminDAO.deleteAdminById((byte)8));
     }
 }
 
