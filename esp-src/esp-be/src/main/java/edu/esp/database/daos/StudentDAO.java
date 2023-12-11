@@ -1,7 +1,6 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Student;
-import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.system_entities.system_users.UnregisteredStudent;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
