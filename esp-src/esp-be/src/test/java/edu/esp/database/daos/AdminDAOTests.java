@@ -2,6 +2,7 @@ package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.system_entities.system_users.Instructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ public class AdminDAOTests {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private AdminDAO adminDAO;
+    public InstructorDAO instructorDAO;
     private final Random random = new Random();
     private int insertedAdminId1;
     private final byte[] setupIds = {10,12,13,9,7,8};

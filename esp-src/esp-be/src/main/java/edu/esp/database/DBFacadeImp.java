@@ -8,6 +8,7 @@ import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.Student;
+import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -76,6 +77,10 @@ public class DBFacadeImp {
         return this.studentDAO.signUpStudent(id, hash, student);
     }
 
+    public boolean RegisterNewInstructor(UnregisteredInstructor unregisteredInstructor){
+        return this.instructorDAO.AddUnregisteredInstructors(unregisteredInstructor.getInstructor_id(), unregisteredInstructor.getInstructor_temp_pw_hash());
+    }
+    
     public boolean addNewCourse( Course newCourse ){
         return this.CourseDAO.addNewCourse( newCourse );
     }

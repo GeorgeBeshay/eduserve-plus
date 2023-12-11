@@ -11,7 +11,8 @@ public class Instructor {
 
     public Instructor() {}
 
-    public Instructor(int instructorId, int instructorPwHash, byte departmentId, String instructorName,
+
+    public Instructor(int instructorId,int instructorPwHash, byte departmentId, String instructorName,
                       String phone, String email, String officeHours) {
         this.instructorId = instructorId;
         this.instructorPwHash = instructorPwHash;
@@ -77,6 +78,9 @@ public class Instructor {
     public void setOfficeHours(String officeHours) {
         this.officeHours = officeHours;
     }
+
+
+
 
     @Override
     public String toString() {
