@@ -2,12 +2,10 @@ package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
 import edu.esp.system_entities.system_users.Admin;
-import edu.esp.system_entities.system_users.Instructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.util.List;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,105 +16,87 @@ public class AdminDAOTests {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private AdminDAO adminDAO;
-    public InstructorDAO instructorDAO;
     private final Random random = new Random();
-    private int insertedAdminId1;
-    private final byte[] setupIds = {10,12,13,9,7,8};
 
     @BeforeAll
-    public void setUp(){
+    public void setUp() {
         this.adminDAO = new AdminDAO(jdbcTemplate);
-
-        jdbcTemplate.batchUpdate("""
-            INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
-            VALUES
-                (%d, 65, 'Duplicate Test Admin', %d),
-                (%d, 78, 'Read Test Admin', %d),
-                (%d, 25, 'Delete Twice Test Admin', %d),
-                (%d, 66, 'Delete Test Admin', %d),
-                (%d, 456, 'Creator Test Admin', %d),
-                (%d, 987, 'Created Test Admin', %d);
-            """.formatted(
-                setupIds[0], setupIds[0],
-                setupIds[1], setupIds[0],
-                setupIds[2], setupIds[2],
-                setupIds[3], setupIds[0],
-                setupIds[4], setupIds[0],
-                setupIds[5], setupIds[4]
-                )
-        );
     }
 
     @AfterAll
-    public void closingStatement(){
-        // 2 Admins are deleted before admin with id = 10 in order to not violate FK constraints
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM sys_admin WHERE admin_id = %d;
-                DELETE FROM sys_admin WHERE admin_id = %d;
-                DELETE FROM sys_admin WHERE admin_id = %d;
-                """.formatted(insertedAdminId1, setupIds[1], setupIds[0]));
+    public void closingStatement() {
         System.out.println("\u001B[32m" + "All Admin DAO test cases have been executed." + "\u001B[0m");
     }
 
     @Test
     @DisplayName("Admin DAO - Valid Insertion Test Case")
-    public void testCreateAdminSuccess(){
-        insertedAdminId1 = random.nextInt(100) + 14;
-
-        Admin newAdmin = new Admin();
-        newAdmin.setAdminId((byte) insertedAdminId1);
-        newAdmin.setAdminPwHash(9855);
-        newAdmin.setCreatorAdminId(setupIds[0]);
-        newAdmin.setAdminName("Test Admin One");
+    public void testCreateAdminSuccess() {
+        // Create an admin object with test data
+        byte insertedAdminId = (byte) random.nextInt(1, 10);
+        Admin newAdmin = new Admin(insertedAdminId, 9855, "Test Admin", (byte)0);
 
         assertTrue(this.adminDAO.createAdmin(newAdmin));
+
+        // Delete the used admin object
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id = %d;".formatted(insertedAdminId));
     }
 
     @Test
-    @DisplayName("Admin DAO - Invalid Insertion Test Case (duplicate id)")
-    public void testCreateAdminFailureDuplicateId(){
+    @DisplayName("Admin DAO - Invalid Insertion Test Case with duplicate id")
+    public void testCreateAdminFailureDuplicateId() {
+        // Create two admin objects with same ID and different test data
+        byte dupId = (byte) random.nextInt(1, 10);
+        Admin newAdmin = new Admin(dupId, 68432, "Test Admin", (byte) 0);
+        Admin dupAdmin = new Admin(dupId, -651, "Duplicate ID Admin", (byte) 0);
 
-        Admin newAdmin = new Admin();
-        newAdmin.setAdminId(setupIds[0]);     // setting duplicate id
-        newAdmin.setCreatorAdminId(setupIds[0]);
-        newAdmin.setAdminName("Invalid Insertion Admin");
+        assertTrue(this.adminDAO.createAdmin(newAdmin));
+        assertFalse(this.adminDAO.createAdmin(dupAdmin));
+
+        // Delete the used admin object
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id = %d;".formatted(dupId));
+    }
+
+    @Test
+    @DisplayName("Admin DAO - Invalid Insertion Test Case with invalid creator id")
+    public void testCreateAdminFailureInvalidCreator() {
+        // Create an admin object with an invalid creator admin ID
+        byte randomId = (byte) random.nextInt(1, 8);
+        Admin newAdmin = new Admin(randomId, 6500, "Test Admin", (byte) 9);
 
         assertFalse(this.adminDAO.createAdmin(newAdmin));
     }
 
     @Test
-    @DisplayName("Admin DAO - Invalid Insertion Test Case (invalid creator id)")
-    public void testCreateAdminFailureInvalidCreator(){
-
-        Admin newAdmin = new Admin();
-        newAdmin.setAdminId((byte) 21);
-        newAdmin.setCreatorAdminId((byte) 20); // setting invalid creator id
-        newAdmin.setAdminName("Invalid Created Admin");
-
-        assertFalse(this.adminDAO.createAdmin(newAdmin));
-    }
-
-    @Test
-    @DisplayName("Admin DAO - read Admin with ID = 12")
+    @DisplayName("Admin DAO - read Admin with ID = 8")
     public void testReadAdminByValidId() {
-        Admin admin = this.adminDAO.readAdminById(setupIds[1]);
+        // Insert two admin object with ID = 7,8 where one has created the other
+        jdbcTemplate.update("""
+                INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
+                VALUES
+                    (7, 78, 'Creator Admin', 0),
+                    (8, 78, 'Read Test Admin', 7);
+                """);
 
-        assertNotNull(admin);
-        assertEquals(setupIds[1], admin.getAdminId());
+        Admin admin = this.adminDAO.readAdminById((byte)8);
+
+        assertEquals(8, admin.getAdminId());
+        assertEquals(78, admin.getAdminPwHash());
         assertEquals("Read Test Admin", admin.getAdminName());
+        assertEquals(7, admin.getCreatorAdminId());
+
+        // Delete the used admin objects
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id IN (8,7);");
     }
 
     @Test
     @DisplayName("Admin DAO - read invalid Admin with ID = -1")
     public void testReadAdminByInvalidId() {
-        Admin admin = this.adminDAO.readAdminById((byte) -1);
-
-        assertNull(admin);
+        assertNull(this.adminDAO.readAdminById((byte) -1));
     }
 
     @Test
     @DisplayName("Admin DAO - select all admins")
-    public void testSelectAll(){
+    public void testSelectAll() {
         List<Admin> admins = this.adminDAO.SelectAll();
 
         assertNotEquals(null,admins);
@@ -125,7 +105,13 @@ public class AdminDAOTests {
     @Test
     @DisplayName("Admin DAO - delete valid admin with ID = 9")
     public void testDeleteAdminByValidId() {
-        assertTrue(this.adminDAO.deleteAdminById(setupIds[3]));
+        // Insert two admin object with ID = 9
+        jdbcTemplate.update("""
+                INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
+                VALUES (9, -67801, 'Test Admin', 0);
+                """);
+
+        assertTrue(this.adminDAO.deleteAdminById((byte)9));
     }
 
     @Test
@@ -135,20 +121,34 @@ public class AdminDAOTests {
     }
 
     @Test
-    @DisplayName("Admin DAO - delete valid admin with ID = 13, then try to delete the same admin again")
+    @DisplayName("Admin DAO - delete valid admin with ID = 5, then try to delete the same admin again")
     public void testDeleteAdminTwice() {
-        assertTrue(this.adminDAO.deleteAdminById(setupIds[2]));
-        assertFalse(this.adminDAO.deleteAdminById(setupIds[2]));
+        // Insert two admin object with ID = 5
+        jdbcTemplate.update("""
+                INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
+                VALUES (5, 99066, 'Test Admin', 0);
+                """);
+
+        assertTrue(this.adminDAO.deleteAdminById((byte)5));
+        assertFalse(this.adminDAO.deleteAdminById((byte)5));
     }
 
+    // TODO This operation allows admins to just create other admins so they cannot be deleted,
+    // TODO so we need to have a default value set to 0 whenever a parent admin record is deleted.
     @Test
     @DisplayName("Admin DAO - try to delete admin before the admin he created")
     public void testDeleteCreatorBeforeCreatedAdmin() {
-        assertFalse(this.adminDAO.deleteAdminById(setupIds[4]));
-        assertTrue(this.adminDAO.deleteAdminById(setupIds[5]));
-        assertTrue(this.adminDAO.deleteAdminById(setupIds[4]));
+        // Insert two admin object with ID = 7,8 where one has created the other
+        jdbcTemplate.update("""
+                INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
+                VALUES
+                    (7, 78, 'Creator Admin', 0),
+                    (8, 78, 'Created Admin', 7);
+                """);
+
+        assertFalse(this.adminDAO.deleteAdminById((byte)7));
+        assertTrue(this.adminDAO.deleteAdminById((byte)8));
+        assertTrue(this.adminDAO.deleteAdminById((byte)7));
     }
-
-
 }
 
