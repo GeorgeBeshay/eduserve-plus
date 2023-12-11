@@ -138,6 +138,7 @@ public class StudentEndPointTests {
         Student student = new Student();
         student.setStudentId(101);
         student.setSsn("ssn123456");
+        student.setDptId((byte)1);
 
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("student", student);

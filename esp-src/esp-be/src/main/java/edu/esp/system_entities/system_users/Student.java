@@ -123,7 +123,7 @@ public class Student {
         this.landline = landline;
     }
 
-    public boolean isMale() {
+    public boolean getGender() {
         return gender;
     }
 
