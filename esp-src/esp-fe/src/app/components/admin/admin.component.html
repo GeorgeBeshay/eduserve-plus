@@ -55,7 +55,41 @@
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 1">
-          This is the admin creation page!
+          <form [formGroup]="AdminCreationForm" (ngSubmit)="CreateAdmin()">
+            <div class="form-group">
+              <label>Creator Admin ID</label>
+              <input type="text" formControlName="CreatorAdminID" />
+              <div *ngIf="AdminCreationForm.get('CreatorAdminID')?.hasError('required') && signInForm.get('CreatorAdminID')?.touched" class="input-error">
+                Creator Admin ID is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>New Admin ID</label>
+              <input type="text" formControlName="NewAdminID" />
+              <div *ngIf="AdminCreationForm.get('NewAdminID')?.hasError('required') && AdminCreationForm.get('NewAdminID')?.touched" class="input-error">
+                New Admin ID is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>New Admin password</label>
+              <input type="password" formControlName="NewAdminPassword" />
+              <div *ngIf="AdminCreationForm.get('NewAdminPassword')?.hasError('required') && AdminCreationForm.get('NewAdminPassword')?.touched" class="input-error">
+                New Admin password is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>New Admin Name</label>
+              <input type="text" formControlName="NewAdminName" />
+              <div *ngIf="AdminCreationForm.get('NewAdminName')?.hasError('required') && AdminCreationForm.get('NewAdminName')?.touched" class="input-error">
+                New admin name is required.
+              </div>
+            </div>
+
+            <button mat-raised-button type="submit" [disabled]="AdminCreationForm.invalid">Add New Admin</button>
+          </form>
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 2">

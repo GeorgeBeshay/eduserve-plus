@@ -31,6 +31,10 @@ export class AdminService {
     }
     return null;
   }
+  async createAdmin(admin: Admin){
+
+    return null;
+  }
 
 
 
