@@ -259,6 +259,25 @@ public class InstructorDAOTests {
     }
 
     @Test
+    @DisplayName("Instructor DAO - Read unregistered record of ID = 55")
+    public void testReadUnregisteredInstructor() {
+        // Insert an unregistered instructor with test data
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                VALUES
+                    (55, 13038);
+                """);
+
+        UnregisteredInstructor unregisteredInstructor = this.instructorDAO.readUnregisteredInstructorById(55);
+
+        assertEquals(55, unregisteredInstructor.getInstructorId());
+        assertEquals(13038, unregisteredInstructor.getInstructorTempPwHash());
+
+        // Delete inserted record
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = 55;");
+    }
+
+    @Test
     @DisplayName("Instructor DAO - deleting an existing unregistered instructor")
     public void testDeleteValidUnregisteredInstructor() {
         // Insert an unregistered instructor with test data

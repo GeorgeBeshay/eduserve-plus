@@ -4,6 +4,8 @@ public class UnregisteredStudent {
     private int studentId;
     private int studentTempPwHash;
 
+    public UnregisteredStudent() {}
+
     public UnregisteredStudent(int studentId, int studentTempPwHash) {
         this.studentId = studentId;
         this.studentTempPwHash = studentTempPwHash;

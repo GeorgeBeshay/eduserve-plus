@@ -286,9 +286,27 @@ public class StudentDAOTests {
     }
 
     @Test
+    @DisplayName("Student DAO - Read unregistered record of ID = 73")
+    public void testReadUnregisteredStudent() {
+        // Insert an unregistered student with test data
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_student (student_id, student_temp_pw_hash)
+                VALUES (73, -855110);
+                """);
+
+        UnregisteredStudent unregisteredStudent = this.studentDAO.readUnregisteredStudentById(73);
+
+        assertEquals(73, unregisteredStudent.getStudentId());
+        assertEquals(-855110, unregisteredStudent.getStudentTempPwHash());
+
+        // Delete the unregistered student which was inserted
+        jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = 73;");
+    }
+
+    @Test
     @DisplayName("Student DAO - deleting an existing unregistered student")
     public void testDeleteValidUnregisteredStudent() {
-        // Insert a unregistered student with test data
+        // Insert an unregistered student with test data
         jdbcTemplate.update("""
                 INSERT INTO unregistered_student (student_id, student_temp_pw_hash)
                 VALUES (13, 420);
