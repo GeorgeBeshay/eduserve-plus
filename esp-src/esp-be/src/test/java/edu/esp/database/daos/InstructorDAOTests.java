@@ -22,11 +22,13 @@ public class InstructorDAOTests {
 
     @BeforeAll
     public void setUp() {
+        // TODO insert testing departments
         this.instructorDAO = new InstructorDAO(jdbcTemplate);
     }
 
     @AfterAll
     public void closingStatement() {
+        // TODO delete testing departments
         System.out.println("\u001B[32m" + "All Instructor DAO test cases have been executed." + "\u001B[0m");
     }
 

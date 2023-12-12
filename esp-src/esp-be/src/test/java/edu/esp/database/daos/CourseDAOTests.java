@@ -2,10 +2,7 @@ package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
 import edu.esp.system_entities.system_uni_objs.Course;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,7 +23,13 @@ public class CourseDAOTests {
 
     @BeforeAll
     public void setUp() {
+        // TODO insert testing departments
         this.CourseDAO = new CourseDAO( jdbcTemplate );
+    }
+
+    @AfterAll
+    public void cleanUp() {
+        // TODO delete testing departments
     }
 
     @Test

@@ -39,6 +39,7 @@ public class AdminEndPointTests {
 
     @BeforeEach
     public void prepare() {
+        // TODO insert testing departments
         DBFacadeImp dbFacade = new DBFacadeImp(jdbcTemplate);
         dbFacade.createAdmin(
                 new Admin(
