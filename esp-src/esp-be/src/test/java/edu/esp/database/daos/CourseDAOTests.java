@@ -138,6 +138,19 @@ public class CourseDAOTests {
     }
 
     @Test
+    @DisplayName("Passing a null offeringDpt.")
+    public void findByOfferingDptInvalidOfferingDpt2() {
+        // Arrange
+        Byte offeringDpt = null;
+
+        // Act
+        List<Course> actualMatchingCourses = courseDAO.findByOfferingDpt(offeringDpt);
+
+        // Assert
+        assertNull(actualMatchingCourses);
+    }
+
+    @Test
     @DisplayName("Passing an offeringDpt that offers no courses.")
     public void findByOfferingDptNoMatchingCourses() {
         // Arrange

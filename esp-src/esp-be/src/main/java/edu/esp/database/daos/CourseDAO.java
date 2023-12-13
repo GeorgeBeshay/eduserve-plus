@@ -92,9 +92,10 @@ public class CourseDAO extends DAO<Course> {
      * 2. An error had occurred during query execution.
      */
     @Transactional
-    public List<Course> findByOfferingDpt(byte offeringDpt) {
+    public List<Course> findByOfferingDpt(Byte offeringDpt) {
 
         try {
+            assert offeringDpt != null: "Offering department can't be null!";
             assert offeringDpt >= 0 : "Offering department can't be a negative value!";
 
             String sql = """
