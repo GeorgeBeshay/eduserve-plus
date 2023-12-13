@@ -59,8 +59,8 @@ public class CSVManipulatorTests {
 
         assertEquals(3, list.size());
         for (int i=0 ; i<3 ; i++) {
-            assertEquals( ids[i] , list.get(i).getInstructor_id() );
-            assertEquals( Hasher.hash(OTPs[i]) , list.get(i).getInstructor_temp_pw_hash());
+            assertEquals( ids[i] , list.get(i).getInstructorId() );
+            assertEquals( Hasher.hash(OTPs[i]) , list.get(i).getInstructorTempPwHash());
         }
     }
 

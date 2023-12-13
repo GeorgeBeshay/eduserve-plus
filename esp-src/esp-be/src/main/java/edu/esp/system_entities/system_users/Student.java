@@ -3,7 +3,7 @@ package edu.esp.system_entities.system_users;
 public class Student {
     private int studentId;
     private int studentPwHash;
-    private byte departmentId;
+    private byte dptId;
     private byte studentLevel;
     private float gpa;
     private String studentName;
@@ -17,12 +17,12 @@ public class Student {
 
     public Student() {}
 
-    public Student(int studentId, int studentPwHash, byte departmentId, byte studentLevel, float gpa,
+    public Student(int studentId, int studentPwHash, byte dptId, byte studentLevel, float gpa,
                    String studentName, String ssn, String bdate, String studentAddress, String phone,
                    String landline, boolean gender, String email) {
         this.studentId = studentId;
         this.studentPwHash = studentPwHash;
-        this.departmentId = departmentId;
+        this.dptId = dptId;
         this.studentLevel = studentLevel;
         this.gpa = gpa;
         this.studentName = studentName;
@@ -51,12 +51,12 @@ public class Student {
         this.studentPwHash = studentPwHash;
     }
 
-    public byte getDepartmentId() {
-        return departmentId;
+    public byte getDptId() {
+        return dptId;
     }
 
-    public void setDepartmentId(byte departmentId) {
-        this.departmentId = departmentId;
+    public void setDptId(byte dptId) {
+        this.dptId = dptId;
     }
 
     public byte getStudentLevel() {
@@ -123,7 +123,7 @@ public class Student {
         this.landline = landline;
     }
 
-    public boolean isGender() {
+    public boolean getGender() {
         return gender;
     }
 
@@ -144,7 +144,7 @@ public class Student {
         return "Student{" +
                 "studentId=" + studentId +
                 ", studentPwHash=" + studentPwHash +
-                ", departmentId=" + departmentId +
+                ", departmentId=" + dptId +
                 ", studentLevel=" + studentLevel +
                 ", gpa=" + gpa +
                 ", studentName='" + studentName + '\'' +

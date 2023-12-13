@@ -7,20 +7,20 @@ public class Instructor {
     private String instructorName;
     private String phone;
     private String email;
-    private String officeHours;
+    private String officeHrs;
 
     public Instructor() {}
 
 
     public Instructor(int instructorId, int instructorPwHash, byte dptId, String instructorName,
-                      String phone, String email, String officeHours) {
+                      String phone, String email, String officeHrs) {
         this.instructorId = instructorId;
         this.instructorPwHash = instructorPwHash;
         this.dptId = dptId;
         this.instructorName = instructorName;
         this.phone = phone;
         this.email = email;
-        this.officeHours = officeHours;
+        this.officeHrs = officeHrs;
     }
 
     public int getInstructorId() {
@@ -71,12 +71,12 @@ public class Instructor {
         this.email = email;
     }
 
-    public String getOfficeHours() {
-        return officeHours;
+    public String getOfficeHrs() {
+        return officeHrs;
     }
 
-    public void setOfficeHours(String officeHours) {
-        this.officeHours = officeHours;
+    public void setOfficeHrs(String officeHrs) {
+        this.officeHrs = officeHrs;
     }
 
 
@@ -91,7 +91,7 @@ public class Instructor {
                 ", instructorName='" + instructorName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
-                ", officeHours='" + officeHours + '\'' +
+                ", officeHours='" + officeHrs + '\'' +
                 '}';
     }
 }

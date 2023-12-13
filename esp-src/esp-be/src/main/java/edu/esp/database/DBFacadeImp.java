@@ -76,7 +76,7 @@ public class DBFacadeImp {
     }
 
     public boolean addNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
-        return this.instructorDAO.addUnregisteredInstructors(unregisteredInstructor);
+        return this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor);
 
     }
     public boolean addNewCourse( Course newCourse ){
