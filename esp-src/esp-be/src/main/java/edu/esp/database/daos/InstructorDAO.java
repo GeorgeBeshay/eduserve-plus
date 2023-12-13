@@ -10,12 +10,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import java.util.List;
 
-public class InstructorDAO {
-
-    private final JdbcTemplate jdbcTemplate;
+public class InstructorDAO extends DAO<Instructor> {
 
     public InstructorDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        super(jdbcTemplate, Instructor.class);
     }
 
     public Instructor readInstructorById(int id) {
@@ -26,27 +24,22 @@ public class InstructorDAO {
                 WHERE instructor_id = %d
                 """.formatted(id);
 
-            BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true); // to deal with null primitive data types.
-
             return jdbcTemplate.queryForObject(sql, rowMapper);
         } catch (Exception e) {
-            System.out.println("Error in readInstructorByID: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), "Error in readInstructorByID: " + e.getMessage(), 1);
             return null;
         }
     }
 
     public boolean createInstructor(Instructor newInstructor) {
         try {
-            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                    .withTableName("instructor");
-
+            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("instructor");
             BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(newInstructor);
-            int rowsAffected = jdbcInsert.execute(parameterSource);
 
-            return rowsAffected > 0;
+            return jdbcInsert.execute(parameterSource) > 0;
+
         } catch (Exception ex) {
-            System.out.println("\u001B[35m" + "Error had occurred in instructor record insertion: " + ex.getMessage() + "\u001B[0m");
+            Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in instructor record insertion: " + ex.getMessage(), 1);
             return false; // Return a meaningful response indicating failure
         }
     }
@@ -54,11 +47,10 @@ public class InstructorDAO {
     public List<Instructor> SelectAll() {
         try {
             String sql = "SELECT * FROM instructor";
-            BeanPropertyRowMapper<Instructor> rowMapper = new BeanPropertyRowMapper<>(Instructor.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true);
+
             return jdbcTemplate.query(sql, rowMapper);
         } catch (Exception e) {
-            System.out.println("Error in selectAllInstructors: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), "Error in selectAllInstructors: " + e.getMessage(), 1);
             return null;
         }
     }
@@ -72,7 +64,7 @@ public class InstructorDAO {
             int rowsAffected = jdbcTemplate.update(sql);
             return rowsAffected > 0;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
             return false;
         }
     }
@@ -96,7 +88,7 @@ public class InstructorDAO {
             // Add record to instructors table and rely on the DB trigger to delete that record from the unregistered_instructors
             return createInstructor(registeredInstructor);
         } catch (Exception e) {
-            System.out.println("\u001B[35m" + "Error had occurred in instructor sign up: " + e.getMessage() + "\u001B[0m");
+            Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in instructor sign up: " + e.getMessage(), 1);
             return false; // Return a meaningful response indicating failure
         }
     }
