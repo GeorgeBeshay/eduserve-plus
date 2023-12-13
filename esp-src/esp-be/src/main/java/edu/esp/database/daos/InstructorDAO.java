@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import java.util.List;
 
 public class InstructorDAO extends DAO<Instructor> {
@@ -69,23 +68,19 @@ public class InstructorDAO extends DAO<Instructor> {
         }
     }
 
+    /**
+     * @param id The ID which the instructor has entered while signing up
+     * @param tempHash The hash of the OTP which the instructor has entered while signing up
+     * @param registeredInstructor The object which encapsulates the data that the instructor has entered while signing up not including the department ID
+     * @return Returns a boolean indicating the success of the signup operation
+     */
     public boolean signUpInstructor(int id, int tempHash, Instructor registeredInstructor) {
         try {
-            int passwordHash;
-            // Retrieve ID and temporary password hash from unregistered instructors table
-            SqlRowSet unregisteredInstructor = jdbcTemplate.queryForRowSet("""
-                    SELECT *
-                    FROM unregistered_instructor
-                    WHERE instructor_id = %d
-                    """.formatted(id));
-            // If no such record exists, reject operation
-            if (unregisteredInstructor.next())
-                passwordHash = unregisteredInstructor.getInt("Instructor_temp_pw_hash");
-            else
-                return false;
+            UnregisteredInstructor unregisteredInstructor = readUnregisteredInstructorById(id);
             // If the input temporary hash is not the same as the unregistered password hash, reject operation
-            if (tempHash != passwordHash) return false;
+            if (unregisteredInstructor == null || unregisteredInstructor.getInstructorTempPwHash() != tempHash) return false;
             // Add record to instructors table and rely on the DB trigger to delete that record from the unregistered_instructors
+            registeredInstructor.setDptId(unregisteredInstructor.getDptId());
             return createInstructor(registeredInstructor);
         } catch (Exception e) {
             Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in instructor sign up: " + e.getMessage(), 1);
