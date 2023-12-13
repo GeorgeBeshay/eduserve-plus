@@ -1,24 +1,18 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_uni_objs.Course;
-import edu.esp.system_entities.system_users.Admin;
+import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CourseDAO {
-
-    private final JdbcTemplate jdbcTemplate;
+public class CourseDAO extends DAO<Course> {
 
     public CourseDAO( JdbcTemplate jdbcTemplate ) {
-        this.jdbcTemplate = jdbcTemplate;
+        super(jdbcTemplate, Course.class);
     }
 
 
@@ -88,4 +82,34 @@ public class CourseDAO {
         }
         return true;
     }
+
+    /**
+     * Retrieves a list of the courses offered by the department with id 'offeringDpt'
+     * @param offeringDpt The offering department identifier to search for.
+     * @return A list of 'Course' objects that are being offered by a department with id 'offeringDpt',
+     * OR null if:
+     * 1. A negative offeringDpt was given.
+     * 2. An error had occurred during query execution.
+     */
+    @Transactional
+    public List<Course> findByOfferingDpt(byte offeringDpt) {
+
+        try {
+            assert offeringDpt >= 0 : "Offering department can't be a negative value!";
+
+            String sql = """
+                SELECT *
+                FROM course
+                WHERE offering_dpt = ?
+                """;
+
+            return jdbcTemplate.query(sql, rowMapper, offeringDpt);
+        }
+        catch (AssertionError | Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+
+    }
+
 }
