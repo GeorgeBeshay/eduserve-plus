@@ -128,6 +128,39 @@ public class StudentDAOTests {
     }
 
     @Test
+    @DisplayName("Student DAO - create a student object then read it with DAO methods")
+    public void testCreateThenReadStudent() {
+        // Create a student object with test data
+        Student newStudent = new Student(
+                15, 456789, (byte)1, (byte)3, 3.2F,
+                "John Doe", "12345678901234", "2002-08-22", "Some address 123",
+                "555-1234", "123-4567", true, "john.doe@example.com"
+        );
+
+        assertTrue(this.studentDAO.createStudent(newStudent));
+
+        Student student = this.studentDAO.readStudentById(15);
+
+        assertEquals(15, student.getStudentId());
+        assertEquals(456789, student.getStudentPwHash());
+        assertEquals(1, student.getDptId());
+        assertEquals(3, student.getStudentLevel());
+        // TODO Round GPA after a certain number of decimal places. Do this for grade records GPA too (either in the create method or in the DB itself).
+        assertEquals(3.2, student.getGpa(), 0.00001);
+        assertEquals("John Doe", student.getStudentName());
+        assertEquals("12345678901234", student.getSsn());
+        assertEquals("2002-08-22", student.getBdate());
+        assertEquals("Some address 123", student.getStudentAddress());
+        assertEquals("555-1234", student.getPhone());
+        assertEquals("123-4567", student.getLandline());
+        assertTrue(student.getGender());
+        assertEquals("john.doe@example.com", student.getEmail());
+
+        // Delete the student used in the test
+        jdbcTemplate.update("DELETE FROM student WHERE student_id = 15;");
+    }
+
+    @Test
     @DisplayName("Student DAO - select all students")
     public void testSelectAll() {
         // Insert a list of students
@@ -301,6 +334,25 @@ public class StudentDAOTests {
 
         // Delete the unregistered student which was inserted
         jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = 73;");
+    }
+
+    @Test
+    @DisplayName("Student DAO - create an unregistered student object then read it with DAO methods")
+    public void testCreateThenReadUnregisteredStudent() {
+        // Create an unregistered instructor object with test data
+        int id = random.nextInt(1, 100);
+        int pwHash = random.nextInt(-10000, 10000);
+        UnregisteredStudent newStudent = new UnregisteredStudent(id, pwHash);
+
+        assertTrue(this.studentDAO.createUnregisteredStudent(newStudent));
+
+        UnregisteredStudent student = this.studentDAO.readUnregisteredStudentById(id);
+
+        assertEquals(id, student.getStudentId());
+        assertEquals(pwHash, student.getStudentTempPwHash());
+
+        // Delete inserted record
+        jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = %d;".formatted(id));
     }
 
     @Test

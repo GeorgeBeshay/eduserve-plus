@@ -113,6 +113,33 @@ public class InstructorDAOTests {
     }
 
     @Test
+    @DisplayName("Instructor DAO - create an instructor object then read it with DAO methods")
+    public void testCreateThenReadInstructor() {
+        // Create an instructor object with test data
+        int insertedInstructorId = random.nextInt(1, 100);
+        int pwHash = random.nextInt(-10000, 10000);
+        Instructor newInstructor = new Instructor(
+                insertedInstructorId, pwHash, (byte) 1,
+                "Test Instructor", "555-4321", "instructor1@uni.com", "Monday 10am-12pm, Wednesday 2pm-4pm"
+        );
+
+        assertTrue(this.instructorDAO.createInstructor(newInstructor));
+
+        Instructor instructor = this.instructorDAO.readInstructorById(insertedInstructorId);
+
+        assertEquals(insertedInstructorId, instructor.getInstructorId());
+        assertEquals(pwHash, instructor.getInstructorPwHash());
+        assertEquals(1, instructor.getDptId());
+        assertEquals("Test Instructor", instructor.getInstructorName());
+        assertEquals("555-4321", instructor.getPhone());
+        assertEquals("instructor1@uni.com", instructor.getEmail());
+        assertEquals("Monday 10am-12pm, Wednesday 2pm-4pm", instructor.getOfficeHrs());
+
+        // Delete inserted instructor
+        jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id = %d;".formatted(insertedInstructorId));
+    }
+
+    @Test
     @DisplayName("Instructor DAO - Select all instructors")
     public void testSelectAll() {
         // Insert a list of instructors
@@ -276,6 +303,26 @@ public class InstructorDAOTests {
         // Delete inserted record
         jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = 55;");
     }
+
+    @Test
+    @DisplayName("Instructor DAO - create an unregistered instructor object then read it with DAO methods")
+    public void testCreateThenReadUnregisteredInstructor() {
+        // Create an unregistered instructor object with test data
+        int id = random.nextInt(1, 100);
+        int pwHash = random.nextInt(-10000, 10000);
+        UnregisteredInstructor newInstructor = new UnregisteredInstructor(id, pwHash);
+
+        assertTrue(this.instructorDAO.createUnregisteredInstructor(newInstructor));
+
+        UnregisteredInstructor instructor = this.instructorDAO.readUnregisteredInstructorById(id);
+
+        assertEquals(id, instructor.getInstructorId());
+        assertEquals(pwHash, instructor.getInstructorTempPwHash());
+
+        // Delete inserted record
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = %d;".formatted(id));
+    }
+
 
     @Test
     @DisplayName("Instructor DAO - deleting an existing unregistered instructor")

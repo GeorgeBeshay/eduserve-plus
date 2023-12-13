@@ -97,11 +97,54 @@ public class AdminDAOTests {
     }
 
     @Test
+    @DisplayName("Admin DAO - create an admin  object then read it with DAO methods")
+    public void testCreateThenReadAdmin() {
+        Admin admin1 = new Admin((byte)2, 101, "Test Admin", (byte)0);
+        Admin admin2 = new Admin((byte)3, -6504, "Read Test Admin", (byte)2);
+
+        assertTrue(this.adminDAO.createAdmin(admin1));
+        assertTrue(this.adminDAO.createAdmin(admin2));
+
+        Admin admin = this.adminDAO.readAdminById((byte)3);
+
+        assertEquals(3, admin.getAdminId());
+        assertEquals(-6504, admin.getAdminPwHash());
+        assertEquals("Read Test Admin", admin.getAdminName());
+        assertEquals(2, admin.getCreatorAdminId());
+
+        // Delete the used admin objects
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id IN (2,3);");
+    }
+
+    @Test
     @DisplayName("Admin DAO - select all admins")
     public void testSelectAll() {
+        // Insert a list of admins
+        jdbcTemplate.update("""
+                INSERT INTO sys_admin (admin_id, admin_pw_hash, admin_name, creator_admin_id)
+                VALUES
+                    (1, 1003, 'Admin One', 0),
+                    (2, 78, 'Admin Two', 1),
+                    (3, 28, 'Admin Three', 2);
+                """);
+
         List<Admin> admins = this.adminDAO.SelectAll();
 
-        assertNotEquals(null,admins);
+        assertNotNull(admins);
+        assertTrue(admins.size() >= 4); // Size is at least 4 (with the root admin)
+
+        // Check that the list contains the inserted IDs
+        boolean[] containsId = {false,false,false};
+        int id;
+        for (Admin admin : admins) {
+            id = admin.getAdminId();
+            if (id == 1 || id == 2 || id == 3)
+                containsId[id-1] = true;
+        }
+        assertArrayEquals(new boolean[]{true,true,true}, containsId);
+
+        // Delete the admin list
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id IN (1,2,3);");
     }
 
     @Test
