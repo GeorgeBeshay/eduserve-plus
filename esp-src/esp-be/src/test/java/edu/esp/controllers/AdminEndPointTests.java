@@ -5,6 +5,7 @@ import edu.esp.be.EspBeApplication;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Admin;
+import edu.esp.utilities.CSVManipulator;
 import edu.esp.utilities.Hasher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.springframework.http.MediaType;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +30,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest(classes = EspBeApplication.class)
 @AutoConfigureMockMvc
@@ -230,6 +238,77 @@ public class AdminEndPointTests {
         assertFalse(booleanResponse);
 
         jdbcTemplate.update("DELETE FROM course WHERE course_code = 'TEST3';");
+
+    }
+
+    @Test
+    @DisplayName("Admin Add unregistered students - Accepted")
+    public void addUnregisteredStudents() throws Exception {
+
+        jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id IN(50, 51, 52);");
+
+        CSVManipulator csvManipulator = new CSVManipulator();
+        String originalFilename = "validUnregisteredStudents.csv";
+        Path path = Paths.get(csvManipulator.csvFolderPrefix + originalFilename);
+        Files.createFile(path);
+
+        String csvContent = """
+                        studentID,studentOTP
+                        50,13
+                        51,125
+                        52,1245""";
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(csvManipulator.csvFolderPrefix + originalFilename));
+        writer.write(csvContent);
+        writer.close();
+
+        MockMultipartFile unregisteredStudents = new MockMultipartFile("unregisteredStudents", originalFilename, "text/csv", Files.readAllBytes(path));
+
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8081/esp-server/admin-endpoint/addUnregisteredStudents")
+                        .file(unregisteredStudents)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andReturn();
+
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        int addedStudents = Integer.parseInt(content);
+
+        // Assert the status code and the boolean value
+        assertEquals(HttpStatus.OK.value(), status);
+        assertEquals(3, addedStudents);
+
+        jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id IN(50, 51, 52);");
+        Files.delete(Paths.get(csvManipulator.csvFolderPrefix + originalFilename));
+    }
+
+
+    @Test
+    @DisplayName("Admin Add unregistered students - Rejected because of sending null multipart file")
+    public void addUnregisteredStudentsNull() throws Exception {
+
+        MockMultipartFile unregisteredStudents = new MockMultipartFile("unregisteredStudents", "", "text/csv", (byte[]) null);
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8081/esp-server/admin-endpoint/addUnregisteredStudents")
+                        .file(unregisteredStudents)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andReturn();
+
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        int addedStudents = Integer.parseInt(content);
+
+        // Assert the status code and the boolean value
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertEquals(0, addedStudents);
 
     }
 
