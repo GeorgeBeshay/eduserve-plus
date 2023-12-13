@@ -12,6 +12,7 @@ import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 public class DBFacadeImp {
@@ -20,7 +21,7 @@ public class DBFacadeImp {
     private final StudentDAO studentDAO;
     private final InstructorDAO instructorDAO;
     private final AdminDAO adminDAO;
-    private final CourseDAO CourseDAO;
+    private final CourseDAO courseDAO;
 
     @Autowired
     public DBFacadeImp(JdbcTemplate jdbcTemplate){
@@ -28,7 +29,7 @@ public class DBFacadeImp {
         this.studentDAO = new StudentDAO(this.jdbcTemplate);
         this.instructorDAO = new InstructorDAO(this.jdbcTemplate);
         this.adminDAO = new AdminDAO(this.jdbcTemplate);
-        this.CourseDAO = new CourseDAO(this.jdbcTemplate);
+        this.courseDAO = new CourseDAO(this.jdbcTemplate);
     }        
    
     public boolean createStudent(Student st){
@@ -80,7 +81,11 @@ public class DBFacadeImp {
 
     }
     public boolean addNewCourse( Course newCourse ){
-        return this.CourseDAO.addNewCourse( newCourse );
+        return this.courseDAO.addNewCourse( newCourse );
 
+    }
+
+    public List<Course> fetchCoursesOfferedByDpt(byte offeringDpt) {
+        return this.courseDAO.findByOfferingDpt(offeringDpt);
     }
 }
