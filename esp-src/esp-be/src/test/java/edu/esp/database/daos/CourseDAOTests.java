@@ -173,6 +173,8 @@ public class CourseDAOTests {
         byte offeringDpt = 101;
         jdbcTemplate.update("DELETE FROM course WHERE course_code = ?", courseCode);
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
+        jdbcTemplate.update("INSERT INTO department (dpt_id, dpt_name) VALUES (?, ?)", offeringDpt, "TEST DEPARTMENT");
         jdbcTemplate.update("INSERT INTO course (course_code, offering_dpt) VALUES (?, ?)", courseCode, offeringDpt);
 
         // Act
@@ -196,6 +198,8 @@ public class CourseDAOTests {
         byte offeringDpt = 101;
 
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
+        jdbcTemplate.update("INSERT INTO department (dpt_id, dpt_name) VALUES (?, ?)", offeringDpt, "TEST DEPARTMENT");
         for (String courseCode : courseCodes) {
             jdbcTemplate.update("DELETE FROM course WHERE course_code = ?", courseCode);
             jdbcTemplate.update("INSERT INTO course (course_code, offering_dpt) VALUES (?, ?)", courseCode, offeringDpt);
