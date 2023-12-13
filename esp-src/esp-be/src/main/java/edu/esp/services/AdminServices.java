@@ -7,6 +7,7 @@ import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 
 import edu.esp.system_entities.system_uni_objs.Course;
+import edu.esp.system_entities.system_users.UnregisteredStudent;
 import edu.esp.utilities.CSVManipulator;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
@@ -14,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class represents the "Brain" of all operations related to the admin entity, as it implements all the business logic
@@ -117,15 +118,27 @@ public class AdminServices {
 
     /**
      * This service takes the file from the front and send it to csv manipulator to save it
-     * @param unregisteredStudents the csv file sent from the front
-     * @return A boolean to indicate the saving of the file
+     * @param unregisteredStudentsFile the csv file sent from the front
+     * @return Number of added students
      */
-    public Boolean addUnregisteredStudents (MultipartFile unregisteredStudents) {
+    public int addUnregisteredStudents (MultipartFile unregisteredStudentsFile) {
 
         CSVManipulator csvManipulator = new CSVManipulator();
 
-        return csvManipulator.saveCSVFile(unregisteredStudents);
+        if (csvManipulator.saveCSVFile(unregisteredStudentsFile)) {
+            List<UnregisteredStudent> unregisteredStudents = csvManipulator.readUnregisteredStudents(unregisteredStudentsFile.getOriginalFilename());
 
+            int counter = 0;
+            for (UnregisteredStudent unregisteredStudent : unregisteredStudents) {
+                if (dbFacade.addNewUnregisteredStudent(unregisteredStudent)) {
+                    counter++;
+                }
+            }
+
+            return counter;
+        }
+
+        return 0;
     }
 
 

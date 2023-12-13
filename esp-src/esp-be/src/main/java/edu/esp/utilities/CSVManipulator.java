@@ -31,7 +31,7 @@ public class CSVManipulator {
         }
 
         catch (Exception e) {
-            Logger.logMsgFrom(this.getClass().getName(), "CSV File can not be saved" + e.getMessage(), 1);
+            Logger.logMsgFrom(this.getClass().getName(), "CSV File can not be saved " + e.getMessage(), 1);
             return false;
         }
 
