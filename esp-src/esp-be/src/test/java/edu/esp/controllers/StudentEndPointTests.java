@@ -37,10 +37,10 @@ public class StudentEndPointTests {
             DELETE FROM student WHERE student_id IN (%d, %d);
             """.formatted(101, 101, 100));
         jdbcTemplate.batchUpdate("""
-            INSERT INTO unregistered_student (student_id, student_temp_pw_hash)
+            INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
             VALUES
-                (%d, %d);
-            """.formatted(101, 1983716562));
+                (%d, %d, %d);
+            """.formatted(101, 1983716562, 1));
         jdbcTemplate.batchUpdate("""
             INSERT INTO student (student_id, Student_pw_hash, ssn)
             VALUES
