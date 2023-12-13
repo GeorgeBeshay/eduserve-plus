@@ -1,5 +1,7 @@
 package edu.esp.system_entities.system_users;
 
+import java.util.*;
+
 public class Student {
     private int studentId;
     private int studentPwHash;
@@ -8,7 +10,7 @@ public class Student {
     private float gpa;
     private String studentName;
     private String ssn;
-    private String bdate;
+    private Date birthDate;
     private String studentAddress;
     private String phone;
     private String landline;
@@ -18,7 +20,7 @@ public class Student {
     public Student() {}
 
     public Student(int studentId, int studentPwHash, byte departmentId, byte studentLevel, float gpa,
-                   String studentName, String ssn, String bdate, String studentAddress, String phone,
+                   String studentName, String ssn, Date birthDate, String studentAddress, String phone,
                    String landline, boolean gender, String email) {
         this.studentId = studentId;
         this.studentPwHash = studentPwHash;
@@ -27,7 +29,7 @@ public class Student {
         this.gpa = gpa;
         this.studentName = studentName;
         this.ssn = ssn;
-        this.bdate = bdate;
+        this.birthDate = birthDate;
         this.studentAddress = studentAddress;
         this.phone = phone;
         this.landline = landline;
@@ -91,12 +93,12 @@ public class Student {
         this.ssn = ssn;
     }
 
-    public String getBdate() {
-        return bdate;
+    public Date getBirthDate() {
+        return birthDate;
     }
 
-    public void setBdate(String bdate) {
-        this.bdate = bdate;
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getStudentAddress() {
@@ -149,7 +151,7 @@ public class Student {
                 ", gpa=" + gpa +
                 ", studentName='" + studentName + '\'' +
                 ", ssn='" + ssn + '\'' +
-                ", birthdate=" + bdate +
+                ", birthDate=" + birthDate +
                 ", studentAddress='" + studentAddress + '\'' +
                 ", phone='" + phone + '\'' +
                 ", landline='" + landline + '\'' +

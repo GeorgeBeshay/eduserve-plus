@@ -4,9 +4,6 @@ package edu.esp.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
-import edu.esp.system_entities.system_users.UnregisteredInstructor;
-
-import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +21,7 @@ public class AdminServices {
     private final JdbcTemplate jdbcTemplate;
     private final DBFacadeImp dbFacade;       // TODO: Instantiate the object as of type DBFacadeIF instead.
 
-    public AdminServices(JdbcTemplate jdbcTemplate) {
+    public AdminServices(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
         this.dbFacade = new DBFacadeImp(this.jdbcTemplate);
     }
@@ -35,9 +32,9 @@ public class AdminServices {
      * @param admin The admin object to be registered.
      * @return True if the registration is successful, otherwise false.
      */
-    public boolean signUp(Admin admin) {
+    public boolean signUp (Admin admin) {
 
-        if (dbFacade.createAdmin(admin)) {
+        if( dbFacade.createAdmin(admin) ){
             Logger.logMsgFrom(this.getClass().getName(), "New admin was successfully registered.", 0);
             return true;
         }
@@ -52,7 +49,7 @@ public class AdminServices {
      * @param requestMap contains the admin object (without the password) to be signed in and the password before hashing
      * @return True if the authentication is successful, otherwise false.
      */
-    public boolean signIn(Map<String, Object> requestMap) {
+    public boolean signIn (Map<String, Object> requestMap) {
         // Extract Admin and password converted to hashed value
         Admin admin = (new ObjectMapper()).convertValue(requestMap.get("admin"), Admin.class);
         int hashedPassword = Hasher.hash((String) requestMap.get("password"));
@@ -84,38 +81,5 @@ public class AdminServices {
         Logger.logMsgFrom(this.getClass().getName(), "Admin password is incorrect.", 1);
         return false;
     }
-
-    public boolean addNewUnregisteredInstructor(UnregisteredInstructor unregisteredInstructor) {
-        if (this.dbFacade.addNewUnregisteredInstructor(unregisteredInstructor)) {
-            Logger.logMsgFrom(this.getClass().getName(), "New unregistered instructor was successfully added to the system.", 0);
-            return true;
-        }
-        Logger.logMsgFrom(this.getClass().getName(), "New Unregistered Instructor failed to be added to the system.", 1);
-        return false;
-
-    }
-
-    /**
-     * Implements the business logic for adding new course to DB.
-     *
-     * @param newCourse the course object of the new course having the prerequisite List.
-     * @return True if the course is added successful, otherwise False.
-     */
-    public boolean addNewCourse ( Course newCourse ){
-        // call the DB to add that course
-        if ( dbFacade.addNewCourse( newCourse ) ){
-            Logger.logMsgFrom( this.getClass().getName(),"the course added successfully",0 );
-            return true;
-        }
-        else {
-            Logger.logMsgFrom( this.getClass().getName(),"the course didn't be added",1 );
-            return false;
-        }
-    }
-
-
-
-
-
 
 }
