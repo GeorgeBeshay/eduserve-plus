@@ -183,8 +183,8 @@ public class CourseDAOTests {
         // Assert
         assertNotNull(actualMatchingCourses);
         assertEquals(1, actualMatchingCourses.size());
-        assertEquals(courseCode, actualMatchingCourses.getFirst().getCourseCode());
-        assertEquals(offeringDpt, actualMatchingCourses.getFirst().getOfferingDpt());
+        assertEquals(courseCode, actualMatchingCourses.get(0).getCourseCode());
+        assertEquals(offeringDpt, actualMatchingCourses.get(0).getOfferingDpt());
 
         // Clean
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
