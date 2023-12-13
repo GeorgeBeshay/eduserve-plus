@@ -3,6 +3,7 @@ import {FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
 import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
 import { Course } from 'src/app/System Entities/course';
+import { AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-admin',
@@ -12,6 +13,7 @@ import { Course } from 'src/app/System Entities/course';
 export class AdminComponent implements OnInit{
   signInForm: FormGroup;
   AdminCreationForm: FormGroup<any>;
+  AdminUploadInstructorsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
 
@@ -25,6 +27,7 @@ export class AdminComponent implements OnInit{
       id: ['', Validators.required],
       password: ['', Validators.required]
     });
+
     this.AdminCreationForm = this.formBuilder.group({
       CreatorAdminID: ['', Validators.required],
       NewAdminID: ['', Validators.required],
@@ -32,6 +35,10 @@ export class AdminComponent implements OnInit{
       NewAdminName: ['', Validators.required]
     });
 
+    this.AdminUploadInstructorsForm = this.formBuilder.group({
+      uploaded_file: ['', [Validators.required]]
+
+    });
     this.admin = null
     this.selectedSection = 0
 
@@ -101,6 +108,34 @@ export class AdminComponent implements OnInit{
     else{
       alert("The course has not been added successfully")
     }
+  }
+
+  UploadInstructors(){
+    if(this.AdminUploadInstructorsForm.valid && this.csvFileValidator()){
+      const uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file');
+      alert('Uploading Instructors from CSV file: ')
+      console.log('Uploading Instructors from CSV file: ', uploaded_file);
+
+      // Add the code here to send the CSV file to the backend
+
+
+
+
+    }
+    else{
+      alert('Only CSV files are allowed');
+    }
+  }
+
+  csvFileValidator() {
+    const control = this.AdminUploadInstructorsForm.get('uploaded_file') || null;
+    if(control){
+      const file = control?.value;
+      const extension = file.split('.').pop()
+      const isCsv = extension === 'csv';
+      return isCsv;
+    }
+    return false
   }
 
 }
