@@ -100,8 +100,77 @@
           </form>
         </ng-container>
 
+        
         <ng-container *ngIf="selectedSection == 3">
-          This is the courses addition page!
+
+          <form [formGroup]="courseForm" (ngSubmit)="addCourse()">
+            <div class="form-group">
+              <label for="courseCode">Course Code:</label>
+              <input id="courseCode" type="text" formControlName="courseCode" />
+              <div *ngIf="courseForm.get('courseCode')?.invalid && (courseForm.get('courseCode')?.dirty || courseForm.get('courseCode')?.touched)">
+                <div *ngIf="courseForm.get('courseCode')?.hasError('required')" class="input-error">Course Code is required.</div>
+                <div *ngIf="courseForm.get('courseCode')?.errors?.['maxlength']" class="input-error">Course Code should be at most 7 characters.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="courseName">Course Name:</label>
+              <input id="courseName" type="text" formControlName="courseName" />
+              <div *ngIf="courseForm.get('courseName')?.invalid && (courseForm.get('courseName')?.dirty || courseForm.get('courseName')?.touched)">
+                <div *ngIf="courseForm.get('courseName')?.hasError('required')" class="input-error">Course Name is required.</div>
+                <div *ngIf="courseForm.get('courseName')?.errors?.['maxlength']" class="input-error">Course Name should be at most 40 characters.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="courseDescription">Course Description:</label>
+              <input id="courseDescription" type="text" formControlName="courseDescription" />
+              <div *ngIf="courseForm.get('courseDescription')?.invalid && (courseForm.get('courseDescription')?.dirty || courseForm.get('courseDescription')?.touched)">
+                <div *ngIf="courseForm.get('courseDescription')?.hasError('required')" class="input-error">Course Description is required.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="offeringDpt">Offering Department ID:</label>
+              <input id="offeringDpt" type="number" formControlName="offeringDpt" />
+              <div *ngIf="courseForm.get('offeringDpt')?.invalid && (courseForm.get('offeringDpt')?.dirty || courseForm.get('offeringDpt')?.touched)">
+                <div *ngIf="courseForm.get('offeringDpt')?.hasError('required')" class="input-error">Offering Department is required.</div>
+                <div *ngIf="(courseForm.get('offeringDpt')?.hasError('min') || courseForm.get('offeringDpt')?.hasError('max'))" class="input-error">
+                  Offering Department should be between -128 and 127.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="creditHrs">Credit Hours:</label>
+              <input id="creditHrs" type="number" formControlName="creditHrs" />
+              <div *ngIf="courseForm.get('creditHrs')?.invalid && (courseForm.get('creditHrs')?.dirty || courseForm.get('creditHrs')?.touched)">
+                <div *ngIf="courseForm.get('creditHrs')?.hasError('required')" class="input-error">Credit Hours is required.</div>
+                <div *ngIf="(courseForm.get('creditHrs')?.hasError('min') || courseForm.get('creditHrs')?.hasError('max'))" class="input-error">
+                  Credit Hours should be between -128 and 127.
+                </div>
+              </div>
+            </div>
+
+            <div formArrayName="prerequisite">
+              <label>Prerequisites:</label>
+              <div *ngFor="let prerequisiteControl of prerequisiteControls; let i = index">
+                <div class="form-group">
+                  <label for="prerequisite{{i}}">Course Code {{i + 1}}:</label>
+                  <input id="prerequisite{{i}}" type="text" [formControl]="prerequisiteControl" />
+                  <div *ngIf="prerequisiteControl.invalid && (prerequisiteControl.dirty || prerequisiteControl.touched)">
+                    <div *ngIf="prerequisiteControl.hasError('required')" class="input-error">Prerequisite is required.</div>
+                    <div *ngIf="prerequisiteControl.errors?.['maxlength']" class="input-error">Prerequisite should be at most 7 characters.</div>
+                  </div>
+                  <button type="button" (click)="removePrerequisite(i)">Remove</button>
+                </div>
+              </div>
+              <button mat-icon-button type="button" (click)="addPrerequisite()"> + </button>
+            </div>
+
+            <button mat-raised-button type="submit" [disabled]="courseForm.invalid">Add Course</button>
+          </form>
+
         </ng-container>
 
       </div>
