@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Instructor} from "../../System Entities/Instructor";
+import { InstructorService } from 'src/app/services/instructor.service';
 
 @Component({
   selector: 'app-instructor',
@@ -10,7 +11,7 @@ import {Instructor} from "../../System Entities/Instructor";
 export class InstructorComponent implements OnInit {
   signInForm: FormGroup;
   signUpForm: FormGroup;
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private service:InstructorService) {
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required]
@@ -39,6 +40,7 @@ export class InstructorComponent implements OnInit {
 
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
+      this.service.signIn(id,password);
 
       // call API
     }
@@ -52,13 +54,17 @@ export class InstructorComponent implements OnInit {
       const password = this.signUpForm.value.password;
       const newPassword = this.signUpForm.value.newPassword;
       const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
-      // Placeholder: Simulate authentication logic
-      // this.instructorservice.SignUp(this.signUpForm.value).subscribe(
-      //   data => console.log('success',data),
-      // )
+      const dptId = this.signUpForm.value.department;
+      const instructorName = this.signUpForm.value.instructorName;
+      const intstructorPhone = this.signUpForm.value.contact_no;
+      const instructorEmail = this.signUpForm.value.email;
+      const officeHours = this.signUpForm.value.officeHours;
+      let instructor = new Instructor(id,newPassword,dptId,instructorName,intstructorPhone,instructorEmail,officeHours);
       console.log('Signing in with ID:', id, ', password:', password,
         ', new password:', newPassword,
         'and confirm password: ', confirmNewPassword);
+
+      this.service.signUp(newPassword,password,instructor);
     }
 
   }
