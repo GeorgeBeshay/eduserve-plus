@@ -2,13 +2,8 @@ package edu.esp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.be.EspBeApplication;
-import edu.esp.database.DBFacadeImp;
-import edu.esp.system_entities.system_uni_objs.Course;
-import edu.esp.system_entities.system_users.Admin;
-import edu.esp.utilities.Hasher;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import edu.esp.system_entities.system_users.Student;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,50 +12,53 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.springframework.http.MediaType;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MvcResult;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = EspBeApplication.class)
 @AutoConfigureMockMvc
-public class AdminEndPointTests {
+public class StudentEndPointTests {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @BeforeEach
-    public void prepare() {
-        DBFacadeImp dbFacade = new DBFacadeImp(jdbcTemplate);
-        dbFacade.createAdmin(
-                new Admin(
-                        (byte) 99,
-                        Hasher.hash("1234"),
-                        "AdminForTest",
-                        (byte) 1
-                        )
-        );
+    @BeforeAll
+    public void setUp() {
+
+        jdbcTemplate.batchUpdate("""
+            DELETE FROM unregistered_student WHERE student_id IN (%d);
+            DELETE FROM student WHERE student_id IN (%d, %d);
+            """.formatted(101, 101, 100));
+        jdbcTemplate.batchUpdate("""
+            INSERT INTO unregistered_student (student_id, student_temp_pw_hash)
+            VALUES
+                (%d, %d);
+            """.formatted(101, 1983716562));
+        jdbcTemplate.batchUpdate("""
+            INSERT INTO student (student_id, Student_pw_hash, ssn)
+            VALUES
+                (%d, %d, '123456789');
+            """.formatted(100, 1983716562));
     }
 
     @Test
-    @DisplayName("Admin Sign In - Authenticated")
+    @DisplayName("Student Sign In - Authenticated")
     public void successfulSignIn() throws Exception {
 
-        Admin admin = new Admin();
-        admin.setAdminId((byte) 99);
+        Student student = new Student();
+        student.setStudentId(100);
 
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("admin", admin);
+        requestMap.put("student", student);
         requestMap.put("password", "1234");
 
-        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/signIn")
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/student-endpoint/signIn")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(requestMap)))
                 .andReturn();
@@ -75,21 +73,20 @@ public class AdminEndPointTests {
         // Assert the status code and the boolean value
         assertEquals(HttpStatus.OK.value(), status);
         assertTrue(booleanResponse);
-
     }
 
     @Test
-    @DisplayName("Admin Sign In - Rejected (Wrong PW)")
-    public void nonValidPWSignIn() throws Exception {
+    @DisplayName("Student Sign In - Rejected Wrong Password")
+    public void wrongPasswordSignIn() throws Exception {
 
-        Admin admin = new Admin();
-        admin.setAdminId((byte) 99);
+        Student student = new Student();
+        student.setStudentId(100);
 
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("admin", admin);
-        requestMap.put("password", "12344");
+        requestMap.put("student", student);
+        requestMap.put("password", "123456");
 
-        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/signIn")
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/student-endpoint/signIn")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(requestMap)))
                 .andReturn();
@@ -107,17 +104,17 @@ public class AdminEndPointTests {
     }
 
     @Test
-    @DisplayName("Admin Sign In - Rejected (Admin ID doesn't exist)")
-    public void nonValidIDSignIn() throws Exception {
+    @DisplayName("Student Sign In - Rejected Wrong id")
+    public void signInWithWrongID() throws Exception {
 
-        Admin admin = new Admin();
-        admin.setAdminId((byte) -100);
+        Student student = new Student();
+        student.setStudentId(-1);
 
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("admin", admin);
+        requestMap.put("student", student);
         requestMap.put("password", "1234");
 
-        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/signIn")
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/student-endpoint/signIn")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(requestMap)))
                 .andReturn();
@@ -135,15 +132,21 @@ public class AdminEndPointTests {
     }
 
     @Test
-    @DisplayName("Admin Add course - Accepted (Course id is unique)")
-    public void validAddCourse() throws Exception {
+    @DisplayName("Student Sign Up - Authenticated correct")
+    public void signUpValid() throws Exception {
 
-        Course newCourse = new Course("CS55","math1",
-                "bla bla",(byte) 1,(byte) 3);
+        Student student = new Student();
+        student.setStudentId(101);
+        student.setSsn("ssn123456");
 
-        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("student", student);
+        requestMap.put("password", "567");
+        requestMap.put("OTPPassword", "1234");
+
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/student-endpoint/signUp")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(newCourse)))
+                        .content(asJsonString(requestMap)))
                 .andReturn();
 
         // Retrieve the response status code
@@ -156,28 +159,23 @@ public class AdminEndPointTests {
         // Assert the status code and the boolean value
         assertEquals(HttpStatus.OK.value(), status);
         assertTrue(booleanResponse);
-
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM course WHERE course_code = 'CS55';
-                """
-        );
     }
 
     @Test
-    @DisplayName("Admin Add course - Rejected (Course id is unique but prerequisite are not in DB)")
-    public void unvalidPrereqAddCourse() throws Exception {
+    @DisplayName("Student Sign Up - Rejected wrong id")
+    public void signUpWrongID() throws Exception {
 
-        Course newCourse = new Course("CS55","math1",
-                "bla bla",(byte) 1,(byte) 3);
+        Student student = new Student();
+        student.setStudentId(-1);
 
-        List<String> preq = new ArrayList<>();
-        preq.add("CS1");
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("student", student);
+        requestMap.put("password", "567");
+        requestMap.put("OTPPassword", "1234");
 
-        newCourse.setPrerequisite(preq);
-
-        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/student-endpoint/signUp")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(newCourse)))
+                        .content(asJsonString(requestMap)))
                 .andReturn();
 
         // Retrieve the response status code
@@ -190,32 +188,24 @@ public class AdminEndPointTests {
         // Assert the status code and the boolean value
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         assertFalse(booleanResponse);
-
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM course WHERE course_code = 'CS55';
-                """
-        );
-
-
     }
 
     @Test
-    @DisplayName("Admin Add course - Rejected (Course id is not unique)")
-    public void unvalidAddCourseId() throws Exception {
+    @DisplayName("Student Sign Up - Rejected wrong OTP password")
+    public void signUpWrongOTPPassword() throws Exception {
 
-        DBFacadeImp dbFacadeImp = new DBFacadeImp(jdbcTemplate);
+        Student student = new Student();
+        student.setStudentId(101);
+        student.setSsn("ssn123456");
 
-        Course newCourse1 = new Course("CS55","math1",
-                "bla bla",(byte) 1,(byte) 3);
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("student", student);
+        requestMap.put("password", "567");
+        requestMap.put("OTPPassword", "5123");
 
-        dbFacadeImp.addNewCourse(newCourse1);
-
-        Course newCourse2 = new Course("CS55","math2",
-                "bla bla",(byte) 1,(byte) 3);
-
-        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/student-endpoint/signUp")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(newCourse2)))
+                        .content(asJsonString(requestMap)))
                 .andReturn();
 
         // Retrieve the response status code
@@ -228,16 +218,16 @@ public class AdminEndPointTests {
         // Assert the status code and the boolean value
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         assertFalse(booleanResponse);
-
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM course WHERE course_code = 'CS55';
-                """
-        );
-
-
     }
 
-    // Helper method to convert Map to JSON string
+    @AfterAll
+    public void removeStudent() {
+        jdbcTemplate.batchUpdate("""
+            DELETE FROM unregistered_student WHERE student_id IN (%d);
+            DELETE FROM student WHERE student_id IN (%d, %d);
+            """.formatted(101, 101, 100));
+    }
+
     private String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);

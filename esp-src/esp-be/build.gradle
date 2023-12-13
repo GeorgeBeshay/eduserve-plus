@@ -23,6 +23,7 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.apache.commons:commons-csv:1.10.0'
 	// when the following dependency is enabled, an error is generated after a couple of seconds
 //	implementation 'org.springframework.session:spring-session-jdbc'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

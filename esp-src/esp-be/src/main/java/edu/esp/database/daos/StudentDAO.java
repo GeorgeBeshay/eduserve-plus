@@ -1,6 +1,7 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Student;
+import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
@@ -101,10 +102,10 @@ public class StudentDAO {
                     WHERE student_id = %d
                     """.formatted(id)) <= 0) return false;
             // Add record to students table
-            createStudent(registeredStudent);
-            return true;
-        }catch (Exception e){
-            System.out.println("\u001B[35m" + "Error had occurred in student sign up: " + e.getMessage() + "\u001B[0m");
+            return createStudent(registeredStudent);
+
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in student sign up: " + e.getMessage(), 1);
             return false; // Return a meaningful response indicating failure
         }
     }
