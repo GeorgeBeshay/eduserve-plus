@@ -30,7 +30,8 @@ public class StudentEndPointTests {
 
     @BeforeAll
     public void setUp() {
-
+        // TODO decouple tests from setup
+        // TODO insert testing departments
         jdbcTemplate.batchUpdate("""
             DELETE FROM unregistered_student WHERE student_id IN (%d);
             DELETE FROM student WHERE student_id IN (%d, %d);
@@ -138,6 +139,7 @@ public class StudentEndPointTests {
         Student student = new Student();
         student.setStudentId(101);
         student.setSsn("ssn123456");
+        student.setDptId((byte)1);
 
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("student", student);

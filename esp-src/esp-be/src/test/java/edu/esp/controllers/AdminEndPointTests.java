@@ -6,6 +6,7 @@ import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.utilities.Hasher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,15 +39,21 @@ public class AdminEndPointTests {
 
     @BeforeEach
     public void prepare() {
+        // TODO insert testing departments
         DBFacadeImp dbFacade = new DBFacadeImp(jdbcTemplate);
         dbFacade.createAdmin(
                 new Admin(
                         (byte) 99,
                         Hasher.hash("1234"),
                         "AdminForTest",
-                        (byte) 1
+                        (byte) 0
                         )
         );
+    }
+
+    @AfterEach
+    public void close() {
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id = 99;");
     }
 
     @Test
@@ -138,7 +145,7 @@ public class AdminEndPointTests {
     @DisplayName("Admin Add course - Accepted (Course id is unique)")
     public void validAddCourse() throws Exception {
 
-        Course newCourse = new Course("CS55","math1",
+        Course newCourse = new Course("TEST1","math1",
                 "bla bla",(byte) 1,(byte) 3);
 
         MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
@@ -157,17 +164,14 @@ public class AdminEndPointTests {
         assertEquals(HttpStatus.OK.value(), status);
         assertTrue(booleanResponse);
 
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM course WHERE course_code = 'CS55';
-                """
-        );
+        jdbcTemplate.update("DELETE FROM course WHERE course_code = 'TEST1';");
     }
 
     @Test
     @DisplayName("Admin Add course - Rejected (Course id is unique but prerequisite are not in DB)")
     public void unvalidPrereqAddCourse() throws Exception {
 
-        Course newCourse = new Course("CS55","math1",
+        Course newCourse = new Course("TEST2","math1",
                 "bla bla",(byte) 1,(byte) 3);
 
         List<String> preq = new ArrayList<>();
@@ -191,11 +195,7 @@ public class AdminEndPointTests {
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         assertFalse(booleanResponse);
 
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM course WHERE course_code = 'CS55';
-                """
-        );
-
+        jdbcTemplate.update("DELETE FROM course WHERE course_code = 'TEST2';");
 
     }
 
@@ -205,12 +205,12 @@ public class AdminEndPointTests {
 
         DBFacadeImp dbFacadeImp = new DBFacadeImp(jdbcTemplate);
 
-        Course newCourse1 = new Course("CS55","math1",
+        Course newCourse1 = new Course("TEST3","math1",
                 "bla bla",(byte) 1,(byte) 3);
 
         dbFacadeImp.addNewCourse(newCourse1);
 
-        Course newCourse2 = new Course("CS55","math2",
+        Course newCourse2 = new Course("TEST3","math2",
                 "bla bla",(byte) 1,(byte) 3);
 
         MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
@@ -229,11 +229,7 @@ public class AdminEndPointTests {
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         assertFalse(booleanResponse);
 
-        jdbcTemplate.batchUpdate("""
-                DELETE FROM course WHERE course_code = 'CS55';
-                """
-        );
-
+        jdbcTemplate.update("DELETE FROM course WHERE course_code = 'TEST3';");
 
     }
 
