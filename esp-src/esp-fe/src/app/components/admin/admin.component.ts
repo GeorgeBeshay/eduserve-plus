@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
+import {FormGroup, NonNullableFormBuilder, Validators, FormArray, FormControl} from "@angular/forms";
 import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
 import { Course } from 'src/app/System Entities/course';
@@ -19,6 +19,7 @@ export class AdminComponent implements OnInit{
   selectedSection: number
   unregisteredInstructorfile : File | null = null;
   unregisteredStudentfile : File | null = null;
+  courseForm: FormGroup;
 
 
   constructor(
@@ -46,6 +47,15 @@ export class AdminComponent implements OnInit{
     this.adminUploadStudentsForm = this.formBuilder.group({
       uploaded_file: ['', [Validators.required]]
 
+    });
+
+    this.courseForm = this.formBuilder.group({
+      courseCode: ['', [Validators.required, Validators.maxLength(7)]],
+      courseName: ['', [Validators.required, Validators.maxLength(40)]],
+      courseDescription: ['', Validators.required],
+      offeringDpt: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
+      creditHrs: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
+      prerequisite: this.formBuilder.array([])
     });
 
     this.admin = null
@@ -101,23 +111,52 @@ export class AdminComponent implements OnInit{
 
   async addCourse () {
 
-    // initialize the course with this constructor.
-    // inforce in the form that the courseCode has max 7 characters
-    // and Course name max 40 character
-    // and department id and creditHours are in the range of the byte [-128,127]
-    let newCourse = new Course("CSEN 901", "Software Engineering", "This course is about software engineering", 1, 3, [])
+    if(this.courseForm.valid) {
 
+      const courseCode = this.courseForm.get('courseCode')?.value;
+      const courseName = this.courseForm.get('courseName')?.value;
+      const courseDescription = this.courseForm.get('courseDescription')?.value
+      const offeringDpt = this.courseForm.get('offeringDpt')?.value;
+      const creditHrs = this.courseForm.get('creditHrs')?.value;
+      const prerequisite = this.courseForm.get('prerequisite')?.value;
 
+      console.log(courseCode)
+      console.log(courseName)
+      console.log(courseDescription)
+      console.log(offeringDpt)
+      console.log(creditHrs)
+      console.log(prerequisite)
 
-    let isSuccess: boolean | null = await this.service.addCourse(newCourse)
+      let newCourse = new Course(courseCode, courseName, courseDescription, offeringDpt, creditHrs, prerequisite)
 
-    if(isSuccess){
-      alert("The course has been added successfully")
-    }
-    else{
-      alert("The course has not been added successfully")
+      let isSuccess: boolean | null = await this.service.addCourse(newCourse)
+
+      if(isSuccess){
+        alert("The course has been added successfully")
+      }
+      else{
+        alert("The course has not been added successfully")
+      }
     }
   }
+
+
+  get prerequisite() {
+    return this.courseForm.get('prerequisite') as FormArray;
+  }
+
+  addPrerequisite() {
+    this.prerequisite.push(this.formBuilder.control('', [Validators.required, Validators.maxLength(7)]));
+  }
+
+  removePrerequisite(index: number) {
+    this.prerequisite.removeAt(index);
+  }
+
+  get prerequisiteControls() {
+    return (this.courseForm.get('prerequisite') as FormArray).controls as FormControl[];
+  }
+
 
   onInstructorFileChange(event: any) {
     if (event.target.files.length > 0) {
