@@ -109,7 +109,7 @@ input {
 .upload-csv-form {
   display: flex;
   flex-direction: column;
-  width: 350px;
+  width: 200px;
   margin: auto;
 }
 
