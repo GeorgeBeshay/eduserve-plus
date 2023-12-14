@@ -253,10 +253,10 @@ public class AdminEndPointTests {
         Files.createFile(path);
 
         String csvContent = """
-                        studentID,studentOTP
-                        50,13
-                        51,125
-                        52,1245""";
+                        studentID,studentOTP,studentDpt
+                        50,13,1
+                        51,125,1
+                        52,1245,1""";
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(csvManipulator.csvFolderPrefix + originalFilename));
         writer.write(csvContent);
