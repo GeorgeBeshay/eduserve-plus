@@ -33,14 +33,14 @@ export class InstructorComponent implements OnInit {
     // Any initialization logic
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.signInForm.valid) {
       const id = this.signInForm.value.id;
       const password = this.signInForm.value.password;
 
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
-      let isSuccess:boolean | null = this.service.signIn(id,password);
+      let isSuccess:boolean | null = await this.service.signIn(id,password);
       if(isSuccess){
         alert('Instructor successfully signed in');}
       else{
@@ -50,7 +50,7 @@ export class InstructorComponent implements OnInit {
     }
   }
 
-  onSignUp() {
+  async onSignUp() {
     console.log(this.signUpForm.value)
     if (this.signUpForm.valid) {
       // const name = this.signUpForm.value.name;
