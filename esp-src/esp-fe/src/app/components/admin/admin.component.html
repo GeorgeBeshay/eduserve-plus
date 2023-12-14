@@ -104,7 +104,7 @@
         <ng-container *ngIf="selectedSection == 3">
           Upload your CSV file to add students!
           <form class="upload-csv-form" [formGroup]="adminUploadStudentsForm" (ngSubmit)="uploadStudents()">
-            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onStudentFileChange($event)"/>
             <button type="submit">Submit</button>
           </form>
         </ng-container>

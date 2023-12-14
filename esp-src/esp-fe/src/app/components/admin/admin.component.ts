@@ -83,7 +83,7 @@ export class AdminComponent implements OnInit{
       const NewAdminPassword = this.AdminCreationForm.get('NewAdminPassword')?.value;
       const NewAdminName =this.AdminCreationForm.get('NewAdminName')?.value;
       console.log('Registering new Admin with ID: ', NewAdminID,' , password: ',NewAdminPassword,' and Name: ',NewAdminName,' Admin was registered by Admin # ',id);
- 
+
       let admin = new Admin(
         this.AdminCreationForm.get('NewAdminID')?.value,
         this.AdminCreationForm.get('NewAdminPassword')?.value,
@@ -127,13 +127,13 @@ export class AdminComponent implements OnInit{
 
   async uploadInstructors(){
 
-    if(this.adminUploadInstructorsForm.valid 
+    if(this.adminUploadInstructorsForm.valid
       && this.csvFileValidator(this.adminUploadInstructorsForm)){
-  
+
       let uploaded_file = this.unregisteredInstructorfile;
       console.log(uploaded_file)
       alert('Uploading Instructors from CSV file please wait a moment')
-      
+
       if(uploaded_file){
 
         let InstructorsAdded: number = 0
@@ -143,14 +143,14 @@ export class AdminComponent implements OnInit{
         // in the admin service
 
         // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
-        
+
         if(InstructorsAdded > 0){
           alert(InstructorsAdded + ' Added Successfully')
         }
         else{
           alert('Error: No students were added')
         }
-      }  
+      }
     }
     else{
       alert('Only CSV files are allowed');
@@ -165,7 +165,7 @@ export class AdminComponent implements OnInit{
 
   async uploadStudents() {
 
-    if(this.adminUploadStudentsForm 
+    if(this.adminUploadStudentsForm
       && this.csvFileValidator(this.adminUploadStudentsForm)) {
 
         let uploaded_file = this.unregisteredStudentfile;
@@ -174,10 +174,10 @@ export class AdminComponent implements OnInit{
 
         if (uploaded_file) {
 
-          let studentsAdded: number = 0
+          let studentsAdded: number = await this.service.uploadUnregisteredStudents(uploaded_file)
 
-          // TODO: send csv file to back end by a service, get the number of added students 
-          
+          // TODO: send csv file to back end by a service, get the number of added students
+
           if(studentsAdded > 0){
             alert(studentsAdded + ' Added Successfully')
           }
@@ -185,7 +185,7 @@ export class AdminComponent implements OnInit{
             alert('Error: No students were added')
           }
         }
-      
+
     } else {
       alert('Only CSV files are allowed')
     }
