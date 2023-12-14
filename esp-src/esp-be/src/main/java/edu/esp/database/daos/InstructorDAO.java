@@ -142,20 +142,14 @@ public class InstructorDAO extends DAO<Instructor> {
     }
 
     public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
-        List<UnregisteredInstructor> empty = new ArrayList<UnregisteredInstructor>();
         try {
-
-            String sql = """
-                SELECT *
-                FROM unregistered_instructor
-                """;
             BeanPropertyRowMapper<UnregisteredInstructor> rm = new BeanPropertyRowMapper<>(UnregisteredInstructor.class);
             this.rowMapper.setPrimitivesDefaultedForNullValue(true);
-            return jdbcTemplate.query(sql,rm);
+            return jdbcTemplate.query("SELECT * FROM unregistered_instructor;",rm);
         }
         catch (Exception error) {
             Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
-            return empty;
+            return null;
         }
     }
 }

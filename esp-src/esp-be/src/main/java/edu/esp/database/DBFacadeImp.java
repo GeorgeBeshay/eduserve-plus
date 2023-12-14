@@ -99,4 +99,8 @@ public class DBFacadeImp {
         return this.instructorDAO.getAllUnregisteredInstructors();
     }
 
+    public List<UnregisteredStudent> getAllUnregisteredStudents() {
+        return this.studentDAO.getAllUnregisteredStudents();
+    }
+
 }

@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAO extends DAO<Course> {
@@ -115,36 +114,39 @@ public class CourseDAO extends DAO<Course> {
     }
 
     public List<Course> getAllCourses() {
-        List<Course> courses = new ArrayList<Course>();
         try {
+            List<Course> courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
 
-            String sql = """
-                SELECT *
-                FROM course
-                """;
+            for (Course course : courses) {
+                List<String> pre = getCoursePrerequisites(course.getCourseCode());
 
-            courses = jdbcTemplate.query(sql, rowMapper);
-
-            for (Course course:courses) {
-                try {
-                    String sql2 = """
-                            SELECT preq_id
-                            FROM course_prereq
-                            WHERE course_code = '
-                            """ + course.getCourseCode() + "'";
-                    course.setPrerequisite(jdbcTemplate.queryForList(sql2,String.class));
+                if (pre == null) {
+                    throw new RuntimeException("Error had occurred while reading the database.");
                 }
-                catch (Exception e){
-                    Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
-                }
+
+                course.setPrerequisite(pre);
             }
+
+            return courses;
         }
         catch (Exception error) {
             Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
         }
-
-        return courses;
     }
 
+    private List<String> getCoursePrerequisites(String courseCode) {
+        try {
+            String sql = """
+                            SELECT preq_id
+                            FROM course_prereq
+                            WHERE course_code = '?';
+                            """;
+            return jdbcTemplate.queryForList(sql, String.class, courseCode);
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+            return null;
+        }
+    }
 
 }

@@ -137,4 +137,16 @@ public class StudentDAO extends DAO <Student> {
             return false;
         }
     }
+
+    public List<UnregisteredStudent> getAllUnregisteredStudents() {
+        try {
+            BeanPropertyRowMapper<UnregisteredStudent> rm = new BeanPropertyRowMapper<>(UnregisteredStudent.class);
+            this.rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query("SELECT * FROM unregistered_student;",rm);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
 }

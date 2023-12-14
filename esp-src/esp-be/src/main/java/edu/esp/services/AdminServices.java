@@ -6,6 +6,7 @@ import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.system_entities.system_uni_objs.Course;
+import edu.esp.system_entities.system_users.UnregisteredStudent;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -147,7 +148,7 @@ public class AdminServices {
 
         List<Course> courses = dbFacade.getAllCourses();
         Logger.logMsgFrom(this.getClass().getName(), "get All the Courses successfully ..", 0);
-        return courses;
+        return (courses != null)? courses : new ArrayList<>();
     }
 
     /**
@@ -158,7 +159,19 @@ public class AdminServices {
     public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
 
         List<UnregisteredInstructor> instructors = dbFacade.getAllUnregisteredInstructors();
-        Logger.logMsgFrom(this.getClass().getName(), "get All the Unregistered Instructors successfully ..", 0);
-        return instructors;
+        Logger.logMsgFrom(this.getClass().getName(), "Getting all unregistered instructors..", 0);
+        return (instructors != null)? instructors : new ArrayList<>();
+    }
+
+    /**
+     * get all the un registered students saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of UnregisteredStudent objects (possibly an empty one).
+     */
+    public List<UnregisteredStudent> getAllUnregisteredStudents() {
+
+        List<UnregisteredStudent> students = dbFacade.getAllUnregisteredStudents();
+        Logger.logMsgFrom(this.getClass().getName(), "Getting all unregistered students..", 0);
+        return (students != null)? students : new ArrayList<>();
     }
 }

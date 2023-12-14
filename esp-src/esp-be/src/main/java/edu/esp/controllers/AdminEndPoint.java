@@ -5,6 +5,7 @@ import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
+import edu.esp.system_entities.system_users.UnregisteredStudent;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,15 @@ public class AdminEndPoint {
 
         Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to get all Unregistered Instructors .. processing the request ..", -1);
         return new ResponseEntity<>(this.adminServices.getAllUnregisteredInstructors(), HttpStatus.OK);
+
+    }
+
+    @PostMapping("getAllUnregisteredStudents")
+    @ResponseBody
+    public ResponseEntity<List<UnregisteredStudent>> getAllUnregisteredStudents () {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to get all Unregistered Students .. processing the request ..", -1);
+        return new ResponseEntity<>(this.adminServices.getAllUnregisteredStudents(), HttpStatus.OK);
 
     }
 
