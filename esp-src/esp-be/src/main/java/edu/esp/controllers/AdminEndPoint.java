@@ -2,9 +2,7 @@ package edu.esp.controllers;
 
 import edu.esp.services.AdminServices;
 import edu.esp.system_entities.system_uni_objs.Course;
-import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
-import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -43,17 +41,16 @@ public class AdminEndPoint {
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("signUp")
+    @PostMapping("addNewAdmin")
     @ResponseBody
-    public ResponseEntity<Boolean> signUp (@RequestBody Admin admin) {
+    public ResponseEntity<Boolean> addNewAdmin (@RequestBody Map<String, Object> requestMap) {
+        Logger.logMsgFrom(this.getClass().getName(), "Client side requested to add a new admin .. processing the request ..", -1);
 
-        Logger.logMsgFrom(this.getClass().getName(), "Client side requested to register a new admin .. processing the request ..", -1);
-
-        return (this.adminServices.signUp(admin))
+        return (this.adminServices.addNewAdmin(requestMap))
                 ? new ResponseEntity<>(true, HttpStatus.OK)
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-
     }
+
     @PostMapping("CreateUnregisteredInstructor")
     @ResponseBody
     public ResponseEntity<Boolean> registerInstructor(@RequestBody UnregisteredInstructor unregisteredInstructor){

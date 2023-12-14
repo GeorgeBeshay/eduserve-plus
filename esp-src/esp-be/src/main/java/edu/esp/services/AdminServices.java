@@ -32,20 +32,42 @@ public class AdminServices {
     }
 
     /**
-     * Implements the business logic for registering a new admin.
-     *
-     * @param admin The admin object to be registered.
-     * @return True if the registration is successful, otherwise false.
+     * Implements the business logic for adding a new admin to the system. It relies on the methods provided by the
+     * dbFacade object from the layer below it, and converts the admin password to the hashed version of it.
+     * @param requestMap A map that contains the "admin" field which essentially contains all the admin real data
+     * except for the password, which is sent in a dedicated field "adminPw", so that it can be further hashed
+     * and then stored in the DB. We can't send the 'adminPw' field in the admin object itself, as the object stores
+     * an attribute of type int and not a string.
+     * @return a boolean flag that indicates the success or failure of the process.
      */
-    public boolean signUp(Admin admin) {
+    public boolean addNewAdmin(Map<String,Object> requestMap) {
 
-        if (dbFacade.createAdmin(admin)) {
-            Logger.logMsgFrom(this.getClass().getName(), "New admin was successfully registered.", 0);
+        try {
+            // Check that the map contains the needed fields.
+            assert requestMap != null : "Request Map was found to be null!";
+            assert requestMap.containsKey("admin") : "Request Map does not contain the 'admin' field!";
+            assert requestMap.containsKey("adminPw") : "Request Map does not contain the 'adminPw' field!";
+
+            // Prepare the real admin object, that to be stored in the DB.
+            Admin adminToBeAdded = (new ObjectMapper()).convertValue(requestMap.get("admin"), Admin.class);
+            int hashedPassword = Hasher.hash((String)requestMap.get("adminPw"));
+
+            // Check for special cases
+            assert adminToBeAdded != null : "Admin object sent was null.";
+            assert hashedPassword != -1 : "Admin password couldn't be hashed.";
+
+            adminToBeAdded.setAdminPwHash(hashedPassword);
+            assert dbFacade.createAdmin(adminToBeAdded) : "New admin wasn't created.";
+
+            Logger.logMsgFrom(this.getClass().getName(), "New admin was successfully created.", 0);
             return true;
+
+        } catch (Exception | Error e) {
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+            return false;
+
         }
 
-        Logger.logMsgFrom(this.getClass().getName(), "New Admin failed to be registered.", 1);
-        return false;
     }
 
     /**
