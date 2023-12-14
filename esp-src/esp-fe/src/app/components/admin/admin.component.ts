@@ -174,12 +174,13 @@ export class AdminComponent implements OnInit{
 
         if (uploaded_file) {
 
-          let studentsAdded: number = await this.service.uploadUnregisteredStudents(uploaded_file)
+          let results = await this.service.uploadUnregisteredStudents(uploaded_file)
 
-          // TODO: send csv file to back end by a service, get the number of added students
-
-          if(studentsAdded > 0){
-            alert(studentsAdded + ' Added Successfully')
+          if(results.studentsSuccessfullyAdded > 0){
+            alert(results.studentsSuccessfullyAdded + ' Added Successfully')
+            for (var fail of results.failedStudentsToBeAdded) {
+              alert('Student in row ' + fail + ' failed to be added.')
+            }
           }
           else{
             alert('Error: No students were added')
