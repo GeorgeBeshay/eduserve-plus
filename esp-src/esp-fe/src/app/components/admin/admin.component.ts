@@ -13,9 +13,12 @@ import { AbstractControl } from '@angular/forms';
 export class AdminComponent implements OnInit{
   signInForm: FormGroup;
   AdminCreationForm: FormGroup<any>;
-  AdminUploadInstructorsForm: FormGroup<any>;
+  adminUploadInstructorsForm: FormGroup<any>;
+  adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
+  unregisteredInstructorfile : File | null = null;
+  unregisteredStudentfile : File | null = null;
 
 
   constructor(
@@ -35,10 +38,16 @@ export class AdminComponent implements OnInit{
       NewAdminName: ['', Validators.required]
     });
 
-    this.AdminUploadInstructorsForm = this.formBuilder.group({
+    this.adminUploadInstructorsForm = this.formBuilder.group({
       uploaded_file: ['', [Validators.required]]
 
     });
+
+    this.adminUploadStudentsForm = this.formBuilder.group({
+      uploaded_file: ['', [Validators.required]]
+
+    });
+
     this.admin = null
     this.selectedSection = 0
 
@@ -74,7 +83,7 @@ export class AdminComponent implements OnInit{
       const NewAdminPassword = this.AdminCreationForm.get('NewAdminPassword')?.value;
       const NewAdminName =this.AdminCreationForm.get('NewAdminName')?.value;
       console.log('Registering new Admin with ID: ', NewAdminID,' , password: ',NewAdminPassword,' and Name: ',NewAdminName,' Admin was registered by Admin # ',id);
- 
+
       let admin = new Admin(
         this.AdminCreationForm.get('NewAdminID')?.value,
         this.AdminCreationForm.get('NewAdminPassword')?.value,
@@ -110,25 +119,81 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  UploadInstructors(){
-    if(this.AdminUploadInstructorsForm.valid && this.csvFileValidator()){
-      const uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file');
-      alert('Uploading Instructors from CSV file: ')
-      console.log('Uploading Instructors from CSV file: ', uploaded_file);
+  onInstructorFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.unregisteredInstructorfile = event.target.files[0];
+    }
+  }
 
-      // Add the code here to send the CSV file to the backend
+  async uploadInstructors(){
 
+    if(this.adminUploadInstructorsForm.valid
+      && this.csvFileValidator(this.adminUploadInstructorsForm)){
 
+      let uploaded_file = this.unregisteredInstructorfile;
+      console.log(uploaded_file)
+      alert('Uploading Instructors from CSV file please wait a moment')
 
+      if(uploaded_file){
 
+        let InstructorsAdded: number = 0
+        // Add the code here to send the CSV file to the backend
+
+        // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
+        // in the admin service
+
+        // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
+
+        if(InstructorsAdded > 0){
+          alert(InstructorsAdded + ' Added Successfully')
+        }
+        else{
+          alert('Error: No students were added')
+        }
+      }
     }
     else{
       alert('Only CSV files are allowed');
     }
   }
 
-  csvFileValidator() {
-    const control = this.AdminUploadInstructorsForm.get('uploaded_file') || null;
+  onStudentFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.unregisteredStudentfile = event.target.files[0];
+    }
+  }
+
+  async uploadStudents() {
+
+    if(this.adminUploadStudentsForm
+      && this.csvFileValidator(this.adminUploadStudentsForm)) {
+
+        let uploaded_file = this.unregisteredStudentfile;
+        console.log('Uploading Students from CSV file: ', uploaded_file);
+        alert('Uploading Students from CSV file, please wait.')
+
+        if (uploaded_file) {
+
+          let results = await this.service.uploadUnregisteredStudents(uploaded_file)
+
+          if(results.studentsSuccessfullyAdded > 0){
+            alert(results.studentsSuccessfullyAdded + ' Added Successfully')
+            for (var fail of results.failedStudentsToBeAdded) {
+              alert('Student in row ' + fail + ' failed to be added.')
+            }
+          }
+          else{
+            alert('Error: No students were added')
+          }
+        }
+
+    } else {
+      alert('Only CSV files are allowed')
+    }
+  }
+
+  csvFileValidator(csvForm: FormGroup) {
+    const control = csvForm.get('uploaded_file') || null;
     if(control){
       const file = control?.value;
       const extension = file.split('.').pop()
