@@ -6,10 +6,7 @@ import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.utilities.Hasher;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = EspBeApplication.class)
 @AutoConfigureMockMvc
 public class AdminEndPointTests {
@@ -49,6 +47,16 @@ public class AdminEndPointTests {
                         (byte) 0
                         )
         );
+    }
+
+    @BeforeAll
+    public void setUpBeforeAll() {
+        assert (
+                jdbcTemplate.queryForList(
+                        "SELECT * FROM sys_admin WHERE admin_id BETWEEN ? AND ?",
+                        (byte) 1,
+                        (byte) 10)
+        ).isEmpty() : "Check your DB state, records with testing id were found!";
     }
 
     @AfterEach
@@ -230,6 +238,224 @@ public class AdminEndPointTests {
         assertFalse(booleanResponse);
 
         jdbcTemplate.update("DELETE FROM course WHERE course_code = 'TEST3';");
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing null requestMap.")
+    public void addNewAdminNullMap() throws Exception {
+
+        // Arrange
+        Map<String, Object> requestMap = null;
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertFalse(booleanResponse);
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing an empty requestMap.")
+    public void addNewAdminEmptyMap() throws Exception {
+
+        // Arrange
+        Map<String, Object> requestMap = new HashMap<>();
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertFalse(booleanResponse);
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing a map with a missing 'admin' field.")
+    public void addNewAdminMapMissingAdminField() throws Exception {
+
+        // Arrange
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("adminPw", "awesomePassword");
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertFalse(booleanResponse);
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing a map with a missing 'adminPw' field.")
+    public void addNewAdminMapMissingAdminPwField() throws Exception {
+
+        // Arrange
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("admin", new Admin());
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertFalse(booleanResponse);
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing a map with an admin initialized using an empty constructor.")
+    public void addNewAdminMapAdminAttributesNonTouched() throws Exception {
+
+        // Arrange
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("admin", new Admin());
+        requestMap.put("adminPw", "awesomePassword");
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertFalse(booleanResponse);
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing a map containing valid fields.")
+    public void addNewAdminValidMap() throws Exception {
+
+        // Arrange
+        byte adminId = 2;
+        byte creatorAdminId = 0;
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("admin", new Admin(adminId, 123, "TEST ADMIN", creatorAdminId));
+        requestMap.put("adminPw", "awesomePassword");
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.OK.value(), status);
+        assertTrue(booleanResponse);
+
+        // Clean
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id = ?", adminId);
+
+    }
+
+    @Test
+    @DisplayName("Method addNewAdmin() - Passing a map containing an admin that already exists.")
+    public void addNewAdminDuplicateAdmin() throws Exception {
+
+        // Arrange
+        byte adminId = 2;
+        byte creatorAdminId = 0;
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("admin", new Admin(adminId, 123, "TEST ADMIN", creatorAdminId));
+        requestMap.put("adminPw", "awesomePassword");
+
+        // Act
+        MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+        // Retrieve the response status code
+        int status = result.getResponse().getStatus();
+
+        // Retrieve the response content
+        String content = result.getResponse().getContentAsString();
+        boolean booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert
+        assertEquals(HttpStatus.OK.value(), status);
+        assertTrue(booleanResponse);
+
+        // Act again
+        result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addNewAdmin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(requestMap)))
+                .andReturn();
+
+
+        status = result.getResponse().getStatus();
+
+        content = result.getResponse().getContentAsString();
+        booleanResponse = Boolean.parseBoolean(content);
+
+        // Assert again against duplication scenario
+        assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        assertFalse(booleanResponse);
+
+        // Clean
+        jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id = ?", adminId);
 
     }
 
