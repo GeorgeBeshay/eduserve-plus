@@ -91,10 +91,10 @@ courses: Course[] = []
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
     if(this.selectedSection == 2){
-      this.showCourses();
+      this.showUnregisteredInstructors();
     }
-    if(this.selectedSection == 4){
-
+    if(this.selectedSection == 3){
+      this.showCourses();
     }
     console.log(this.selectedSection)
   }
