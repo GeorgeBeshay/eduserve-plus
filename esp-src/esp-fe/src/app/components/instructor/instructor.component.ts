@@ -40,8 +40,12 @@ export class InstructorComponent implements OnInit {
 
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
-      this.service.signIn(id,password);
-
+      let isSuccess:boolean | null = this.service.signIn(id,password);
+      if(isSuccess){
+        alert('Instructor successfully signed in');}
+      else{
+        alert('Instructor failed to sign in');
+      }
       // call API
     }
   }
@@ -64,7 +68,12 @@ export class InstructorComponent implements OnInit {
         ', new password:', newPassword,
         'and confirm password: ', confirmNewPassword);
 
-      this.service.signUp(newPassword,password,instructor);
+      let isSuccess: boolean | null = await this.service.signUp(newPassword,password,instructor);
+      if(isSuccess){
+        alert('Instructor has been successfully signed up');}
+      else{
+        alert('Failed to sign up instructor');
+      }
     }
 
   }
