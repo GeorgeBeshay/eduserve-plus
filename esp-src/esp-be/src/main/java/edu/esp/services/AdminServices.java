@@ -144,24 +144,47 @@ public class AdminServices {
      * @param unregisteredStudentsFile the csv file sent from the front
      * @return Number of added students
      */
-    public int addUnregisteredStudents (MultipartFile unregisteredStudentsFile) {
+    public Map<String, Object> addUnregisteredStudents (MultipartFile unregisteredStudentsFile) {
 
         CSVManipulator csvManipulator = new CSVManipulator();
 
+        List<UnregisteredStudent> unregisteredStudents = null;
         if (csvManipulator.saveCSVFile(unregisteredStudentsFile)) {
-            List<UnregisteredStudent> unregisteredStudents = csvManipulator.readUnregisteredStudents(unregisteredStudentsFile.getOriginalFilename());
-
-            int counter = 0;
-            for (UnregisteredStudent unregisteredStudent : unregisteredStudents) {
-                if (dbFacade.addNewUnregisteredStudent(unregisteredStudent)) {
-                    counter++;
-                }
-            }
-
-            return counter;
+            unregisteredStudents = csvManipulator.readUnregisteredStudents(unregisteredStudentsFile.getOriginalFilename());
         }
 
-        return 0;
+        return addUnregisteredStudents(unregisteredStudents);
+    }
+
+    /**
+     * This is a private function used to add the unregistered students
+     * @param unregisteredStudents the students needed to be added
+     * @return Map of 2 things: the number of successfully added students and the row index of failed students to be added
+     */
+
+    private Map<String, Object> addUnregisteredStudents(List<UnregisteredStudent> unregisteredStudents) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        List<Integer> failStudentsToBeAdded = new ArrayList<>();
+
+        if (unregisteredStudents == null) {
+            result.put("studentsSuccessfullyAdded", 0);
+            result.put("failedStudentsToBeAdded", failStudentsToBeAdded);
+            return result;
+        }
+
+        for (int i = 0 ; i < unregisteredStudents.size() ; i++) {
+            if (!dbFacade.addNewUnregisteredStudent(unregisteredStudents.get(i))) {
+                failStudentsToBeAdded.add(i + 2);
+            }
+        }
+
+        result.put("studentsSuccessfullyAdded", unregisteredStudents.size() - failStudentsToBeAdded.size());
+        result.put("failedStudentsToBeAdded", failStudentsToBeAdded);
+
+        return result;
+
     }
 
 }

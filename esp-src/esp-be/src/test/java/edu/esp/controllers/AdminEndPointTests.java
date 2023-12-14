@@ -1,5 +1,6 @@
 package edu.esp.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.be.EspBeApplication;
 import edu.esp.database.DBFacadeImp;
@@ -256,7 +257,8 @@ public class AdminEndPointTests {
                         studentID,studentOTP,studentDpt
                         50,13,1
                         51,125,1
-                        52,1245,1""";
+                        52,1245,1
+                        50,151,1""";
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(csvManipulator.csvFolderPrefix + originalFilename));
         writer.write(csvContent);
@@ -276,11 +278,14 @@ public class AdminEndPointTests {
 
         // Retrieve the response content
         String content = result.getResponse().getContentAsString();
-        int addedStudents = Integer.parseInt(content);
+        Map<String, Object> resultMap = new ObjectMapper().readValue(content, new TypeReference<Map<String, Object>>() {});
+        int addedStudents = (int) resultMap.get("studentsSuccessfullyAdded");
+        List<Integer> failedStudentsToBeAdded = (List<Integer>) resultMap.get("failedStudentsToBeAdded");
 
         // Assert the status code and the boolean value
         assertEquals(HttpStatus.OK.value(), status);
         assertEquals(3, addedStudents);
+        assertEquals(5, failedStudentsToBeAdded.get(0));
 
         jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id IN(50, 51, 52);");
         Files.delete(Paths.get(csvManipulator.csvFolderPrefix + originalFilename));
@@ -304,7 +309,10 @@ public class AdminEndPointTests {
 
         // Retrieve the response content
         String content = result.getResponse().getContentAsString();
-        int addedStudents = Integer.parseInt(content);
+
+        Map<String, Object> resultMap = new ObjectMapper().readValue(content, new TypeReference<Map<String, Object>>() {});
+        int addedStudents = (int) resultMap.get("studentsSuccessfullyAdded");
+        List<Integer> failedStudentsToBeAdded = (List<Integer>) resultMap.get("failedStudentsToBeAdded");
 
         // Assert the status code and the boolean value
         assertEquals(HttpStatus.BAD_REQUEST.value(), status);
