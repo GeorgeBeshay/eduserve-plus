@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAO extends DAO<Course> {
@@ -112,5 +113,38 @@ public class CourseDAO extends DAO<Course> {
         }
 
     }
+
+    public List<Course> getAllCourses() {
+        List<Course> courses = new ArrayList<Course>();
+        try {
+
+            String sql = """
+                SELECT *
+                FROM course
+                """;
+
+            courses = jdbcTemplate.query(sql, rowMapper);
+
+            for (Course course:courses) {
+                try {
+                    String sql2 = """
+                            SELECT preq_id
+                            FROM course_prereq
+                            WHERE course_code = '
+                            """ + course.getCourseCode() + "'";
+                    course.setPrerequisite(jdbcTemplate.queryForList(sql2,String.class));
+                }
+                catch (Exception e){
+                    Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+                }
+            }
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+        }
+
+        return courses;
+    }
+
 
 }
