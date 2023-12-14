@@ -47,10 +47,10 @@ public class CSVManipulatorTests {
     public void testReadValidInstructorFile() throws IOException {
         writeFile("validInstructors.csv",
                 """
-                        instructorID,instructorOTP
-                        1001,bl0550m
-                        2002,bu6613s
-                        3003,6utt3rcup"""
+                        instructorID,instructorOTP,instructorDpt
+                        1001,bl0550m,101
+                        2002,bu6613s,102
+                        3003,6utt3rcup,103"""
         );
 
         List<UnregisteredInstructor> list = manipulator.readUnregisteredInstructors(filename);
@@ -69,10 +69,10 @@ public class CSVManipulatorTests {
     public void testReadInvalidFormatInstructorFile() throws IOException {
         writeFile("invalidFormatInstructors.csv",
                 """
-                        instructorID,instructorOTP
-                        1001,bl0550m
-                        2002
-                        3003,6utt3rcup"""
+                        instructorID,instructorOTP,instructorDpt
+                        1001,bl0550m,102
+                        2002,bu6613s
+                        3003,6utt3rcup,103"""
         );
 
         assertNull(manipulator.readUnregisteredInstructors(filename));
@@ -83,10 +83,10 @@ public class CSVManipulatorTests {
     public void testReadInvalidIdInstructorFile() throws IOException {
         writeFile("invalidIdInstructors.csv",
                 """
-                        instructorID,instructorOTP
-                        1001,bl0550m
-                        2002,bu6613s
-                        -303,6utt3rcup"""
+                        instructorID,instructorOTP,instructorDpt
+                        1001,bl0550m,101
+                        2002,bu6613s,102
+                        -303,6utt3rcup,103"""
         );
 
         assertNull(manipulator.readUnregisteredInstructors(filename));
@@ -95,7 +95,7 @@ public class CSVManipulatorTests {
     @Test
     @DisplayName("CSVManipulator - Reading instructor file with a header only")
     public void testReadInstructorFileHeaderOnly() throws IOException {
-        writeFile("headerOnlyInstructor.csv", "instructorID,instructorOTP");
+        writeFile("headerOnlyInstructor.csv", "instructorID,instructorOTP,instructorDpt");
 
         assertNull(manipulator.readUnregisteredInstructors(filename));
     }
@@ -105,10 +105,10 @@ public class CSVManipulatorTests {
     public void testReadInvalidHeaderInstructorFile() throws IOException {
         writeFile("invalidHeaderInstructors.csv",
                 """
-                        studentID,studentOTP
-                        1001,bl0550m
-                        2002,bu6613s
-                        303,6utt3rcup"""
+                        studentID,studentOTP,studentDpt
+                        1001,bl0550m,101
+                        2002,bu6613s,102
+                        303,6utt3rcup,103"""
         );
 
         assertNull(manipulator.readUnregisteredInstructors(filename));
@@ -129,10 +129,10 @@ public class CSVManipulatorTests {
     public void testReadValidStudentFile() throws IOException {
         writeFile("validStudents.csv",
                 """
-                        studentID,studentOTP
-                        1010,s4m33r
-                        2020,sh4h33r
-                        3030,64h33r"""
+                        studentID,studentOTP,studentDpt
+                        1010,s4m33r,109
+                        2020,sh4h33r,108
+                        3030,64h33r,107"""
         );
 
         List<UnregisteredStudent> list = manipulator.readUnregisteredStudents(filename);
@@ -151,7 +151,7 @@ public class CSVManipulatorTests {
     public void testReadInvalidFormatStudentFile() throws IOException {
         writeFile("invalidFormatStudents.csv",
                 """
-                        studentID,studentOTP
+                        studentID,studentOTP,studentDpt
                         haHAA,s4m33r
                         2020,sh4h33r
                         3030,64h33r"""
@@ -165,10 +165,10 @@ public class CSVManipulatorTests {
     public void testReadInvalidIdStudentFile() throws IOException {
         writeFile("invalidIdStudents.csv",
                 """
-                        studentID,studentOTP
-                        1010,s4m33r
-                        -100,sh4h33r
-                        3030,64h33r"""
+                        studentID,studentOTP,studentDpt
+                        1010,s4m33r,109
+                        -100,sh4h33r,108
+                        3030,64h33r,107"""
         );
 
         assertNull(manipulator.readUnregisteredStudents(filename));
@@ -177,7 +177,7 @@ public class CSVManipulatorTests {
     @Test
     @DisplayName("CSVManipulator - Reading student file with a header only")
     public void testReadStudentFileHeaderOnly() throws IOException {
-        writeFile("headerOnlyStudents.csv", "studentID,studentOTP");
+        writeFile("headerOnlyStudents.csv", "studentID,studentOTP,studentDpt");
 
         assertNull(manipulator.readUnregisteredStudents(filename));
     }
@@ -187,10 +187,10 @@ public class CSVManipulatorTests {
     public void testReadInvalidHeaderStudentFile() throws IOException {
         writeFile("invalidHeaderStudents.csv",
                 """
-                        instructorID,instructorOTP
-                        1010,s4m33r
-                        100,sh4h33r
-                        3030,64h33r"""
+                        instructorID,instructorOTP,instructorDpt
+                        1010,s4m33r,109
+                        100,sh4h33r,108
+                        3030,64h33r,107"""
         );
 
         assertNull(manipulator.readUnregisteredStudents(filename));

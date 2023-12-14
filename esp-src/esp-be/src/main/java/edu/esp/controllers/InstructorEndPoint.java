@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.json.KotlinSerializationJsonEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,11 +32,12 @@ public class InstructorEndPoint {
 
     @PostMapping("signIn")
     @ResponseBody
-    public Boolean signIn(@RequestBody Instructor instructor) {
-        //check if the username and password are correct
-        //and send message to the front
-        System.out.println(instructor.toString());
-        return true;
+    public ResponseEntity<Boolean> signIn(@RequestBody Map<String, Object> requestMap) {
+        Logger.logMsgFrom(this.getClass().getName(), "An Instructor has requested to sign in .. processing the request ..", -1);
+
+        return (this.instructorServices.signIn(requestMap))
+                ? new ResponseEntity<>(true, HttpStatus.OK)
+                : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("signUp")

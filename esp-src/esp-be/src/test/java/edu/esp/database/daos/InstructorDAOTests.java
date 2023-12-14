@@ -206,20 +206,23 @@ public class InstructorDAOTests {
     public void testSignUpValidInstructor() {
         // Insert an unregistered instructor with ID = 4
         jdbcTemplate.update("""
-                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash, dpt_id)
                 VALUES
-                    (4, 999);
+                    (4, 999, 2);
                 """);
 
         // Create an instructor object with same ID and test data
         Instructor registeredInstructor = new Instructor(
-            4, 9847, (byte) 2,
+            4, 9847, (byte)-1,
             "Signed Up Instructor", null, "instructor5@uni.com", null
         );
 
         assertTrue(this.instructorDAO.signUpInstructor(4, 999, registeredInstructor));
         // Check that the instructor does not exist anymore in the unregistered instructors table
         assertNull(this.instructorDAO.readUnregisteredInstructorById(4));
+        // Read the registered instructor and make sure the department ID
+        // is the same as the one that was in the unregistered table
+        assertEquals(2, this.instructorDAO.readInstructorById(4).getDptId());
 
         // Delete the instructor used in the test
         jdbcTemplate.update("DELETE FROM instructor WHERE instructor_id = 4;");
@@ -242,15 +245,15 @@ public class InstructorDAOTests {
     public void testSignUpInstructorInvalidPassword() {
         // Insert an unregistered instructor with ID = 5
         jdbcTemplate.update("""
-                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash, dpt_id)
                 VALUES
-                    (5, 120);
+                    (5, 120, 3);
                 """);
 
 
         // Create an instructor object with same ID and test data, but sign up with a wrong OTP
         Instructor registeredInstructor = new Instructor(
-                5, 444, (byte) 2,
+                5, 444, (byte) -1,
                 "Fake Instructor", null, "instructorfake@uni.com", null
         );
 
@@ -264,7 +267,7 @@ public class InstructorDAOTests {
     @DisplayName("Instructor DAO - adding an unregistered instructor to the database")
     public void testCreateUnregisteredInstructor() {
         // Create an unregistered instructor with test data
-        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(90,463);
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(90,463,(byte)2);
 
         assertTrue(this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor));
 
@@ -276,7 +279,7 @@ public class InstructorDAOTests {
     @DisplayName("Instructor DAO - adding duplicate unregistered instructor to the database")
     public void testCreateDuplicateUnregisteredInstructor() {
         // Create an unregistered instructor with test data
-        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(2,567);
+        UnregisteredInstructor unregisteredInstructor = new UnregisteredInstructor(2,567,(byte)2);
 
         assertTrue(this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor));
         assertFalse(this.instructorDAO.createUnregisteredInstructor(unregisteredInstructor));
@@ -290,15 +293,16 @@ public class InstructorDAOTests {
     public void testReadUnregisteredInstructor() {
         // Insert an unregistered instructor with test data
         jdbcTemplate.update("""
-                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash, dpt_id)
                 VALUES
-                    (55, 13038);
+                    (55, 13038, 1);
                 """);
 
         UnregisteredInstructor unregisteredInstructor = this.instructorDAO.readUnregisteredInstructorById(55);
 
         assertEquals(55, unregisteredInstructor.getInstructorId());
         assertEquals(13038, unregisteredInstructor.getInstructorTempPwHash());
+        assertEquals(1, unregisteredInstructor.getDptId());
 
         // Delete inserted record
         jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = 55;");
@@ -310,7 +314,7 @@ public class InstructorDAOTests {
         // Create an unregistered instructor object with test data
         int id = random.nextInt(1, 100);
         int pwHash = random.nextInt(-10000, 10000);
-        UnregisteredInstructor newInstructor = new UnregisteredInstructor(id, pwHash);
+        UnregisteredInstructor newInstructor = new UnregisteredInstructor(id, pwHash, (byte)3);
 
         assertTrue(this.instructorDAO.createUnregisteredInstructor(newInstructor));
 
@@ -318,6 +322,7 @@ public class InstructorDAOTests {
 
         assertEquals(id, instructor.getInstructorId());
         assertEquals(pwHash, instructor.getInstructorTempPwHash());
+        assertEquals(3, instructor.getDptId());
 
         // Delete inserted record
         jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = %d;".formatted(id));
@@ -329,11 +334,9 @@ public class InstructorDAOTests {
     public void testDeleteValidUnregisteredInstructor() {
         // Insert an unregistered instructor with test data
         jdbcTemplate.update("""
-                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash)
-                VALUES
-                    (34, 3333);
-                """);
-
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash, dpt_id)
+                VALUES (34, 3333, 2);
+                 """);
         assertTrue(this.instructorDAO.deleteUnregisteredInstructorById(34));
         // Try to delete the same object again
         assertFalse(this.instructorDAO.deleteUnregisteredInstructorById(34));

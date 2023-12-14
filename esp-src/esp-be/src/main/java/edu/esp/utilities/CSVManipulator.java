@@ -53,25 +53,32 @@ public class CSVManipulator {
 
             // Parse the header row, check for correct size and column names
             record = csvIterator.next();
-            if (record.size() != 2 || !record.get(0).equals("instructorID") || !record.get(1).equals("instructorOTP")) {
+            if (record.size() != 3
+                    || !record.get(0).equals("instructorID")
+                    || !record.get(1).equals("instructorOTP")
+                    || !record.get(2).equals("instructorDpt")) {
                 throw new RuntimeException("Wrong instructor csv header format.");
             }
 
             // Check for presence of actual data
             if (!csvIterator.hasNext()) {
-                throw new RuntimeException("CSV file has a header only with no data.");
+                throw new RuntimeException("Instructor csv file has a header only with no data.");
             }
 
             // Parse the data rows
             int id, otpHash;
+            byte dpt;
             while (csvIterator.hasNext()) {
                 record = csvIterator.next();
-                id = Integer.parseInt(record.get(0));
-                otpHash = Hasher.hash(record.get(1));
-                if (record.size() > 2 || id < 0) {
-                    throw new RuntimeException("Error in records inside the CSV file.");
+                if (record.size() != 3) {
+                    throw new RuntimeException("An instructor record has an incorrect size in the csv file.");
                 }
-                instructors.add(new UnregisteredInstructor(id, otpHash));
+                if ((id = Integer.parseInt(record.get(0))) < 0) {
+                    throw new RuntimeException("An instructor record has a negative ID in the csv file.");
+                }
+                otpHash = Hasher.hash(record.get(1));
+                dpt = Byte.parseByte(record.get(2));
+                instructors.add(new UnregisteredInstructor(id, otpHash, dpt));
             }
 
             return instructors;
@@ -98,26 +105,33 @@ public class CSVManipulator {
 
             // Parse the header row, check for correct size and column names
             record = csvIterator.next();
-            if (record.size() != 2 || !record.get(0).equals("studentID") || !record.get(1).equals("studentOTP")) {
+            if (record.size() != 3
+                    || !record.get(0).equals("studentID")
+                    || !record.get(1).equals("studentOTP")
+                    || !record.get(2).equals(("studentDpt"))) {
                 throw new RuntimeException("Wrong student csv header format.");
             }
 
             // Check for presence of actual data
             if (!csvIterator.hasNext()) {
-                throw new RuntimeException("CSV file has a header only with no data.");
+                throw new RuntimeException("Student csv file has a header only with no data.");
             }
 
             // Parse the data rows
             int id, otpHash;
+            byte dpt;
             while (csvIterator.hasNext()) {
                 record = csvIterator.next();
-                id = Integer.parseInt(record.get(0));
-                otpHash = Hasher.hash(record.get(1));
-                if (record.size() > 2 || id < 0) {
-                    throw new RuntimeException("Error in records inside the CSV file.");
+                if (record.size() != 3) {
+                    throw new RuntimeException("A student record has an incorrect size in the csv file.");
                 }
+                if ((id = Integer.parseInt(record.get(0))) < 0){
+                    throw new RuntimeException("A student record has a negative ID in the csv file.");
+                }
+                otpHash = Hasher.hash(record.get(1));
+                dpt = Byte.parseByte(record.get(2));
                 students.add(
-                        new UnregisteredStudent(id, otpHash)
+                        new UnregisteredStudent(id, otpHash, dpt)
                 );
             }
 
