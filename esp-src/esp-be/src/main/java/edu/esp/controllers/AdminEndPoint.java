@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -68,6 +69,20 @@ public class AdminEndPoint {
         return (this.adminServices.addNewCourse(newCourse))
                 ? new ResponseEntity<>(true, HttpStatus.OK)
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("addUnregisteredStudents")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addUnregisteredStudents (@RequestParam("unregisteredStudents") MultipartFile unregisteredStudents) {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to add unregistered students .. processing the request ..", -1);
+
+        Map<String, Object> resultOfAddingStudents = this.adminServices.addUnregisteredStudents(unregisteredStudents);
+
+        return (!resultOfAddingStudents.get("studentsSuccessfullyAdded").equals(0))
+                ? new ResponseEntity<>(resultOfAddingStudents, HttpStatus.OK)
+                : new ResponseEntity<>(resultOfAddingStudents, HttpStatus.BAD_REQUEST);
+
     }
 
 }
