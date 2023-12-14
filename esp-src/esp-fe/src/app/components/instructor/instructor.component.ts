@@ -59,7 +59,7 @@ export class InstructorComponent implements OnInit {
       const intstructorPhone = this.signUpForm.value.contact_no;
       const instructorEmail = this.signUpForm.value.email;
       const officeHours = this.signUpForm.value.officeHours;
-      let instructor = new Instructor(id,newPassword,dptId,instructorName,intstructorPhone,instructorEmail,officeHours);
+      let instructor = new Instructor(id,"",dptId,instructorName,intstructorPhone,instructorEmail,officeHours);
       console.log('Signing in with ID:', id, ', password:', password,
         ', new password:', newPassword,
         'and confirm password: ', confirmNewPassword);
