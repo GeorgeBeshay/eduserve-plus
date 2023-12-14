@@ -24,15 +24,19 @@ public class AdminServicesTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUpBeforeEach() {
         this.adminServices = new AdminServices(jdbcTemplate);
+
+    }
+
+    @BeforeAll
+    public void setUpBeforeAll() {
         assert (
                 jdbcTemplate.queryForList(
                         "SELECT * FROM sys_admin WHERE admin_id BETWEEN ? AND ?",
                         (byte) 1,
                         (byte) 10)
         ).isEmpty() : "Check your DB state, records with testing id were found!";
-
     }
 
 
