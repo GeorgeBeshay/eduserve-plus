@@ -1,6 +1,7 @@
 package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
+import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,6 +219,35 @@ public class CourseDAOTests {
 
         // Clean
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
+    }
+
+    @Test
+    @DisplayName("Get All Courses not empty")
+    public void GetAllCoursesNotEmpty() {
+        DBFacadeImp db = new DBFacadeImp(jdbcTemplate);
+        db.addNewCourse(new Course("TEST1","TEST","ay habal",(byte)1,(byte)2));
+        db.addNewCourse(new Course("TEST2","TEST","ay habal",(byte)1,(byte)2));
+
+        List<Course> courseList = db.getAllCourses();
+        assertEquals(courseList.size(),2);
+        assertEquals(courseList.get(0).getCourseCode(),"TEST1");
+        assertEquals(courseList.get(1).getCourseCode(),"TEST2");
+
+
+        jdbcTemplate.update("DELETE FROM course WHERE course_name = 'TEST'");
+
+    }
+
+    @Test
+    @DisplayName("Get All Courses empty")
+    public void GetAllCoursesEmpty() {
+        DBFacadeImp db = new DBFacadeImp(jdbcTemplate);
+
+        List<Course> courseList = db.getAllCourses();
+
+        assertNotNull(courseList);
+        assertEquals(courseList.size(),0);
+
     }
 
 }
