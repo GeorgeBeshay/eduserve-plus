@@ -6,13 +6,15 @@ import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.system_entities.system_uni_objs.Course;
+import edu.esp.system_entities.system_users.UnregisteredStudent;
+import edu.esp.utilities.CSVManipulator;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
 
 /**
  * Class represents the "Brain" of all operations related to the admin entity, as it implements all the business logic
@@ -158,4 +160,53 @@ public class AdminServices {
 
         }
     }
+
+    /**
+     * This service takes the file from the front and send it to csv manipulator to save it
+     * @param unregisteredStudentsFile the csv file sent from the front
+     * @return Number of added students
+     */
+    public Map<String, Object> addUnregisteredStudents (MultipartFile unregisteredStudentsFile) {
+
+        CSVManipulator csvManipulator = new CSVManipulator();
+
+        List<UnregisteredStudent> unregisteredStudents = null;
+        if (csvManipulator.saveCSVFile(unregisteredStudentsFile)) {
+            unregisteredStudents = csvManipulator.readUnregisteredStudents(unregisteredStudentsFile.getOriginalFilename());
+        }
+
+        return addUnregisteredStudents(unregisteredStudents);
+    }
+
+    /**
+     * This is a private function used to add the unregistered students
+     * @param unregisteredStudents the students needed to be added
+     * @return Map of 2 things: the number of successfully added students and the row index of failed students to be added
+     */
+
+    private Map<String, Object> addUnregisteredStudents(List<UnregisteredStudent> unregisteredStudents) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        List<Integer> failStudentsToBeAdded = new ArrayList<>();
+
+        if (unregisteredStudents == null) {
+            result.put("studentsSuccessfullyAdded", 0);
+            result.put("failedStudentsToBeAdded", failStudentsToBeAdded);
+            return result;
+        }
+
+        for (int i = 0 ; i < unregisteredStudents.size() ; i++) {
+            if (!dbFacade.addNewUnregisteredStudent(unregisteredStudents.get(i))) {
+                failStudentsToBeAdded.add(i + 2);
+            }
+        }
+
+        result.put("studentsSuccessfullyAdded", unregisteredStudents.size() - failStudentsToBeAdded.size());
+        result.put("failedStudentsToBeAdded", failStudentsToBeAdded);
+
+        return result;
+
+    }
+
 }

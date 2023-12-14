@@ -3,6 +3,8 @@ package edu.esp.utilities;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.system_entities.system_users.UnregisteredStudent;
 import org.apache.commons.csv.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +14,28 @@ public class CSVManipulator {
 
     private Iterator<CSVRecord> csvIterator;
     public final String csvFolderPrefix = "src/main/resources/csv_files/";
+
+    /**
+     * Save the file that come from the front to csv_files folder
+     * @param csvFile the csv file to be saved
+     * @return A boolean to indicate the saving of the file
+     */
+    public Boolean saveCSVFile (MultipartFile csvFile) {
+
+        try {
+            File newFile = new File(System.getProperty("user.dir") + "/" + csvFolderPrefix + csvFile.getOriginalFilename());
+            csvFile.transferTo(newFile);
+
+            Logger.logMsgFrom(this.getClass().getName(), "CSV File saved successfully.", 0);
+            return true;
+        }
+
+        catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), "CSV File can not be saved " + e.getMessage(), 1);
+            return false;
+        }
+
+    }
 
     /**
      * Reads unregistered instructors from a .csv file uploaded to the system by an admin.
