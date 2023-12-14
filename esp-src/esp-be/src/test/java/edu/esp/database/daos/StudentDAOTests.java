@@ -377,5 +377,47 @@ public class StudentDAOTests {
         assertFalse(this.studentDAO.deleteUnregisteredStudentById(10));
     }
 
-    //TODO enforce DB constraint on unregistered_student id to be non-negative
+    @Test
+    @DisplayName("Student DAO - getting all unregistered students in normal case")
+    public void testGettingAllUnregisteredStudents(){
+        //Arrange
+        UnregisteredStudent unregisteredStudent1 = new UnregisteredStudent(1,456,(byte)1);
+        UnregisteredStudent unregisteredStudent2 = new UnregisteredStudent(2,456,(byte)1);
+        UnregisteredStudent unregisteredStudent3 = new UnregisteredStudent(3,456,(byte)1);
+        UnregisteredStudent unregisteredStudent4 = new UnregisteredStudent(4,456,(byte)1);
+        this.studentDAO.createUnregisteredStudent(unregisteredStudent1);
+        this.studentDAO.createUnregisteredStudent(unregisteredStudent2);
+        this.studentDAO.createUnregisteredStudent(unregisteredStudent3);
+        this.studentDAO.createUnregisteredStudent(unregisteredStudent4);
+
+        //Act
+        List<UnregisteredStudent> unregisteredStudents = this.studentDAO.getAllUnregisteredStudents();
+
+        //Assert
+        int i=1;
+        for(UnregisteredStudent unregisteredStudent : unregisteredStudents){
+            assertNotNull(unregisteredStudent);
+            assertEquals(i++,unregisteredStudent.getStudentId());
+        }
+        //Clean
+        this.studentDAO.deleteUnregisteredStudentById(1);
+        this.studentDAO.deleteUnregisteredStudentById(2);
+        this.studentDAO.deleteUnregisteredStudentById(3);
+        this.studentDAO.deleteUnregisteredStudentById(4);
+
+    }
+
+    @Test
+    @DisplayName("Student DAO - getting all unregistered students from an empty table")
+    public void testGettingAllUnregisteredInstructorsFromEmptyTable(){
+        //Arrange
+        //Empty DATABASE
+        //Act
+        List<UnregisteredStudent> unregisteredStudents = this.studentDAO.getAllUnregisteredStudents();
+        //Assert
+        assertNull(unregisteredStudents);
+
+    }
+
+    //TODO enforce DB constraint on unregistered_student id to be non-negative (Milestone 3)
 }
