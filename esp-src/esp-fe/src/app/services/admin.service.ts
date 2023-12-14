@@ -62,7 +62,7 @@ export class AdminService {
 
     try {
       return await firstValueFrom (
-        this.http.post<{"studentsSuccessfullyAdded": number, "failedStudentsToBeAdded": number[]}>(this.URL + 'addUnregisteredStudents', formData)
+        this.http.post<number>(this.URL + 'addUnregisteredStudents', formData)
       );
     }
 
@@ -72,7 +72,7 @@ export class AdminService {
       else
         console.error('Error');
     }
-    return {"studentsSuccessfullyAdded": 0, "failedStudentsToBeAdded": []};
+    return 0;
 
   }
 
