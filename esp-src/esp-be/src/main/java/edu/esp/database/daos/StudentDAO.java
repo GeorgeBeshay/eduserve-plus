@@ -9,26 +9,23 @@ import java.util.List;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-public class StudentDAO {
-
-    private final JdbcTemplate jdbcTemplate;
+public class StudentDAO extends DAO <Student> {
 
     public StudentDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        super(jdbcTemplate, Student.class);
     }
 
     public boolean createStudent(Student newStudent) {
         try {
-            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                    .withTableName("student");
-
+            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("student");
             BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(newStudent);
-            int rowsAffected = jdbcInsert.execute(parameterSource);
 
-            return rowsAffected > 0;
+            return jdbcInsert.execute(parameterSource) > 0;
+
         } catch (Exception ex) {
-            System.out.println("\u001B[35m" + "Error had occurred in student record insertion: " + ex.getMessage() + "\u001B[0m");
+            Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in student record insertion: " + ex.getMessage(), 1);
             return false; // Return a meaningful response indicating failure
+
         }
     }
 
@@ -39,13 +36,14 @@ public class StudentDAO {
                 FROM student
                 WHERE student_id = %d
                 """.formatted(id);
-            BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true);     // to deal with null primitive data types.
+
             return jdbcTemplate.queryForObject(sql, rowMapper);
+
         }
         catch (Exception e) {
-            System.out.println("Error in readStudentByID: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), "Error in readStudentByID: " + e.getMessage(), 1);
             return null;
+
         }
     }
 
@@ -57,8 +55,8 @@ public class StudentDAO {
                     """.formatted(id);
             int rowsAffected = jdbcTemplate.update(sql);
             return rowsAffected > 0;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        } catch (Exception e){
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
             return false;
         }
     }
@@ -66,12 +64,11 @@ public class StudentDAO {
     public List<Student> SelectAll() {
         try {
             String sql = "SELECT * FROM student";
-            BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true);
+
             return jdbcTemplate.query(sql, rowMapper);
         }
         catch (Exception e) {
-            System.out.println("Error in selectAllStudents: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), "Error in selectAllStudents: " + e.getMessage(), 1);
             return null;
         }
     }
@@ -135,7 +132,7 @@ public class StudentDAO {
                     """.formatted(id);
             int rowsAffected = jdbcTemplate.update(sql);
             return rowsAffected > 0;
-        }catch (Exception e){
+        } catch (Exception e){
             Logger.logMsgFrom(this.getClass().getName(),"Error deleting an unregistered student by id.",1);
             return false;
         }
