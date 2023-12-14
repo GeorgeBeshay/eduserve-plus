@@ -13,11 +13,12 @@ import { AbstractControl } from '@angular/forms';
 export class AdminComponent implements OnInit{
   signInForm: FormGroup;
   AdminCreationForm: FormGroup<any>;
-  AdminUploadInstructorsForm: FormGroup<any>;
+  adminUploadInstructorsForm: FormGroup<any>;
   adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
   unregisteredInstructorfile : File | null = null;
+  unregisteredStudentfile : File | null = null;
 
 
   constructor(
@@ -37,7 +38,7 @@ export class AdminComponent implements OnInit{
       NewAdminName: ['', Validators.required]
     });
 
-    this.AdminUploadInstructorsForm = this.formBuilder.group({
+    this.adminUploadInstructorsForm = this.formBuilder.group({
       uploaded_file: ['', [Validators.required]]
 
     });
@@ -118,15 +119,16 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  onFileChange(event: any) {
+  onInstructorFileChange(event: any) {
     if (event.target.files.length > 0) {
       this.unregisteredInstructorfile = event.target.files[0];
     }
   }
 
-  async UploadInstructors(){
+  async uploadInstructors(){
 
-    if(this.AdminUploadInstructorsForm.valid && this.csvFileValidator()){
+    if(this.adminUploadInstructorsForm.valid 
+      && this.csvFileValidator(this.adminUploadInstructorsForm)){
   
       let uploaded_file = this.unregisteredInstructorfile;
       console.log(uploaded_file)
@@ -140,7 +142,7 @@ export class AdminComponent implements OnInit{
         // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
         // in the admin service
 
-        // InstudtorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
+        // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
         
         if(InstructorsAdded > 0){
           alert(InstructorsAdded + ' Added Successfully')
@@ -155,14 +157,34 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  uploadStudents() {
+  onStudentFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.unregisteredStudentfile = event.target.files[0];
+    }
+  }
+
+  async uploadStudents() {
+
     if(this.adminUploadStudentsForm 
       && this.csvFileValidator(this.adminUploadStudentsForm)) {
-        const uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file');
-        alert('Uploading Students from CSV file: ')
-        console.log('Uploading Students from CSV file: ', uploaded_file);
 
-      // TODO send CSV file to back end
+        let uploaded_file = this.unregisteredStudentfile;
+        console.log('Uploading Students from CSV file: ', uploaded_file);
+        alert('Uploading Students from CSV file, please wait.')
+
+        if (uploaded_file) {
+
+          let studentsAdded: number = 0
+
+          // TODO: send csv file to back end by a service, get the number of added students 
+          
+          if(studentsAdded > 0){
+            alert(studentsAdded + ' Added Successfully')
+          }
+          else{
+            alert('Error: No students were added')
+          }
+        }
       
     } else {
       alert('Only CSV files are allowed')

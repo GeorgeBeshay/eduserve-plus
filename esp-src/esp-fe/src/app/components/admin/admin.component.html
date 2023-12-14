@@ -94,15 +94,15 @@
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 2">
-          Upload your CSV file!
-          <form class="upload-csv-form" [formGroup]="AdminUploadInstructorsForm" (ngSubmit)="UploadInstructors()">
-            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onFileChange($event)"/>
+          Upload your CSV file to add instructors!
+          <form class="upload-csv-form" [formGroup]="adminUploadInstructorsForm" (ngSubmit)="uploadInstructors()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onInstructorFileChange($event)"/>
             <button type="submit">Submit</button>
           </form>
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 3">
-          Upload your CSV file!
+          Upload your CSV file to add students!
           <form class="upload-csv-form" [formGroup]="adminUploadStudentsForm" (ngSubmit)="uploadStudents()">
             <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
             <button type="submit">Submit</button>
