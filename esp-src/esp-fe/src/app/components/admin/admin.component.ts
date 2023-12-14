@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit{
   AdminUploadInstructorsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
+  unregisteredInstructorfile : File | null = null;
 
 
   constructor(
@@ -110,22 +111,37 @@ export class AdminComponent implements OnInit{
     }
   }
 
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.unregisteredInstructorfile = event.target.files[0];
+    }
+  }
+
   async UploadInstructors(){
+
     if(this.AdminUploadInstructorsForm.valid && this.csvFileValidator()){
   
-      let uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file')?.value;
+      let uploaded_file = this.unregisteredInstructorfile;
+      console.log(uploaded_file)
       alert('Uploading Instructors from CSV file please wait a moment')
       
-      // Add the code here to send the CSV file to the backend
-      let studentsAdded: number  = await this.service.uploadUnregisteredStudents(uploaded_file)
-      
-      if(studentsAdded > 0){
-        alert(studentsAdded + ' Added Successfully')
-      }
-      else{
-        alert('Error: No students were added')
-      }
-      
+      if(uploaded_file){
+
+        let InstructorsAdded: number = 0
+        // Add the code here to send the CSV file to the backend
+
+        // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
+        // in the admin service
+
+        // InstudtorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
+        
+        if(InstructorsAdded > 0){
+          alert(InstructorsAdded + ' Added Successfully')
+        }
+        else{
+          alert('Error: No students were added')
+        }
+      }  
     }
     else{
       alert('Only CSV files are allowed');
