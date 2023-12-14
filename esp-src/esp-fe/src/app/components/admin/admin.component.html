@@ -43,7 +43,8 @@
           <li><a (click)="selectSection(0)">Admin Home Page</a></li>
           <li><a (click)="selectSection(1)">Add An Admin</a></li>
           <li><a (click)="selectSection(2)">Add Instructors</a></li>
-          <li><a (click)="selectSection(3)">Add A Course</a></li>
+          <li><a (click)="selectSection(3)">Add Students</a></li>
+          <li><a (click)="selectSection(4)">Add A Course</a></li>
           <!-- Add more navigation links as needed -->
         </ul>
       </div>
@@ -94,16 +95,23 @@
 
         <ng-container *ngIf="selectedSection == 2">
           Upload your CSV file!
-          <form class="upload-csv-form" [formGroup]="AdminUploadInstructorsForm" (ngSubmit)="UploadInstructors()">
+          <form class="upload-csv-form" [formGroup]="AdminUploadInstructorsForm" (ngSubmit)="uploadInstructors()">
             <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
             <button type="submit">Submit</button>
           </form>
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 3">
-          This is the courses addition page!
+          Upload your CSV file!
+          <form class="upload-csv-form" [formGroup]="adminUploadStudentsForm" (ngSubmit)="uploadStudents()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
+            <button type="submit">Submit</button>
+          </form>
         </ng-container>
 
+        <ng-container *ngIf="selectedSection == 4">
+          This is the courses addition page!
+        </ng-container>
       </div>
 
     </div>

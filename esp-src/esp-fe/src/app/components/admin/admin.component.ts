@@ -14,6 +14,7 @@ export class AdminComponent implements OnInit{
   signInForm: FormGroup;
   AdminCreationForm: FormGroup<any>;
   AdminUploadInstructorsForm: FormGroup<any>;
+  adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
 
@@ -39,6 +40,12 @@ export class AdminComponent implements OnInit{
       uploaded_file: ['', [Validators.required]]
 
     });
+
+    this.adminUploadStudentsForm = this.formBuilder.group({
+      uploaded_file: ['', [Validators.required]]
+
+    });
+
     this.admin = null
     this.selectedSection = 0
 
@@ -110,8 +117,9 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  UploadInstructors(){
-    if(this.AdminUploadInstructorsForm.valid && this.csvFileValidator()){
+  uploadInstructors(){
+    if(this.AdminUploadInstructorsForm.valid 
+      && this.csvFileValidator(this.AdminUploadInstructorsForm)){
       const uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file');
       alert('Uploading Instructors from CSV file: ')
       console.log('Uploading Instructors from CSV file: ', uploaded_file);
@@ -127,8 +135,22 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  csvFileValidator() {
-    const control = this.AdminUploadInstructorsForm.get('uploaded_file') || null;
+  uploadStudents() {
+    if(this.adminUploadStudentsForm 
+      && this.csvFileValidator(this.adminUploadStudentsForm)) {
+        const uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file');
+        alert('Uploading Students from CSV file: ')
+        console.log('Uploading Students from CSV file: ', uploaded_file);
+
+      // TODO send CSV file to back end
+      
+    } else {
+      alert('Only CSV files are allowed')
+    }
+  }
+
+  csvFileValidator(csvForm: FormGroup) {
+    const control = csvForm.get('uploaded_file') || null;
     if(control){
       const file = control?.value;
       const extension = file.split('.').pop()
