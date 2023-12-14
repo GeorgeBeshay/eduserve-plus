@@ -46,7 +46,6 @@ public class AdminEndPointTests {
 
     @BeforeEach
     public void prepare() {
-        // TODO insert testing departments
         DBFacadeImp dbFacade = new DBFacadeImp(jdbcTemplate);
         dbFacade.createAdmin(
                 new Admin(
@@ -66,11 +65,24 @@ public class AdminEndPointTests {
                         (byte) 1,
                         (byte) 10)
         ).isEmpty() : "Check your DB state, records with testing id were found!";
+
+        jdbcTemplate.update("""
+                INSERT INTO department (dpt_id, dpt_name)
+                VALUES
+                  (101, 'Test DPT 1'),
+                  (102, 'Test DPT 2'),
+                  (103, 'Test DPT 3');
+                """);
     }
 
     @AfterEach
     public void close() {
         jdbcTemplate.update("DELETE FROM sys_admin WHERE admin_id = 99;");
+    }
+
+    @AfterAll
+    public void setUpAfterAll() {
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id IN (101,102,103);");
     }
 
     @Test
@@ -163,7 +175,7 @@ public class AdminEndPointTests {
     public void validAddCourse() throws Exception {
 
         Course newCourse = new Course("TEST1","math1",
-                "bla bla",(byte) 1,(byte) 3);
+                "bla bla",(byte) 101,(byte) 3);
 
         MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -186,15 +198,15 @@ public class AdminEndPointTests {
 
     @Test
     @DisplayName("Admin Add course - Rejected (Course id is unique but prerequisite are not in DB)")
-    public void unvalidPrereqAddCourse() throws Exception {
+    public void invalidPreReqAddCourse() throws Exception {
 
         Course newCourse = new Course("TEST2","math1",
-                "bla bla",(byte) 1,(byte) 3);
+                "bla bla",(byte) 101,(byte) 3);
 
-        List<String> preq = new ArrayList<>();
-        preq.add("CS1");
+        List<String> preReq = new ArrayList<>();
+        preReq.add("CS1");
 
-        newCourse.setPrerequisite(preq);
+        newCourse.setPrerequisite(preReq);
 
         MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -218,17 +230,17 @@ public class AdminEndPointTests {
 
     @Test
     @DisplayName("Admin Add course - Rejected (Course id is not unique)")
-    public void unvalidAddCourseId() throws Exception {
+    public void invalidAddCourseId() throws Exception {
 
         DBFacadeImp dbFacadeImp = new DBFacadeImp(jdbcTemplate);
 
         Course newCourse1 = new Course("TEST3","math1",
-                "bla bla",(byte) 1,(byte) 3);
+                "bla bla",(byte) 101,(byte) 3);
 
         dbFacadeImp.addNewCourse(newCourse1);
 
         Course newCourse2 = new Course("TEST3","math2",
-                "bla bla",(byte) 1,(byte) 3);
+                "bla bla",(byte) 101,(byte) 3);
 
         MvcResult result = this.mockMvc.perform(post("http://localhost:8081/esp-server/admin-endpoint/addCourse")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -263,10 +275,10 @@ public class AdminEndPointTests {
 
         String csvContent = """
                         studentID,studentOTP,studentDpt
-                        50,13,1
-                        51,125,1
-                        52,1245,1
-                        50,151,1""";
+                        50,13,102
+                        51,125,103
+                        52,1245,101
+                        50,151,103""";
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(csvManipulator.csvFolderPrefix + originalFilename));
         writer.write(csvContent);
@@ -286,7 +298,7 @@ public class AdminEndPointTests {
 
         // Retrieve the response content
         String content = result.getResponse().getContentAsString();
-        Map<String, Object> resultMap = new ObjectMapper().readValue(content, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> resultMap = new ObjectMapper().readValue(content, new TypeReference<>() {});
         int addedStudents = (int) resultMap.get("studentsSuccessfullyAdded");
         List<Integer> failedStudentsToBeAdded = (List<Integer>) resultMap.get("failedStudentsToBeAdded");
 
@@ -318,7 +330,7 @@ public class AdminEndPointTests {
         // Retrieve the response content
         String content = result.getResponse().getContentAsString();
 
-        Map<String, Object> resultMap = new ObjectMapper().readValue(content, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> resultMap = new ObjectMapper().readValue(content, new TypeReference<>() {});
         int addedStudents = (int) resultMap.get("studentsSuccessfullyAdded");
         List<Integer> failedStudentsToBeAdded = (List<Integer>) resultMap.get("failedStudentsToBeAdded");
 

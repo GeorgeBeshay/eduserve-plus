@@ -20,13 +20,11 @@ public class AdminDAOTests {
 
     @BeforeAll
     public void setUp() {
-        // TODO insert testing departments
         this.adminDAO = new AdminDAO(jdbcTemplate);
     }
 
     @AfterAll
     public void closingStatement() {
-        // TODO delete testing departments
         System.out.println("\u001B[32m" + "All Admin DAO test cases have been executed." + "\u001B[0m");
     }
 

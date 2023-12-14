@@ -21,13 +21,19 @@ public class StudentDAOTests {
 
     @BeforeAll
     public void setUp() {
-        // TODO insert testing departments
+        jdbcTemplate.update("""
+                INSERT INTO department (dpt_id, dpt_name)
+                VALUES
+                  (101, 'Test DPT 1'),
+                  (102, 'Test DPT 2'),
+                  (103, 'Test DPT 3');
+                """);
         this.studentDAO = new StudentDAO(jdbcTemplate);
     }
 
     @AfterAll
     public void closingStatement() {
-        // TODO delete testing departments
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id IN (101,102,103);");
         System.out.println("\u001B[32m" + "All Student DAO test cases have been executed." + "\u001B[0m");
     }
 
@@ -38,7 +44,7 @@ public class StudentDAOTests {
 
         Student newStudent = new Student(); // Create a Student object with test data
         newStudent.setStudentId(insertedStudentId);
-        newStudent.setDptId((byte) 1);
+        newStudent.setDptId((byte) 101);
         newStudent.setSsn("00001111234587");
         newStudent.setStudentName("Test Student");
         newStudent.setBdate("2000-01-02");
@@ -55,7 +61,7 @@ public class StudentDAOTests {
     public void testCreateStudentFailureInvalidId() {
         Student newStudent = new Student(); // Create a Student object with test data
         newStudent.setStudentId(-1);     // setting invalid id
-        newStudent.setDptId((byte) 1);
+        newStudent.setDptId((byte) 101);
         newStudent.setSsn("12345678912345");
         newStudent.setStudentName("Invalid Insertion Student");
         newStudent.setBdate("2003-05-02");
@@ -72,12 +78,12 @@ public class StudentDAOTests {
 
         // Create two student objects with test data and same id
         Student newStudent1 = new Student(
-            insertedStudentId, 32145, (byte)1, (byte)2, 2.9F,
+            insertedStudentId, 32145, (byte)101, (byte)2, 2.9F,
             "Test Student", "98765423112345", "2002-08-02", "Some address 123",
             null, null, true, null
         );
         Student newStudent2 = new Student(
-            insertedStudentId, -145, (byte)3, (byte)3, 3.4F,
+            insertedStudentId, -145, (byte)103, (byte)3, 3.4F,
             "DupID Test Student", "98760003112345", "2000-08-05", "Some address 403",
             null, null, false, null
         );
@@ -95,7 +101,7 @@ public class StudentDAOTests {
         // Insert a student with ID = 1 into the database
         jdbcTemplate.update("""
                 INSERT INTO student (student_id, Student_pw_hash, dpt_id, student_level, gpa, student_name, ssn, bdate, student_address, phone, landline, gender, email)
-                VALUES (1, 456789, 1, 1, 3.5, 'John Doe', '12345678901234', '2000-01-01', '123 Main St', '555-1234', '123-4567', 1, 'john.doe@example.com');
+                VALUES (1, 456789, 103, 1, 3.5, 'John Doe', '12345678901234', '2000-01-01', '123 Main St', '555-1234', '123-4567', 1, 'john.doe@example.com');
                 """);
 
         Student student = this.studentDAO.readStudentById(1);
@@ -103,7 +109,7 @@ public class StudentDAOTests {
         assertNotNull(student);
         assertEquals(1, student.getStudentId());
         assertEquals(456789, student.getStudentPwHash());
-        assertEquals(1, student.getDptId());
+        assertEquals(103, student.getDptId());
         assertEquals(1, student.getStudentLevel());
         assertEquals(3.5, student.getGpa());
         assertEquals("John Doe", student.getStudentName());
@@ -132,7 +138,7 @@ public class StudentDAOTests {
     public void testCreateThenReadStudent() {
         // Create a student object with test data
         Student newStudent = new Student(
-                15, 456789, (byte)1, (byte)3, 3.2F,
+                15, 456789, (byte)102, (byte)3, 3.2F,
                 "John Doe", "12345678901234", "2002-08-22", "Some address 123",
                 "555-1234", "123-4567", true, "john.doe@example.com"
         );
@@ -143,7 +149,7 @@ public class StudentDAOTests {
 
         assertEquals(15, student.getStudentId());
         assertEquals(456789, student.getStudentPwHash());
-        assertEquals(1, student.getDptId());
+        assertEquals(102, student.getDptId());
         assertEquals(3, student.getStudentLevel());
         // TODO Round GPA after a certain number of decimal places. Do this for grade records GPA too (either in the create method or in the DB itself).
         assertEquals(3.2, student.getGpa(), 0.00001);
@@ -167,9 +173,9 @@ public class StudentDAOTests {
         jdbcTemplate.batchUpdate("""
                 INSERT INTO student (student_id, Student_pw_hash, dpt_id, student_level, gpa, student_name, ssn, bdate, student_address, phone, landline, gender, email)
                 VALUES
-                    (1, 456789, 1, 1, 3.5, 'John Doe', '12345678901234', '2000-01-01', '123 Main St', '555-1234', '123-4567', 1, 'john.doe@example.com'),
-                    (3, 654321, 3, 3, 3.9, 'Bob Johnson', '11112222333344', '1998-05-20', '789 Pine St', '555-8765', '345-6789', 1, 'bob.johnson@example.com'),
-                    (2, 987654, 2, 2, 3.2, 'Jane Smith', '98765432101234', '1999-02-15', '456 Oak St', '555-5678', '234-5678', 0, 'jane.smith@example.com');
+                    (1, 456789, 101, 1, 3.5, 'John Doe', '12345678901234', '2000-01-01', '123 Main St', '555-1234', '123-4567', 1, 'john.doe@example.com'),
+                    (3, 654321, 103, 3, 3.9, 'Bob Johnson', '11112222333344', '1998-05-20', '789 Pine St', '555-8765', '345-6789', 1, 'bob.johnson@example.com'),
+                    (2, 987654, 102, 2, 3.2, 'Jane Smith', '98765432101234', '1999-02-15', '456 Oak St', '555-5678', '234-5678', 0, 'jane.smith@example.com');
                 """);
 
         List<Student> students = this.studentDAO.SelectAll();
@@ -197,7 +203,7 @@ public class StudentDAOTests {
         // Insert student with ID = 3
         jdbcTemplate.update("""
                 INSERT INTO student (student_id, Student_pw_hash, dpt_id, student_level, gpa, student_name, ssn, bdate, student_address, phone, landline, gender, email)
-                VALUES (3, 654321, 3, 3, 3.9, 'Bob Johnson', '11112222333344', '1998-05-20', '789 Pine St', '555-8765', '345-6789', 1, 'bob.johnson@example.com');
+                VALUES (3, 654321, 103, 3, 3.9, 'Bob Johnson', '11112222333344', '1998-05-20', '789 Pine St', '555-8765', '345-6789', 1, 'bob.johnson@example.com');
                 """);
 
         assertTrue(this.studentDAO.deleteStudentById(3));
@@ -215,7 +221,7 @@ public class StudentDAOTests {
         // Insert student with ID = 2
         jdbcTemplate.update("""
                 INSERT INTO student (student_id, Student_pw_hash, dpt_id, student_level, gpa, student_name, ssn, bdate, student_address, phone, landline, gender, email)
-                VALUES (2, 987654, 2, 2, 3.2, 'Jane Smith', '98765432101234', '1999-02-15', '456 Oak St', '555-5678', '234-5678', 0, 'jane.smith@example.com');
+                VALUES (2, 987654, 102, 2, 3.2, 'Jane Smith', '98765432101234', '1999-02-15', '456 Oak St', '555-5678', '234-5678', 0, 'jane.smith@example.com');
                 """);
 
         assertTrue(this.studentDAO.deleteStudentById(2));
@@ -229,7 +235,7 @@ public class StudentDAOTests {
         // Insert a student into the unregistered table
         jdbcTemplate.update("""
                 INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
-                VALUES (4, 505, 3);
+                VALUES (4, 505, 103);
                 """);
 
         // Create a student object with same ID and test data
@@ -247,7 +253,7 @@ public class StudentDAOTests {
         assertNull(this.studentDAO.readUnregisteredStudentById(4));
         // Read the registered student and make sure the department ID
         // is the same as the one that was in the unregistered table
-        assertEquals(3, this.studentDAO.readStudentById(4).getDptId());
+        assertEquals(103, this.studentDAO.readStudentById(4).getDptId());
 
         // Delete the student used in the test
         jdbcTemplate.update("DELETE FROM student WHERE student_id = 4;");
@@ -274,7 +280,7 @@ public class StudentDAOTests {
         // Insert a student into the unregistered table
         jdbcTemplate.update("""
                 INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
-                VALUES (5, 30922, 1);
+                VALUES (5, 30922, 101);
                 """);
 
         // Create a student object with same ID and test data, but sign up with wrong OTP
@@ -297,7 +303,7 @@ public class StudentDAOTests {
     @DisplayName("Student DAO - adding an unregistered student to the database")
     public void testCreateUnregisteredStudent() {
         // Create an unregistered student with test data
-        UnregisteredStudent unregisteredStudent = new UnregisteredStudent(73, 98725, (byte)2);
+        UnregisteredStudent unregisteredStudent = new UnregisteredStudent(73, 98725, (byte)102);
 
         assertTrue(this.studentDAO.createUnregisteredStudent(unregisteredStudent));
 
@@ -309,7 +315,7 @@ public class StudentDAOTests {
     @DisplayName("Student DAO - adding duplicate unregistered student to the database")
     public void testCreateDuplicateUnregisteredStudent() {
         // Create an unregistered student with test data
-        UnregisteredStudent unregisteredStudent = new UnregisteredStudent(22, 605, (byte)1);
+        UnregisteredStudent unregisteredStudent = new UnregisteredStudent(22, 605, (byte)101);
 
         assertTrue(this.studentDAO.createUnregisteredStudent(unregisteredStudent));
         assertFalse(this.studentDAO.createUnregisteredStudent(unregisteredStudent));
@@ -324,14 +330,14 @@ public class StudentDAOTests {
         // Insert an unregistered student with test data
         jdbcTemplate.update("""
                 INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
-                VALUES (73, -855110, 2);
+                VALUES (73, -855110, 102);
                 """);
 
         UnregisteredStudent unregisteredStudent = this.studentDAO.readUnregisteredStudentById(73);
 
         assertEquals(73, unregisteredStudent.getStudentId());
         assertEquals(-855110, unregisteredStudent.getStudentTempPwHash());
-        assertEquals(2, unregisteredStudent.getDptId());
+        assertEquals(102, unregisteredStudent.getDptId());
 
         // Delete the unregistered student which was inserted
         jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = 73;");
@@ -343,7 +349,7 @@ public class StudentDAOTests {
         // Create an unregistered instructor object with test data
         int id = random.nextInt(1, 100);
         int pwHash = random.nextInt(-10000, 10000);
-        UnregisteredStudent newStudent = new UnregisteredStudent(id, pwHash, (byte)2);
+        UnregisteredStudent newStudent = new UnregisteredStudent(id, pwHash, (byte)102);
 
         assertTrue(this.studentDAO.createUnregisteredStudent(newStudent));
 
@@ -351,7 +357,7 @@ public class StudentDAOTests {
 
         assertEquals(id, student.getStudentId());
         assertEquals(pwHash, student.getStudentTempPwHash());
-        assertEquals(2, student.getDptId());
+        assertEquals(102, student.getDptId());
 
         // Delete inserted record
         jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = %d;".formatted(id));
@@ -363,7 +369,7 @@ public class StudentDAOTests {
         // Insert an unregistered student with test data
         jdbcTemplate.update("""
                 INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
-                VALUES (13, 420, 3);
+                VALUES (13, 420, 103);
                 """);
 
         assertTrue(this.studentDAO.deleteUnregisteredStudentById(13));

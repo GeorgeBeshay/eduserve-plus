@@ -21,13 +21,19 @@ public class CourseDAOTests {
 
     @BeforeAll
     public void setUp() {
-        // TODO insert testing departments
+        jdbcTemplate.update("""
+                INSERT INTO department (dpt_id, dpt_name)
+                VALUES
+                  (101, 'Test DPT 1'),
+                  (102, 'Test DPT 2'),
+                  (103, 'Test DPT 3');
+                """);
         this.courseDAO = new CourseDAO( jdbcTemplate );
     }
 
     @AfterAll
     public void cleanUp() {
-        // TODO delete testing departments
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id IN (101,102,103);");
     }
 
     @Test
@@ -35,10 +41,10 @@ public class CourseDAOTests {
     public void addNewCourseRepeatedId() {
 
         Course course = new Course("TEST1","programming1",
-                "bla bla", (byte) 1,(byte) 3);
+                "bla bla", (byte) 101,(byte) 3);
 
         Course repeatedCourse = new Course("TEST1","paradigms",
-                "bla bla", (byte) 1,(byte) 3);
+                "bla bla", (byte) 101,(byte) 3);
 
         assertTrue( courseDAO.addNewCourse(course) );
         assertFalse( courseDAO.addNewCourse(repeatedCourse) );
@@ -51,7 +57,7 @@ public class CourseDAOTests {
     public void addNewCourseWithPrerequisitesSize0(){
 
         Course course = new Course("TEST2","programming1",
-                "bla bla", (byte) 1,(byte) 3);
+                "bla bla", (byte) 101,(byte) 3);
 
         List<String> preReq = new ArrayList<>();
         course.setPrerequisite(preReq);
@@ -66,7 +72,7 @@ public class CourseDAOTests {
     public void addNewCourseWithNullPrerequisites(){
 
         Course course = new Course("TEST3","programming1",
-                "bla bla", (byte) 1,(byte) 3);
+                "bla bla", (byte) 101,(byte) 3);
         course.setPrerequisite( null );
 
         assertTrue( courseDAO.addNewCourse(course) );
@@ -78,14 +84,14 @@ public class CourseDAOTests {
     @DisplayName( "Course DAO - try to add new course with valid prerequisite" )
     public void addNewCourseWithValidPrerequisites(){
 
-        Course pre1 = new Course("PRE1","math1","lkdmf",(byte) 1,(byte) 3);
-        Course pre2 = new Course("PRE2","math2","lkdmf",(byte) 1,(byte) 3);
+        Course pre1 = new Course("PRE1","math1","lkdmf",(byte) 101,(byte) 3);
+        Course pre2 = new Course("PRE2","math2","lkdmf",(byte) 101,(byte) 3);
         courseDAO.addNewCourse(pre1);
         courseDAO.addNewCourse(pre2);
 
 
         Course course = new Course("TEST4","programming1",
-                "bla bla", (byte) 1,(byte) 3);
+                "bla bla", (byte) 101,(byte) 3);
 
         List<String> prereq = new ArrayList<>();
         prereq.add("PRE1");
@@ -103,12 +109,12 @@ public class CourseDAOTests {
     @DisplayName ("Course DAO - try to add new course with invalid prerequisite 'roll back'")
     public void addNewCourseWithInvalidPrerequisites(){
 
-        Course pre1 = new Course("PRE1","math1","lkdmf",(byte) 1,(byte) 3);
+        Course pre1 = new Course("PRE1","math1","lkdmf",(byte) 101,(byte) 3);
 
         courseDAO.addNewCourse(pre1);
 
         Course course = new Course("TEST5","programming1",
-                "bla bla", (byte) 1,(byte) 3);
+                "bla bla", (byte) 101,(byte) 3);
 
         List<String> prereq = new ArrayList<>();
         prereq.add("PRE1");
@@ -154,7 +160,7 @@ public class CourseDAOTests {
     @DisplayName("Passing an offeringDpt that offers no courses.")
     public void findByOfferingDptNoMatchingCourses() {
         // Arrange
-        byte offeringDpt = 101;
+        byte offeringDpt = 104;
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
 
         // ACT
@@ -170,7 +176,7 @@ public class CourseDAOTests {
     public void findByOfferingDptSingleMatch() {
         // Arrange
         String courseCode = "TEST1";         // recall that the id is defined as varchar(7)
-        byte offeringDpt = 101;
+        byte offeringDpt = 104;
         jdbcTemplate.update("DELETE FROM course WHERE course_code = ?", courseCode);
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
         jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
@@ -188,6 +194,7 @@ public class CourseDAOTests {
 
         // Clean
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
     }
 
     @Test
@@ -195,7 +202,7 @@ public class CourseDAOTests {
     public void findByOfferingDptMultipleMatches() {
         // Arrange
         String[] courseCodes = {"TEST1", "TEST2", "TEST3", "TEST4", "TEST5", "TEST6"};
-        byte offeringDpt = 101;
+        byte offeringDpt = 104;
 
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
         jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
@@ -218,6 +225,7 @@ public class CourseDAOTests {
 
         // Clean
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
     }
 
 }
