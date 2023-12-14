@@ -1,5 +1,5 @@
 <div class="holder">
-  <ng-container *ngIf="admin == null; else loggedIn">
+  <ng-container *ngIf="admin != null; else loggedIn">
     <div class="sign-in-form">
       <mat-tab-group>
         <!--     Sign In Tab -->
@@ -98,10 +98,29 @@
             <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
             <button type="submit">Submit</button>
           </form>
+
+          <div *ngFor="let unregisteredInstructor of unregisteredInstructors" class="button">
+              <div class="container">
+                  <div class="from">Instructor ID: {{unregisteredInstructor.instructorId}}</div>
+                  <div class="from">Department ID: {{unregisteredInstructor.departmentId}}</div>
+              </div> 
+          </div>
+
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 3">
           This is the courses addition page!
+
+          <div *ngFor="let course of courses" class="buttonCourse">
+            <div class="container">
+                <div class="courseDetails">Course Code: {{course.courseCode}}</div>
+                <div class="courseDetails">Course Name: {{course.courseName}}</div>
+                <div class="courseDetails">Credit hours: {{course.creditHrs}}</div>
+                <div class="courseDetails">Offering Department ID: {{course.offeringDpt}}</div>
+                <div class="courseDetails">Description: {{course.courseDescription}}</div>
+                <div class="courseDetails">Prerequisite: {{course.prerequisite}}</div>
+            </div> 
+          </div>
         </ng-container>
 
       </div>
