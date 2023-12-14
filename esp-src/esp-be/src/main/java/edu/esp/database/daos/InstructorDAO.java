@@ -1,5 +1,6 @@
 package edu.esp.database.daos;
 
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.utilities.Logger;
@@ -7,6 +8,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class InstructorDAO extends DAO<Instructor> {
@@ -135,6 +138,24 @@ public class InstructorDAO extends DAO<Instructor> {
         }catch (Exception e){
             Logger.logMsgFrom(this.getClass().getName(),"Error deleting an unregistered instructor by his id.",1);
             return false;
+        }
+    }
+
+    public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
+        List<UnregisteredInstructor> empty = new ArrayList<UnregisteredInstructor>();
+        try {
+
+            String sql = """
+                SELECT *
+                FROM unregistered_instructor
+                """;
+            BeanPropertyRowMapper<UnregisteredInstructor> rm = new BeanPropertyRowMapper<>(UnregisteredInstructor.class);
+            this.rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query(sql,rm);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return empty;
         }
     }
 }
