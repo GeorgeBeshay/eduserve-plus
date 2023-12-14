@@ -3,23 +3,24 @@ package edu.esp.system_entities.system_users;
 public class Instructor {
     private int instructorId;
     private int instructorPwHash;
-    private byte departmentId;
+    private byte dptId;
     private String instructorName;
     private String phone;
     private String email;
-    private String officeHours;
+    private String officeHrs;
 
     public Instructor() {}
 
-    public Instructor(int instructorId, int instructorPwHash, byte departmentId, String instructorName,
-                      String phone, String email, String officeHours) {
+
+    public Instructor(int instructorId, int instructorPwHash, byte dptId, String instructorName,
+                      String phone, String email, String officeHrs) {
         this.instructorId = instructorId;
         this.instructorPwHash = instructorPwHash;
-        this.departmentId = departmentId;
+        this.dptId = dptId;
         this.instructorName = instructorName;
         this.phone = phone;
         this.email = email;
-        this.officeHours = officeHours;
+        this.officeHrs = officeHrs;
     }
 
     public int getInstructorId() {
@@ -38,12 +39,12 @@ public class Instructor {
         this.instructorPwHash = instructorPwHash;
     }
 
-    public byte getDepartmentId() {
-        return departmentId;
+    public byte getDptId() {
+        return dptId;
     }
 
-    public void setDepartmentId(byte departmentId) {
-        this.departmentId = departmentId;
+    public void setDptId(byte dptId) {
+        this.dptId = dptId;
     }
 
     public String getInstructorName() {
@@ -70,24 +71,27 @@ public class Instructor {
         this.email = email;
     }
 
-    public String getOfficeHours() {
-        return officeHours;
+    public String getOfficeHrs() {
+        return officeHrs;
     }
 
-    public void setOfficeHours(String officeHours) {
-        this.officeHours = officeHours;
+    public void setOfficeHrs(String officeHrs) {
+        this.officeHrs = officeHrs;
     }
+
+
+
 
     @Override
     public String toString() {
         return "Instructor{" +
                 "instructorId=" + instructorId +
                 ", instructorPwHash=" + instructorPwHash +
-                ", departmentId=" + departmentId +
+                ", departmentId=" + dptId +
                 ", instructorName='" + instructorName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
-                ", officeHours='" + officeHours + '\'' +
+                ", officeHours='" + officeHrs + '\'' +
                 '}';
     }
 }

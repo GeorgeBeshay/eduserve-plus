@@ -179,3 +179,5 @@ CREATE TABLE ticket (
 );
 
 ALTER TABLE department ADD CONSTRAINT foreign_dep_inst foreign key (head_instructor_id) REFERENCES instructor(instructor_id)
+
+
