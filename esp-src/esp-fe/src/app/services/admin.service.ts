@@ -44,7 +44,7 @@ export class AdminService {
       // if added successfully return true.
       // else return false.
       return await firstValueFrom(
-        this.http.post<boolean>(this.URL + 'addCourse', newCourse, {responseType:'json'})  
+        this.http.post<boolean>(this.URL + 'addCourse', newCourse, {responseType:'json'})
       );
     } catch (error) {
       if(error instanceof HttpErrorResponse)
@@ -55,6 +55,25 @@ export class AdminService {
     return null;
   }
 
+  async uploadUnregisteredStudents(file: File) {
+    
+    const formData: FormData = new FormData();
+    formData.append('unregisteredStudents', file);
 
+    try {
+      return await firstValueFrom (
+        this.http.post<{"studentsSuccessfullyAdded": number, "failedStudentsToBeAdded": number[]}>(this.URL + 'addUnregisteredStudents', formData)
+      );
+    }
+
+    catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return {"studentsSuccessfullyAdded": 0, "failedStudentsToBeAdded": []};
+
+  }
 
 }

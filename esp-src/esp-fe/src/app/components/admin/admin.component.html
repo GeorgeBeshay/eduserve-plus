@@ -43,7 +43,8 @@
           <li><a (click)="selectSection(0)">Admin Home Page</a></li>
           <li><a (click)="selectSection(1)">Add An Admin</a></li>
           <li><a (click)="selectSection(2)">Add Instructors</a></li>
-          <li><a (click)="selectSection(3)">Add A Course</a></li>
+          <li><a (click)="selectSection(3)">Add Students</a></li>
+          <li><a (click)="selectSection(4)">Add A Course</a></li>
           <!-- Add more navigation links as needed -->
         </ul>
       </div>
@@ -93,16 +94,24 @@
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 2">
-          Upload your CSV file!
-          <form class="upload-csv-form" [formGroup]="AdminUploadInstructorsForm" (ngSubmit)="UploadInstructors()">
-            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" />
+          Upload your CSV file to add instructors!
+          <form class="upload-csv-form" [formGroup]="adminUploadInstructorsForm" (ngSubmit)="uploadInstructors()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onInstructorFileChange($event)"/>
             <button type="submit">Submit</button>
           </form>
         </ng-container>
 
-        
-        <ng-container *ngIf="selectedSection == 3">
 
+        <ng-container *ngIf="selectedSection == 3">
+          Upload your CSV file to add students!
+          <form class="upload-csv-form" [formGroup]="adminUploadStudentsForm" (ngSubmit)="uploadStudents()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onStudentFileChange($event)"/>
+            <button type="submit">Submit</button>
+          </form>
+
+        </ng-container>
+
+        <ng-container *ngIf="selectedSection == 4">
           <form [formGroup]="courseForm" (ngSubmit)="addCourse()">
             <div class="form-group">
               <label for="courseCode">Course Code:</label>
@@ -170,9 +179,7 @@
 
             <button mat-raised-button type="submit" [disabled]="courseForm.invalid">Add Course</button>
           </form>
-
         </ng-container>
-
       </div>
 
     </div>
