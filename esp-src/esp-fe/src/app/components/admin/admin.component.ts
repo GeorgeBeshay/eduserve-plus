@@ -110,17 +110,22 @@ export class AdminComponent implements OnInit{
     }
   }
 
-  UploadInstructors(){
+  async UploadInstructors(){
     if(this.AdminUploadInstructorsForm.valid && this.csvFileValidator()){
-      const uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file');
-      alert('Uploading Instructors from CSV file: ')
-      console.log('Uploading Instructors from CSV file: ', uploaded_file);
-
+  
+      let uploaded_file = this.AdminUploadInstructorsForm.get('uploaded_file')?.value;
+      alert('Uploading Instructors from CSV file please wait a moment')
+      
       // Add the code here to send the CSV file to the backend
-
-
-
-
+      let studentsAdded: number  = await this.service.uploadUnregisteredStudents(uploaded_file)
+      
+      if(studentsAdded > 0){
+        alert(studentsAdded + ' Added Successfully')
+      }
+      else{
+        alert('Error: No students were added')
+      }
+      
     }
     else{
       alert('Only CSV files are allowed');
