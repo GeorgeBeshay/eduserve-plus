@@ -1,6 +1,8 @@
 package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
+import edu.esp.database.DBFacadeImp;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import org.junit.jupiter.api.*;
@@ -346,6 +348,36 @@ public class InstructorDAOTests {
     @DisplayName("Instructor DAO - deleting an invalid unregistered instructor")
     public void testDeleteInvalidUnregisteredInstructor() {
         assertFalse(this.instructorDAO.deleteUnregisteredInstructorById(10));
+    }
+
+    @Test
+    @DisplayName("Get All Unregistered Instructors not empty")
+    public void GetAllUnregisteredInstructorsNotEmpty() {
+
+        DBFacadeImp db = new DBFacadeImp(jdbcTemplate);
+        db.addNewUnregisteredInstructor(new UnregisteredInstructor(1,26,(byte)1));
+        db.addNewUnregisteredInstructor(new UnregisteredInstructor(2,26,(byte)1));
+
+        List<UnregisteredInstructor> instructorList = db.getAllUnregisteredInstructors();
+        assertEquals(instructorList.size(),2);
+        assertEquals(instructorList.get(0).getInstructorId(),1);
+        assertEquals(instructorList.get(1).getInstructorId(),2);
+
+
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE dpt_id = 1");
+
+    }
+
+    @Test
+    @DisplayName("Get All Unregistered Instructors empty")
+    public void GetAllUnregisteredInstructorsEmpty() {
+        DBFacadeImp db = new DBFacadeImp(jdbcTemplate);
+
+        List<UnregisteredInstructor> instructorList = db.getAllUnregisteredInstructors();
+
+        assertNotNull(instructorList);
+        assertEquals(instructorList.size(),0);
+
     }
 
     //TODO enforce DB constraint on unregistered_instructor id to be non-negative
