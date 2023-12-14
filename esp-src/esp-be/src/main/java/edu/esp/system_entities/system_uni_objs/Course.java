@@ -18,6 +18,8 @@ public class Course {
         this.creditHrs = creditHrs;
     }
 
+    public Course() {}
+
     @Override
     public String toString() {
         return "Course{" +

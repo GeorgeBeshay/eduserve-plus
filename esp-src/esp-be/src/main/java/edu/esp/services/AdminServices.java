@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
-
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -113,9 +114,27 @@ public class AdminServices {
         }
     }
 
+    /**
+     * Implements the business logic of fetching courses that are being offered by a specific department.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @param offeringDpt The id of the department, that we are looking for the courses offered by.
+     * @return A list of Course objects (possibly an empty one) that were found to be offered by the mentioned department.
+     * NOTE: An empty list may be returned in 2 cases:
+     * 1. The department offers no courses.
+     * 2. An invalid ID or a SQL query execution error had occurred.
+     */
+    public List<Course> fetchCoursesOfferedByDpt(byte offeringDpt) {
+        // if null, then either the offeringDpt is negative, or a SQL query execution error had occurred.
+        List<Course> matchingCourses = dbFacade.fetchCoursesOfferedByDpt(offeringDpt);
 
+        if(matchingCourses == null) {
+            Logger.logMsgFrom(this.getClass().getName(), "Something went wrong during courses fetching process .. returning an empty list.", 1);
+            return new ArrayList<>();
 
+        } else {
+            Logger.logMsgFrom(this.getClass().getName(), "Matching courses were successfully found ..", 0);
+            return matchingCourses;
 
-
-
+        }
+    }
 }
