@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -45,17 +46,16 @@ public class AdminEndPoint {
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("signUp")
+    @PostMapping("addNewAdmin")
     @ResponseBody
-    public ResponseEntity<Boolean> signUp (@RequestBody Admin admin) {
+    public ResponseEntity<Boolean> addNewAdmin (@RequestBody Map<String, Object> requestMap) {
+        Logger.logMsgFrom(this.getClass().getName(), "Client side requested to add a new admin .. processing the request ..", -1);
 
-        Logger.logMsgFrom(this.getClass().getName(), "Client side requested to register a new admin .. processing the request ..", -1);
-
-        return (this.adminServices.signUp(admin))
+        return (this.adminServices.addNewAdmin(requestMap))
                 ? new ResponseEntity<>(true, HttpStatus.OK)
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-
     }
+
     @PostMapping("CreateUnregisteredInstructor")
     @ResponseBody
     public ResponseEntity<Boolean> registerInstructor(@RequestBody UnregisteredInstructor unregisteredInstructor){
@@ -100,6 +100,19 @@ public class AdminEndPoint {
 
         Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to get all Unregistered Students .. processing the request ..", -1);
         return new ResponseEntity<>(this.adminServices.getAllUnregisteredStudents(), HttpStatus.OK);
+    }
+    
+    @PostMapping("addUnregisteredStudents")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addUnregisteredStudents (@RequestParam("unregisteredStudents") MultipartFile unregisteredStudents) {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to add unregistered students .. processing the request ..", -1);
+
+        Map<String, Object> resultOfAddingStudents = this.adminServices.addUnregisteredStudents(unregisteredStudents);
+
+        return (!resultOfAddingStudents.get("studentsSuccessfullyAdded").equals(0))
+                ? new ResponseEntity<>(resultOfAddingStudents, HttpStatus.OK)
+                : new ResponseEntity<>(resultOfAddingStudents, HttpStatus.BAD_REQUEST);
 
     }
 

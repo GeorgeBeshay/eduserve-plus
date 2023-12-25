@@ -31,7 +31,13 @@ public class StudentEndPointTests {
     @BeforeAll
     public void setUp() {
         // TODO decouple tests from setup
-        // TODO insert testing departments
+        jdbcTemplate.update("""
+                INSERT INTO department (dpt_id, dpt_name)
+                VALUES
+                  (101, 'Test DPT 1'),
+                  (102, 'Test DPT 2'),
+                  (103, 'Test DPT 3');
+                """);
         jdbcTemplate.batchUpdate("""
             DELETE FROM unregistered_student WHERE student_id IN (%d);
             DELETE FROM student WHERE student_id IN (%d, %d);
@@ -40,12 +46,17 @@ public class StudentEndPointTests {
             INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
             VALUES
                 (%d, %d, %d);
-            """.formatted(101, 1983716562, 1));
+            """.formatted(101, 1983716562, 101));
         jdbcTemplate.batchUpdate("""
             INSERT INTO student (student_id, Student_pw_hash, ssn)
             VALUES
                 (%d, %d, '123456789');
             """.formatted(100, 1983716562));
+    }
+
+    @AfterAll
+    public void setUpAfterAll() {
+        jdbcTemplate.update("DELETE FROM department WHERE dpt_id IN (101,102,103);");
     }
 
     @Test

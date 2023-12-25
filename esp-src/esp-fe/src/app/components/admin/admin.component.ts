@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
-import { Admin, AdminService } from 'src/app/services/admin.service';
+import {FormGroup, NonNullableFormBuilder, Validators, FormArray, FormControl} from "@angular/forms";
+import {AdminService} from '../../services/admin.service';
+import {Admin} from "../../System Entities/Admin";
+import { Course } from 'src/app/System Entities/course';
+import { AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-admin',
@@ -9,20 +12,55 @@ import { Admin, AdminService } from 'src/app/services/admin.service';
 })
 export class AdminComponent implements OnInit{
   signInForm: FormGroup;
-  signUpForm: FormGroup;
+  AdminCreationForm: FormGroup<any>;
+  adminUploadInstructorsForm: FormGroup<any>;
+  adminUploadStudentsForm: FormGroup<any>;
+  admin: Admin | null
+  selectedSection: number
+  unregisteredInstructorfile : File | null = null;
+  unregisteredStudentfile : File | null = null;
+  courseForm: FormGroup;
 
-  constructor(private formBuilder: NonNullableFormBuilder, private service:AdminService) {
+
+  constructor(
+    private formBuilder: NonNullableFormBuilder,
+    private service:AdminService
+  ) {
+
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required]
     });
 
-    this.signUpForm = this.formBuilder.group({
-      id: ['', Validators.required],
-      password: ['', Validators.required],
-      newPassword: ['', Validators.required],
-      confirmNewPassword: ['', Validators.required]
+    this.AdminCreationForm = this.formBuilder.group({
+      CreatorAdminID: ['', Validators.required],
+      NewAdminID: ['', Validators.required],
+      NewAdminPassword: ['', Validators.required],
+      NewAdminName: ['', Validators.required]
     });
+
+    this.adminUploadInstructorsForm = this.formBuilder.group({
+      uploaded_file: ['', [Validators.required]]
+
+    });
+
+    this.adminUploadStudentsForm = this.formBuilder.group({
+      uploaded_file: ['', [Validators.required]]
+
+    });
+
+    this.courseForm = this.formBuilder.group({
+      courseCode: ['', [Validators.required, Validators.maxLength(7)]],
+      courseName: ['', [Validators.required, Validators.maxLength(40)]],
+      courseDescription: ['', Validators.required],
+      offeringDpt: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
+      creditHrs: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
+      prerequisite: this.formBuilder.array([])
+    });
+
+    this.admin = null
+    this.selectedSection = 0
+
   }
 
   ngOnInit() {
@@ -37,39 +75,178 @@ export class AdminComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      let isSucess: boolean | null = await this.service.signIn(id, password);
+      let isSuccess: boolean | null = await this.service.signIn(id, password);
 
-      if (isSucess) {
+      if (isSuccess) {
         alert("The admin has been signIn successfully")
+        this.admin = new Admin("", "", "", "")
       } else {
         alert("The ID or the password is not correct")
       }
 
     }
   }
+  async CreateAdmin(){
+    if(this.AdminCreationForm.valid){
 
-  // onSignUp() {
-  //   if (this.signUpForm.valid) {
-  //     const id = this.signUpForm.value.id
-  //     const password = this.signUpForm.value.password;
-  //     const newPassword = this.signUpForm.value.newPassword;
-  //     const confirmNewPassword = this.signUpForm.value.confirmNewPassword;
+      const id = this.AdminCreationForm.get('CreatorAdminID')?.value;
+      const NewAdminID = this.AdminCreationForm.get('NewAdminID')?.value;
+      const NewAdminPassword = this.AdminCreationForm.get('NewAdminPassword')?.value;
+      const NewAdminName = this.AdminCreationForm.get('NewAdminName')?.value;
+      console.log('Registering new Admin with ID: ', NewAdminID,' , password: ',NewAdminPassword,' and Name: ',NewAdminName,' Admin was registered by Admin # ',id);
 
-  //     // Placeholder: Simulate authentication logic
-  //     console.log('Signing in with ID:', id, ', password:', password,
-  //       ', new password:', newPassword,
-  //       'and confirm password: ', confirmNewPassword);
+      let admin = new Admin(
+        this.AdminCreationForm.get('NewAdminID')?.value,
+        "0",
+        this.AdminCreationForm.get('NewAdminName')?.value,
+        this.AdminCreationForm.get('CreatorAdminID')?.value
+      );
 
-  //       //call API
-  //       this.service.signUp(id,password,newPassword,confirmNewPassword)
-  //       .subscribe((body) => {
-  //           alert(body)
-  //       })
-  //   }
-  // }
-
-  onTabChanged(event: number) {
-    console.log('Tab changed to index:', event);
-    // Perform actions based on the selected tab index, if needed
+      let isSuccess: boolean | null = await this.service.createAdmin(admin, this.AdminCreationForm.get('NewAdminPassword')?.value)
+      if(isSuccess) {
+        alert("Created an Admin successfully.")
+      } else {
+        alert("Failed to create an Admin.")
+      }
+    }
   }
+
+  selectSection (sectionIndex: number) {
+    this.selectedSection = sectionIndex
+    console.log(this.selectedSection)
+  }
+
+  async addCourse () {
+
+    if(this.courseForm.valid) {
+
+      const courseCode = this.courseForm.get('courseCode')?.value;
+      const courseName = this.courseForm.get('courseName')?.value;
+      const courseDescription = this.courseForm.get('courseDescription')?.value
+      const offeringDpt = this.courseForm.get('offeringDpt')?.value;
+      const creditHrs = this.courseForm.get('creditHrs')?.value;
+      const prerequisite = this.courseForm.get('prerequisite')?.value;
+
+      console.log(courseCode)
+      console.log(courseName)
+      console.log(courseDescription)
+      console.log(offeringDpt)
+      console.log(creditHrs)
+      console.log(prerequisite)
+
+      let newCourse = new Course(courseCode, courseName, courseDescription, offeringDpt, creditHrs, prerequisite)
+
+      let isSuccess: boolean | null = await this.service.addCourse(newCourse)
+
+      if(isSuccess){
+        alert("The course has been added successfully")
+      }
+      else{
+        alert("The course has not been added successfully")
+      }
+    }
+  }
+
+
+  get prerequisite() {
+    return this.courseForm.get('prerequisite') as FormArray;
+  }
+
+  addPrerequisite() {
+    this.prerequisite.push(this.formBuilder.control('', [Validators.required, Validators.maxLength(7)]));
+  }
+
+  removePrerequisite(index: number) {
+    this.prerequisite.removeAt(index);
+  }
+
+  get prerequisiteControls() {
+    return (this.courseForm.get('prerequisite') as FormArray).controls as FormControl[];
+  }
+
+
+  onInstructorFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.unregisteredInstructorfile = event.target.files[0];
+    }
+  }
+
+  async uploadInstructors(){
+
+    if(this.adminUploadInstructorsForm.valid
+      && this.csvFileValidator(this.adminUploadInstructorsForm)){
+
+      let uploaded_file = this.unregisteredInstructorfile;
+      console.log(uploaded_file)
+      alert('Uploading Instructors from CSV file please wait a moment')
+
+      if(uploaded_file){
+
+        let InstructorsAdded: number = 0
+        // Add the code here to send the CSV file to the backend
+
+        // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
+        // in the admin service
+
+        // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
+
+        if(InstructorsAdded > 0){
+          alert(InstructorsAdded + ' Added Successfully')
+        }
+        else{
+          alert('Error: No students were added')
+        }
+      }
+    }
+    else{
+      alert('Only CSV files are allowed');
+    }
+  }
+
+  onStudentFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.unregisteredStudentfile = event.target.files[0];
+    }
+  }
+
+  async uploadStudents() {
+
+    if(this.adminUploadStudentsForm
+      && this.csvFileValidator(this.adminUploadStudentsForm)) {
+
+        let uploaded_file = this.unregisteredStudentfile;
+        console.log('Uploading Students from CSV file: ', uploaded_file);
+        alert('Uploading Students from CSV file, please wait.')
+
+        if (uploaded_file) {
+
+          let results = await this.service.uploadUnregisteredStudents(uploaded_file)
+
+          if(results.studentsSuccessfullyAdded > 0){
+            alert(results.studentsSuccessfullyAdded + ' Added Successfully')
+            for (var fail of results.failedStudentsToBeAdded) {
+              alert('Student in row ' + fail + ' failed to be added.')
+            }
+          }
+          else{
+            alert('Error: No students were added')
+          }
+        }
+
+    } else {
+      alert('Only CSV files are allowed')
+    }
+  }
+
+  csvFileValidator(csvForm: FormGroup) {
+    const control = csvForm.get('uploaded_file') || null;
+    if(control){
+      const file = control?.value;
+      const extension = file.split('.').pop()
+      const isCsv = extension === 'csv';
+      return isCsv;
+    }
+    return false
+  }
+
 }

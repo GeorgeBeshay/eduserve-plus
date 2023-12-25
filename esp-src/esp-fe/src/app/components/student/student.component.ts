@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import { Student, StudentService } from 'src/app/services/student.service';
+import {StudentService} from 'src/app/services/student.service';
+import {Student} from "../../System Entities/Student";
 
 @Component({
   selector: 'app-student',
@@ -28,7 +29,7 @@ export class StudentComponent implements OnInit{
       address: ['', Validators.required],
       phone: ['', Validators.required],
       landline: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       gender: ['', Validators.required]
     });
   }
@@ -37,7 +38,7 @@ export class StudentComponent implements OnInit{
     // Any initialization logic
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.signInForm.valid) {
       const id = this.signInForm.value.id;
       const password = this.signInForm.value.password;
@@ -45,17 +46,20 @@ export class StudentComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      // call API
-      this.service.signIn(id,password)
-      .subscribe((body) => {
-        alert(body)
-      })
+      let isSuccess: boolean | null = await this.service.signIn(id, password);
+
+      if (isSuccess) {
+        alert("The student has been signed in successfully")
+      } else {
+        alert("The ID or the password is not correct")
+      }
 
     }
   }
 
-  onSignUp() {
+  async onSignUp() {
     if (this.signUpForm.valid) {
+
       const id = this.signUpForm.value.id
       const password = this.signUpForm.value.password;
       const newPassword = this.signUpForm.value.newPassword;
@@ -67,9 +71,16 @@ export class StudentComponent implements OnInit{
       const phone = this.signUpForm.value.phone
       const landline = this.signUpForm.value.landline
       const email = this.signUpForm.value.email
-      const gender = this.signUpForm.value.gender
+      let gender = this.signUpForm.value.gender
 
-      const student = new Student(id,password,"","","",fullName,ssn,dateOfBirth,address,phone,landline,gender,email)
+      if (gender === "male") {
+        gender = "true"
+      }
+      else {
+        gender = "false"
+      }
+
+      let student = new Student(id, "", "", "", fullName, ssn, dateOfBirth, address, phone, landline, gender, email)
 
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, ', password:', password,
@@ -85,12 +96,13 @@ export class StudentComponent implements OnInit{
         ', gender: ', gender);
 
         //cal API
-        console.log("hi")
-        // console.log(student)
-        // this.service.signUp(student)
-        // .subscribe((body) => {
-        //   alert(body)
-        // })
+        let isSuccess: boolean | null = await this.service.signUp(student, password, newPassword);
+
+      if (isSuccess) {
+        alert("The student has been signed up successfully")
+      } else {
+        alert("The student can not sign up")
+      }
     }
 
 

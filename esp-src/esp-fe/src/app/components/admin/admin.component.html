@@ -1,72 +1,188 @@
 <div class="holder">
-  <mat-tab-group (selectedIndexChange)="onTabChanged($event)">
-    <!-- Sign In Tab -->
-    <mat-tab label="Sign In">
-      <ng-template mat-tab-label>
-        Sign In
-      </ng-template>
-      <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label>Admin ID</label>
-          <input type="text" formControlName="id" />
-          <div *ngIf="signInForm.get('id')?.hasError('required') && signInForm.get('id')?.touched" class="input-error">
-            Admin ID is required.
-          </div>
-        </div>
+  <ng-container *ngIf="admin == null; else loggedIn">
+    <div class="sign-in-form">
+      <mat-tab-group>
+        <!--     Sign In Tab -->
+        <mat-tab label="Sign In">
+          <ng-template mat-tab-label>
+            Sign In
+          </ng-template>
+          <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label>Admin ID</label>
+              <input type="text" formControlName="id" />
+              <div *ngIf="signInForm.get('id')?.hasError('required') && signInForm.get('id')?.touched" class="input-error">
+                Admin ID is required.
+              </div>
+            </div>
 
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" formControlName="password" />
-          <div *ngIf="signInForm.get('password')?.hasError('required') && signInForm.get('password')?.touched" class="input-error">
-            Password is required.
-          </div>
-        </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" formControlName="password" />
+              <div *ngIf="signInForm.get('password')?.hasError('required') && signInForm.get('password')?.touched" class="input-error">
+                Password is required.
+              </div>
+            </div>
 
-        <button mat-raised-button type="submit" [disabled]="signInForm.invalid">Sign In</button>
-      </form>
-    </mat-tab>
+            <button mat-raised-button type="submit" [disabled]="signInForm.invalid">Sign In</button>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </ng-container>
+  <ng-template #loggedIn>
+    <div class="admin-main-page">
 
-    <!-- Sign Up Tab
-    <mat-tab label="Sign Up">
-      <ng-template mat-tab-label>
-        Sign Up
-      </ng-template>
-      <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
-        <div class="form-group">
-          <label>Admin ID</label>
-          <input type="text" formControlName="id" />
-          <div *ngIf="signUpForm.get('id')?.hasError('required') && signUpForm.get('id')?.touched" class="input-error">
-            Admin ID is required.
-          </div>
-        </div>
+      <div class="header">
+        <h1>Admin Dashboard</h1>
+      </div>
 
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" formControlName="password" />
-          <div *ngIf="signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched" class="input-error">
-            Password is required.
-          </div>
-        </div>
 
-        <div class="form-group">
-          <label>New Password</label>
-          <input type="password" formControlName="newPassword" />
-          <div *ngIf="signUpForm.get('newPassword')?.hasError('required') && signUpForm.get('newPassword')?.touched" class="input-error">
-            New Password is required.
-          </div>
-        </div>
+      <div class="sidebar">
+        <ul class="nav-links">
+          <li><a (click)="selectSection(0)">Admin Home Page</a></li>
+          <li><a (click)="selectSection(1)">Add An Admin</a></li>
+          <li><a (click)="selectSection(2)">Add Instructors</a></li>
+          <li><a (click)="selectSection(3)">Add Students</a></li>
+          <li><a (click)="selectSection(4)">Add A Course</a></li>
+          <!-- Add more navigation links as needed -->
+        </ul>
+      </div>
 
-        <div class="form-group">
-          <label>Confirm Password</label>
-          <input type="password" formControlName="confirmNewPassword" />
-          <div *ngIf="signUpForm.get('confirmNewPassword')?.hasError('required') && signUpForm.get('confirmNewPassword')?.touched" class="input-error">
-            Password Confirmation is required.
-          </div>
-        </div>
+      <div class="main-content">
 
-        <button mat-raised-button type="submit" [disabled]="signUpForm.invalid">Sign Up</button>
-      </form>
-    </mat-tab> -->
-    
-  </mat-tab-group>
+        <ng-container *ngIf="selectedSection == 0">
+          This is the admin home page!
+        </ng-container>
+
+        <ng-container *ngIf="selectedSection == 1">
+          <form [formGroup]="AdminCreationForm" (ngSubmit)="CreateAdmin()">
+            <div class="form-group">
+              <label>Creator Admin ID</label>
+              <input type="text" formControlName="CreatorAdminID" />
+              <div *ngIf="AdminCreationForm.get('CreatorAdminID')?.hasError('required') && signInForm.get('CreatorAdminID')?.touched" class="input-error">
+                Creator Admin ID is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>New Admin ID</label>
+              <input type="text" formControlName="NewAdminID" />
+              <div *ngIf="AdminCreationForm.get('NewAdminID')?.hasError('required') && AdminCreationForm.get('NewAdminID')?.touched" class="input-error">
+                New Admin ID is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>New Admin password</label>
+              <input type="password" formControlName="NewAdminPassword" />
+              <div *ngIf="AdminCreationForm.get('NewAdminPassword')?.hasError('required') && AdminCreationForm.get('NewAdminPassword')?.touched" class="input-error">
+                New Admin password is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>New Admin Name</label>
+              <input type="text" formControlName="NewAdminName" />
+              <div *ngIf="AdminCreationForm.get('NewAdminName')?.hasError('required') && AdminCreationForm.get('NewAdminName')?.touched" class="input-error">
+                New admin name is required.
+              </div>
+            </div>
+
+            <button mat-raised-button type="submit" [disabled]="AdminCreationForm.invalid">Add New Admin</button>
+          </form>
+        </ng-container>
+
+        <ng-container *ngIf="selectedSection == 2">
+          Upload your CSV file to add instructors!
+          <form class="upload-csv-form" [formGroup]="adminUploadInstructorsForm" (ngSubmit)="uploadInstructors()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onInstructorFileChange($event)"/>
+            <button type="submit">Submit</button>
+          </form>
+        </ng-container>
+
+        <ng-container *ngIf="selectedSection == 3">
+          Upload your CSV file to add students!
+          <form class="upload-csv-form" [formGroup]="adminUploadStudentsForm" (ngSubmit)="uploadStudents()">
+            <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onStudentFileChange($event)"/>
+            <button type="submit">Submit</button>
+          </form>
+        </ng-container>
+
+        <ng-container *ngIf="selectedSection == 4">
+          <form [formGroup]="courseForm" (ngSubmit)="addCourse()">
+            <div class="form-group">
+              <label for="courseCode">Course Code:</label>
+              <input id="courseCode" type="text" formControlName="courseCode" />
+              <div *ngIf="courseForm.get('courseCode')?.invalid && (courseForm.get('courseCode')?.dirty || courseForm.get('courseCode')?.touched)">
+                <div *ngIf="courseForm.get('courseCode')?.hasError('required')" class="input-error">Course Code is required.</div>
+                <div *ngIf="courseForm.get('courseCode')?.errors?.['maxlength']" class="input-error">Course Code should be at most 7 characters.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="courseName">Course Name:</label>
+              <input id="courseName" type="text" formControlName="courseName" />
+              <div *ngIf="courseForm.get('courseName')?.invalid && (courseForm.get('courseName')?.dirty || courseForm.get('courseName')?.touched)">
+                <div *ngIf="courseForm.get('courseName')?.hasError('required')" class="input-error">Course Name is required.</div>
+                <div *ngIf="courseForm.get('courseName')?.errors?.['maxlength']" class="input-error">Course Name should be at most 40 characters.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="courseDescription">Course Description:</label>
+              <input id="courseDescription" type="text" formControlName="courseDescription" />
+              <div *ngIf="courseForm.get('courseDescription')?.invalid && (courseForm.get('courseDescription')?.dirty || courseForm.get('courseDescription')?.touched)">
+                <div *ngIf="courseForm.get('courseDescription')?.hasError('required')" class="input-error">Course Description is required.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="offeringDpt">Offering Department ID:</label>
+              <input id="offeringDpt" type="number" formControlName="offeringDpt" />
+              <div *ngIf="courseForm.get('offeringDpt')?.invalid && (courseForm.get('offeringDpt')?.dirty || courseForm.get('offeringDpt')?.touched)">
+                <div *ngIf="courseForm.get('offeringDpt')?.hasError('required')" class="input-error">Offering Department is required.</div>
+                <div *ngIf="(courseForm.get('offeringDpt')?.hasError('min') || courseForm.get('offeringDpt')?.hasError('max'))" class="input-error">
+                  Offering Department should be between -128 and 127.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="creditHrs">Credit Hours:</label>
+              <input id="creditHrs" type="number" formControlName="creditHrs" />
+              <div *ngIf="courseForm.get('creditHrs')?.invalid && (courseForm.get('creditHrs')?.dirty || courseForm.get('creditHrs')?.touched)">
+                <div *ngIf="courseForm.get('creditHrs')?.hasError('required')" class="input-error">Credit Hours is required.</div>
+                <div *ngIf="(courseForm.get('creditHrs')?.hasError('min') || courseForm.get('creditHrs')?.hasError('max'))" class="input-error">
+                  Credit Hours should be between -128 and 127.
+                </div>
+              </div>
+            </div>
+
+            <div formArrayName="prerequisite">
+              <label>Prerequisites:</label>
+              <div *ngFor="let prerequisiteControl of prerequisiteControls; let i = index">
+                <div class="form-group">
+                  <label for="prerequisite{{i}}">Course Code {{i + 1}}:</label>
+                  <input id="prerequisite{{i}}" type="text" [formControl]="prerequisiteControl" />
+                  <div *ngIf="prerequisiteControl.invalid && (prerequisiteControl.dirty || prerequisiteControl.touched)">
+                    <div *ngIf="prerequisiteControl.hasError('required')" class="input-error">Prerequisite is required.</div>
+                    <div *ngIf="prerequisiteControl.errors?.['maxlength']" class="input-error">Prerequisite should be at most 7 characters.</div>
+                  </div>
+                  <button type="button" (click)="removePrerequisite(i)">Remove</button>
+                </div>
+              </div>
+              <button mat-icon-button type="button" (click)="addPrerequisite()"> + </button>
+            </div>
+
+            <button mat-raised-button type="submit" [disabled]="courseForm.invalid">Add Course</button>
+          </form>
+
+        </ng-container>
+      </div>
+
+    </div>
+
+  </ng-template>
+
 </div>

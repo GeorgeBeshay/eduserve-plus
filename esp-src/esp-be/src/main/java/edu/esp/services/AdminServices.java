@@ -7,14 +7,17 @@ import edu.esp.system_entities.system_users.Admin;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.UnregisteredStudent;
+import edu.esp.utilities.CSVManipulator;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 /**
  * Class represents the "Brain" of all operations related to the admin entity, as it implements all the business logic
@@ -32,20 +35,42 @@ public class AdminServices {
     }
 
     /**
-     * Implements the business logic for registering a new admin.
-     *
-     * @param admin The admin object to be registered.
-     * @return True if the registration is successful, otherwise false.
+     * Implements the business logic for adding a new admin to the system. It relies on the methods provided by the
+     * dbFacade object from the layer below it, and converts the admin password to the hashed version of it.
+     * @param requestMap A map that contains the "admin" field which essentially contains all the admin real data
+     * except for the password, which is sent in a dedicated field "adminPw", so that it can be further hashed
+     * and then stored in the DB. We can't send the 'adminPw' field in the admin object itself, as the object stores
+     * an attribute of type int and not a string.
+     * @return a boolean flag that indicates the success or failure of the process.
      */
-    public boolean signUp(Admin admin) {
+    public boolean addNewAdmin(Map<String,Object> requestMap) {
 
-        if (dbFacade.createAdmin(admin)) {
-            Logger.logMsgFrom(this.getClass().getName(), "New admin was successfully registered.", 0);
+        try {
+            // Check that the map contains the needed fields.
+            assert requestMap != null : "Request Map was found to be null!";
+            assert requestMap.containsKey("admin") : "Request Map does not contain the 'admin' field!";
+            assert requestMap.containsKey("adminPw") : "Request Map does not contain the 'adminPw' field!";
+
+            // Prepare the real admin object, that to be stored in the DB.
+            Admin adminToBeAdded = (new ObjectMapper()).convertValue(requestMap.get("admin"), Admin.class);
+            int hashedPassword = Hasher.hash((String)requestMap.get("adminPw"));
+
+            // Check for special cases
+            assert adminToBeAdded != null : "Admin object sent was null.";
+            assert hashedPassword != -1 : "Admin password couldn't be hashed.";
+
+            adminToBeAdded.setAdminPwHash(hashedPassword);
+            assert dbFacade.createAdmin(adminToBeAdded) : "New admin wasn't created.";
+
+            Logger.logMsgFrom(this.getClass().getName(), "New admin was successfully created.", 0);
             return true;
+
+        } catch (Exception | Error e) {
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+            return false;
+
         }
 
-        Logger.logMsgFrom(this.getClass().getName(), "New Admin failed to be registered.", 1);
-        return false;
     }
 
     /**
@@ -150,6 +175,55 @@ public class AdminServices {
         Logger.logMsgFrom(this.getClass().getName(), "get All the Courses successfully ..", 0);
         return (courses != null)? courses : new ArrayList<>();
     }
+
+    /** 
+     * This service takes the file from the front and send it to csv manipulator to save it
+     * @param unregisteredStudentsFile the csv file sent from the front
+     * @return Number of added students
+     */
+    public Map<String, Object> addUnregisteredStudents (MultipartFile unregisteredStudentsFile) {
+
+        CSVManipulator csvManipulator = new CSVManipulator();
+
+        List<UnregisteredStudent> unregisteredStudents = null;
+        if (csvManipulator.saveCSVFile(unregisteredStudentsFile)) {
+            unregisteredStudents = csvManipulator.readUnregisteredStudents(unregisteredStudentsFile.getOriginalFilename());
+        }
+
+        return addUnregisteredStudents(unregisteredStudents);
+    }
+
+    /**
+     * This is a private function used to add the unregistered students
+     * @param unregisteredStudents the students needed to be added
+     * @return Map of 2 things: the number of successfully added students and the row index of failed students to be added
+     */
+
+    private Map<String, Object> addUnregisteredStudents(List<UnregisteredStudent> unregisteredStudents) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        List<Integer> failStudentsToBeAdded = new ArrayList<>();
+
+        if (unregisteredStudents == null) {
+            result.put("studentsSuccessfullyAdded", 0);
+            result.put("failedStudentsToBeAdded", failStudentsToBeAdded);
+            return result;
+        }
+
+        for (int i = 0 ; i < unregisteredStudents.size() ; i++) {
+            if (!dbFacade.addNewUnregisteredStudent(unregisteredStudents.get(i))) {
+                failStudentsToBeAdded.add(i + 2);
+            }
+        }
+
+        result.put("studentsSuccessfullyAdded", unregisteredStudents.size() - failStudentsToBeAdded.size());
+        result.put("failedStudentsToBeAdded", failStudentsToBeAdded);
+
+        return result;
+
+    }
+
 
     /**
      * get all the un registered instructors saved in the database.

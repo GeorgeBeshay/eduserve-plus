@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import {Admin} from "../System Entities/Admin";
+import { Course } from '../System Entities/course';
 
 @Injectable({
   providedIn: 'root'
@@ -31,21 +33,57 @@ export class AdminService {
     return null;
   }
 
-  
-
-}
-
-export class Admin{
-
-  adminId: string
-  adminPwHash: string
-  adminName: string
-  creatorAdminId: string
-
-  constructor(adminId: string, adminPwHash: string, adminName: string, creatorAdminId: string) {
-    this.adminId = adminId
-    this.adminName = adminName
-    this.adminPwHash = adminPwHash
-    this.creatorAdminId = creatorAdminId
+  async createAdmin(admin: Admin, adminPw: string){
+    try {
+      return await firstValueFrom(
+        this.http.post<boolean>(this.URL + 'addNewAdmin', {"admin": admin, "adminPw": adminPw}, {responseType:'json'})   // returns the user object.
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return null;
   }
+
+  async addCourse(newCourse: Course){
+    try {
+      // return response entity.
+      // in the body of the response entity, there is a boolean value.
+      // if added successfully return true.
+      // else return false.
+      return await firstValueFrom(
+        this.http.post<boolean>(this.URL + 'addCourse', newCourse, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return null;
+  }
+
+  async uploadUnregisteredStudents(file: File) {
+
+    const formData: FormData = new FormData();
+    formData.append('unregisteredStudents', file);
+
+    try {
+      return await firstValueFrom (
+        this.http.post<{"studentsSuccessfullyAdded": number, "failedStudentsToBeAdded": number[]}>(this.URL + 'addUnregisteredStudents', formData)
+      );
+    }
+
+    catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return {"studentsSuccessfullyAdded": 0, "failedStudentsToBeAdded": []};
+
+  }
+
 }
