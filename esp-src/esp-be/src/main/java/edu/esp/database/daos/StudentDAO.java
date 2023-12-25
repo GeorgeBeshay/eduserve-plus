@@ -1,33 +1,31 @@
 package edu.esp.database.daos;
 
 import edu.esp.system_entities.system_users.Student;
+import edu.esp.system_entities.system_users.UnregisteredStudent;
+import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-public class StudentDAO {
-
-    private final JdbcTemplate jdbcTemplate;
+public class StudentDAO extends DAO <Student> {
 
     public StudentDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        super(jdbcTemplate, Student.class);
     }
 
     public boolean createStudent(Student newStudent) {
         try {
-            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                    .withTableName("student");
-
+            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("student");
             BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(newStudent);
-            int rowsAffected = jdbcInsert.execute(parameterSource);
 
-            return rowsAffected > 0;
+            return jdbcInsert.execute(parameterSource) > 0;
+
         } catch (Exception ex) {
-            System.out.println("\u001B[35m" + "Error had occurred in student record insertion: " + ex.getMessage() + "\u001B[0m");
+            Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in student record insertion: " + ex.getMessage(), 1);
             return false; // Return a meaningful response indicating failure
+
         }
     }
 
@@ -38,19 +36,15 @@ public class StudentDAO {
                 FROM student
                 WHERE student_id = %d
                 """.formatted(id);
-            BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true);     // to deal with null primitive data types.
-            Student st = jdbcTemplate.queryForObject(sql, rowMapper);
-//            System.out.println(st);
-            return st;
+
+            return jdbcTemplate.queryForObject(sql, rowMapper);
+
         }
         catch (Exception e) {
-            System.out.println("Error in readStudentByID: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), "Error in readStudentByID: " + e.getMessage(), 1);
             return null;
-        }
-    }
-    public void updateStudent(){
 
+        }
     }
 
     public boolean deleteStudentById(int id){
@@ -61,51 +55,86 @@ public class StudentDAO {
                     """.formatted(id);
             int rowsAffected = jdbcTemplate.update(sql);
             return rowsAffected > 0;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        } catch (Exception e){
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
             return false;
         }
     }
+
     public List<Student> SelectAll() {
         try {
             String sql = "SELECT * FROM student";
-            BeanPropertyRowMapper<Student> rowMapper = new BeanPropertyRowMapper<>(Student.class);
-            rowMapper.setPrimitivesDefaultedForNullValue(true);
+
             return jdbcTemplate.query(sql, rowMapper);
         }
         catch (Exception e) {
-            System.out.println("Error in selectAllStudents: " + e.getMessage());
+            Logger.logMsgFrom(this.getClass().getName(), "Error in selectAllStudents: " + e.getMessage(), 1);
             return null;
         }
     }
 
+    /**
+     * @param id The ID which the student has entered while signing up
+     * @param tempHash The hash of the OTP which the student has entered while signing up
+     * @param registeredStudent The object which encapsulates the data that the student has entered while signing up not including the department ID
+     * @return Returns a boolean indicating the success of the signup operation
+     */
     public boolean signUpStudent(int id, int tempHash, Student registeredStudent){
-        try{
-            int passwordHash;
-            // Retrieve ID and temporary password hash from unregistered students table
-            SqlRowSet unregisteredStudent = jdbcTemplate.queryForRowSet("""
+        try {
+            UnregisteredStudent unregisteredStudent = readUnregisteredStudentById(id);
+            // If the input temporary hash is not the same as the unregistered password hash, reject operation
+            if (unregisteredStudent == null || unregisteredStudent.getStudentTempPwHash() != tempHash) return false;
+            // Add record to students table and rely on the DB trigger to delete that record from the unregistered_students
+            registeredStudent.setDptId(unregisteredStudent.getDptId());
+            return createStudent(registeredStudent);
+
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), "Error had occurred in student sign up: " + e.getMessage(), 1);
+            return false; // Return a meaningful response indicating failure
+        }
+    }
+
+    public boolean createUnregisteredStudent(UnregisteredStudent unregisteredStudent) {
+        try {
+            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                    .withTableName("unregistered_student");
+
+            BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(unregisteredStudent);
+            int rowsAffected = jdbcInsert.execute(parameterSource);
+
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(),"Error occurred in adding a new unregistered student to the system.",1);
+            return false ; // Return a meaningful response indicating failure
+        }
+    }
+
+    public UnregisteredStudent readUnregisteredStudentById(int id) {
+        try {
+            String sql = """
                     SELECT *
                     FROM unregistered_student
-                    WHERE student_id = %d
-                    """.formatted(id));
-            // If no such record exists, reject operation
-            if (unregisteredStudent.next())
-                passwordHash = unregisteredStudent.getInt("student_temp_pw_hash");
-            else
-                return false;
-            // If the input temporary hash is not the same as the unregistered password hash, reject operation
-            if (tempHash != passwordHash) return false;
-            // Delete the record from the unregistered students table
-            if (jdbcTemplate.update("""
+                    WHERE student_id = %d""".formatted(id);
+            BeanPropertyRowMapper<UnregisteredStudent> rowMapper = new BeanPropertyRowMapper<>(UnregisteredStudent.class);
+            rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.queryForObject(sql, rowMapper);
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(),"Error occurred in reading an unregistered student from the system.",1);
+            return null;
+        }
+    }
+
+    public boolean deleteUnregisteredStudentById(int id) {
+        try{
+            String sql = """
                     DELETE FROM unregistered_student
                     WHERE student_id = %d
-                    """.formatted(id)) <= 0) return false;
-            // Add record to students table
-            createStudent(registeredStudent);
-            return true;
-        }catch (Exception e){
-            System.out.println("\u001B[35m" + "Error had occurred in student sign up: " + e.getMessage() + "\u001B[0m");
-            return false; // Return a meaningful response indicating failure
+                    """.formatted(id);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return rowsAffected > 0;
+        } catch (Exception e){
+            Logger.logMsgFrom(this.getClass().getName(),"Error deleting an unregistered student by id.",1);
+            return false;
         }
     }
 }

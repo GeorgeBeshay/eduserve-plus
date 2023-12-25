@@ -33,8 +33,18 @@ export class AdminService {
     }
     return null;
   }
-  async createAdmin(admin: Admin){
 
+  async createAdmin(admin: Admin, adminPw: string){
+    try {
+      return await firstValueFrom(
+        this.http.post<boolean>(this.URL + 'addNewAdmin', {"admin": admin, "adminPw": adminPw}, {responseType:'json'})   // returns the user object.
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
     return null;
   }
 
@@ -57,13 +67,13 @@ export class AdminService {
   }
 
   async uploadUnregisteredStudents(file: File) {
-    
+
     const formData: FormData = new FormData();
     formData.append('unregisteredStudents', file);
 
     try {
       return await firstValueFrom (
-        this.http.post<number>(this.URL + 'addUnregisteredStudents', formData)
+        this.http.post<{"studentsSuccessfullyAdded": number, "failedStudentsToBeAdded": number[]}>(this.URL + 'addUnregisteredStudents', formData)
       );
     }
 
@@ -73,7 +83,7 @@ export class AdminService {
       else
         console.error('Error');
     }
-    return 0;
+    return {"studentsSuccessfullyAdded": 0, "failedStudentsToBeAdded": []};
 
   }
 

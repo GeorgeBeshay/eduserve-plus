@@ -1,16 +1,14 @@
 package edu.esp.system_entities.system_users;
 
-import java.util.*;
-
 public class Student {
     private int studentId;
     private int studentPwHash;
-    private byte departmentId;
+    private byte dptId;
     private byte studentLevel;
     private float gpa;
     private String studentName;
     private String ssn;
-    private Date birthDate;
+    private String bdate;
     private String studentAddress;
     private String phone;
     private String landline;
@@ -19,17 +17,17 @@ public class Student {
 
     public Student() {}
 
-    public Student(int studentId, int studentPwHash, byte departmentId, byte studentLevel, float gpa,
-                   String studentName, String ssn, Date birthDate, String studentAddress, String phone,
+    public Student(int studentId, int studentPwHash, byte dptId, byte studentLevel, float gpa,
+                   String studentName, String ssn, String bdate, String studentAddress, String phone,
                    String landline, boolean gender, String email) {
         this.studentId = studentId;
         this.studentPwHash = studentPwHash;
-        this.departmentId = departmentId;
+        this.dptId = dptId;
         this.studentLevel = studentLevel;
         this.gpa = gpa;
         this.studentName = studentName;
         this.ssn = ssn;
-        this.birthDate = birthDate;
+        this.bdate = bdate;
         this.studentAddress = studentAddress;
         this.phone = phone;
         this.landline = landline;
@@ -53,12 +51,12 @@ public class Student {
         this.studentPwHash = studentPwHash;
     }
 
-    public byte getDepartmentId() {
-        return departmentId;
+    public byte getDptId() {
+        return dptId;
     }
 
-    public void setDepartmentId(byte departmentId) {
-        this.departmentId = departmentId;
+    public void setDptId(byte dptId) {
+        this.dptId = dptId;
     }
 
     public byte getStudentLevel() {
@@ -93,12 +91,12 @@ public class Student {
         this.ssn = ssn;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
+    public String getBdate() {
+        return bdate;
     }
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+    public void setBdate(String bdate) {
+        this.bdate = bdate;
     }
 
     public String getStudentAddress() {
@@ -125,7 +123,7 @@ public class Student {
         this.landline = landline;
     }
 
-    public boolean isGender() {
+    public boolean getGender() {
         return gender;
     }
 
@@ -146,12 +144,12 @@ public class Student {
         return "Student{" +
                 "studentId=" + studentId +
                 ", studentPwHash=" + studentPwHash +
-                ", departmentId=" + departmentId +
+                ", departmentId=" + dptId +
                 ", studentLevel=" + studentLevel +
                 ", gpa=" + gpa +
                 ", studentName='" + studentName + '\'' +
                 ", ssn='" + ssn + '\'' +
-                ", birthDate=" + birthDate +
+                ", birthdate=" + bdate +
                 ", studentAddress='" + studentAddress + '\'' +
                 ", phone='" + phone + '\'' +
                 ", landline='" + landline + '\'' +
