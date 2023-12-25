@@ -88,19 +88,26 @@ export class AdminComponent implements OnInit{
   }
   async CreateAdmin(){
     if(this.AdminCreationForm.valid){
+
       const id = this.AdminCreationForm.get('CreatorAdminID')?.value;
       const NewAdminID = this.AdminCreationForm.get('NewAdminID')?.value;
       const NewAdminPassword = this.AdminCreationForm.get('NewAdminPassword')?.value;
-      const NewAdminName =this.AdminCreationForm.get('NewAdminName')?.value;
+      const NewAdminName = this.AdminCreationForm.get('NewAdminName')?.value;
       console.log('Registering new Admin with ID: ', NewAdminID,' , password: ',NewAdminPassword,' and Name: ',NewAdminName,' Admin was registered by Admin # ',id);
 
       let admin = new Admin(
         this.AdminCreationForm.get('NewAdminID')?.value,
-        this.AdminCreationForm.get('NewAdminPassword')?.value,
+        "0",
         this.AdminCreationForm.get('NewAdminName')?.value,
         this.AdminCreationForm.get('CreatorAdminID')?.value
       );
-            let isSuccess: boolean | null = await this.service.createAdmin(admin)
+
+      let isSuccess: boolean | null = await this.service.createAdmin(admin, this.AdminCreationForm.get('NewAdminPassword')?.value)
+      if(isSuccess) {
+        alert("Created an Admin successfully.")
+      } else {
+        alert("Failed to create an Admin.")
+      }
     }
   }
 
