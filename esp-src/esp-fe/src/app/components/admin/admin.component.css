@@ -130,6 +130,11 @@ input {
   cursor: pointer;
 }
 
+.border {
+  max-height: 130vh; /* Adjust this value as needed */
+  overflow-y: auto;
+}
+
 
 .button{
   margin: auto;
