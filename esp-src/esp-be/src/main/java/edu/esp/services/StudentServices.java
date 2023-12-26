@@ -2,12 +2,14 @@ package edu.esp.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Student;
 import edu.esp.utilities.Hasher;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,5 +87,21 @@ public class StudentServices {
 
         Logger.logMsgFrom(this.getClass().getName(), "New Student failed to be registered.", 1);
         return false;
+    }
+
+    public Map<String, Object> getCourseRegistrationSetup (int studentId) {
+        // TODO use the getAvailableCourses and getAvailableCreditHours methods to return a map
+        return null;
+    }
+
+    private List<Course> getAvailableCourses(int studentId) {
+        // TODO get the list of available courses for student registration
+        return null;
+    }
+
+    private int getAvailableCreditHours(int studentId) {
+        // TODO maybe create a new DAO for the "attends" table
+        // TODO get student available credit hours
+        return 0;
     }
 }
