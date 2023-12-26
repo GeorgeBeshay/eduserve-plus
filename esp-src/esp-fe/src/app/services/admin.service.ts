@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import {Admin} from "../System Entities/Admin";
 import { Course } from '../System Entities/course';
 import { Instructor } from '../System Entities/Instructor';
+import { Student } from '../System Entities/Student';
+import { UnregisteredStudent } from '../System Entities/unregisterStudent';
 
 @Injectable({
   providedIn: 'root'
@@ -114,4 +116,19 @@ export class AdminService {
     }
     return [];
   }
+
+  async getAllUnregisteredStudents(): Promise<UnregisteredStudent[]> {
+    try {
+      return await firstValueFrom(
+        this.http.post<UnregisteredStudent[]>(this.URL + 'getAllUnregisteredStudents', {}, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return [];
+  }
+
 }
