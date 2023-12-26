@@ -46,4 +46,33 @@ public class StudentEndPoint {
                 ? new ResponseEntity<>(true, HttpStatus.OK)
                 : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("courseRegistrationSetup")
+    @ResponseBody
+    public ResponseEntity<Map<String,Object>> getCourseRegistrationSetup(@RequestBody Integer studentId) {
+        // TODO use the getCourseRegistrationSetup method from the student service class
+        return null;
+    }
+
+    /**
+     * @param requestMap A map which includes student ID, taken credit hours, and list of course codes
+     * @return A boolean which indicates success or failure
+     */
+    @PostMapping("saveRegisteredCourses")
+    @ResponseBody
+    public ResponseEntity<Boolean> saveRegisteredCourses(@RequestBody Map<String, Object> requestMap) {
+        // TODO save the courses which the student has chosen
+        return null;
+    }
+
+    /**
+     * @param requestMap A map which includes the student ID along with the courses they wish to withdraw
+     * @return A boolean which indicates success or failure
+     */
+    @PostMapping("withdrawCourses")
+    @ResponseBody
+    public ResponseEntity<Boolean> withdrawCourses(@RequestBody Map<String, Object> requestMap) {
+        // TODO withdraw the given courses from the current semester of the given student id
+        return null;
+    }
 }

@@ -144,14 +144,15 @@
             </div>
 
             <div class="form-group">
-              <label for="offeringDpt">Offering Department ID:</label>
-              <input id="offeringDpt" type="number" formControlName="offeringDpt" />
-              <div *ngIf="courseForm.get('offeringDpt')?.invalid && (courseForm.get('offeringDpt')?.dirty || courseForm.get('offeringDpt')?.touched)">
-                <div *ngIf="courseForm.get('offeringDpt')?.hasError('required')" class="input-error">Offering Department is required.</div>
-                <div *ngIf="(courseForm.get('offeringDpt')?.hasError('min') || courseForm.get('offeringDpt')?.hasError('max'))" class="input-error">
-                  Offering Department should be between -128 and 127.
+              <label for="offeringDpt">Offering Department:</label>
+              <select id="offeringDpt" type="select" formControlName="offeringDpt" >
+                    <option value = 1>Computer and Systems Engineering</option>
+                    <option value = 2>Mechanical Engineering</option>
+                    <option value = 3>Chemical Engineering</option>
+                <div *ngIf="courseForm.get('offeringDpt')?.invalid && (courseForm.get('offeringDpt')?.dirty || courseForm.get('offeringDpt')?.touched)">
+                  <div *ngIf="courseForm.get('offeringDpt')?.hasError('required')" class="input-error">Offering Department is required.</div>
                 </div>
-              </div>
+              </select>
             </div>
 
             <div class="form-group">
@@ -160,7 +161,7 @@
               <div *ngIf="courseForm.get('creditHrs')?.invalid && (courseForm.get('creditHrs')?.dirty || courseForm.get('creditHrs')?.touched)">
                 <div *ngIf="courseForm.get('creditHrs')?.hasError('required')" class="input-error">Credit Hours is required.</div>
                 <div *ngIf="(courseForm.get('creditHrs')?.hasError('min') || courseForm.get('creditHrs')?.hasError('max'))" class="input-error">
-                  Credit Hours should be between -128 and 127.
+                  Credit Hours should be between 1 and 20.
                 </div>
               </div>
             </div>

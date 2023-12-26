@@ -59,8 +59,8 @@ export class AdminComponent implements OnInit{
       courseCode: ['', [Validators.required, Validators.maxLength(7)]],
       courseName: ['', [Validators.required, Validators.maxLength(40)]],
       courseDescription: ['', Validators.required],
-      offeringDpt: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
-      creditHrs: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
+      offeringDpt: ['', Validators.required],
+      creditHrs: [null, [Validators.required, Validators.min(1), Validators.max(20)]],
       prerequisite: this.formBuilder.array([])
     });
 

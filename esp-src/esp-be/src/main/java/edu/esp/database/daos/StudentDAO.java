@@ -1,5 +1,6 @@
 package edu.esp.database.daos;
 
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Student;
 import edu.esp.system_entities.system_users.UnregisteredStudent;
 import edu.esp.utilities.Logger;

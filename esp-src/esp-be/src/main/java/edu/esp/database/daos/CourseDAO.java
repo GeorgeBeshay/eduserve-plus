@@ -153,4 +153,8 @@ public class CourseDAO extends DAO<Course> {
         }
     }
 
+    public List<Course> getAvailableCourses(int studentId) {
+        // TODO get the list of courses that are available for the student to register by a stored procedure
+        return null;
+    }
 }
