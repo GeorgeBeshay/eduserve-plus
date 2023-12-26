@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -227,5 +228,40 @@ public class CourseDAOTests {
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
         jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
     }
+
+
+
+    @Test
+    @DisplayName("get all courses where there exist courses in the database.")
+    public void GetAllCoursesExist() {
+
+        String[] courseCodes = {"TEST1", "TEST2"};
+        jdbcTemplate.update("INSERT INTO course (course_code, offering_dpt) VALUES ('TEST1', 101)");
+        jdbcTemplate.update("INSERT INTO course (course_code, offering_dpt) VALUES ('TEST2', 101)");
+        List<Course> courses = courseDAO.getAllCourses();
+
+        assertEquals(2, courses.size());
+        assertTrue(courses.get(0).getCourseCode().equals("TEST1")
+                            || courses.get(0).getCourseCode().equals("TEST2") );
+
+        assertTrue(courses.get(1).getCourseCode().equals("TEST1")
+                || courses.get(1).getCourseCode().equals("TEST2") );
+
+        jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", 101);
+
+    }
+
+    @Test
+    @DisplayName("get all courses where there don't exist courses in the database.")
+    public void GetAllCoursesNotExist() {
+
+        List<Course> courses = courseDAO.getAllCourses();
+
+        assertNotNull(courses);
+        assertTrue(courses.isEmpty());
+
+    }
+
+
 
 }

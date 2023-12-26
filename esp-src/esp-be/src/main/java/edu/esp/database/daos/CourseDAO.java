@@ -123,10 +123,6 @@ public class CourseDAO extends DAO<Course> {
                 System.out.println(course.toString());
                 List<String> pre = getCoursePrerequisites(course.getCourseCode());
 
-//                if (pre == null) {
-//                    throw new RuntimeException("Error had occurred while reading the database.");
-//                }
-
                 course.setPrerequisite(pre);
             }
 
