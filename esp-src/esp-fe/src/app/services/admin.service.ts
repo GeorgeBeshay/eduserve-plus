@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {Admin} from "../System Entities/Admin";
 import { Course } from '../System Entities/course';
+import { Instructor } from '../System Entities/Instructor';
 
 @Injectable({
   providedIn: 'root'
@@ -86,4 +87,31 @@ export class AdminService {
 
   }
 
+  async getAllCourses(): Promise<Course[]> {
+    try {
+      return await firstValueFrom(
+        this.http.post<Course[]>(this.URL + 'getAllCourses', {}, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return [];
+  }
+
+  async getAllUnregisteredInstructors(): Promise<Instructor[]> {
+    try {
+      return await firstValueFrom(
+        this.http.post<Instructor[]>(this.URL + 'getAllUnregisteredInstructors', {}, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return [];
+  }
 }

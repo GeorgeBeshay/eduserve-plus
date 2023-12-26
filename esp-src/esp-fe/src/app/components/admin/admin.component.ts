@@ -4,6 +4,7 @@ import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
 import { Course } from 'src/app/System Entities/course';
 import { AbstractControl } from '@angular/forms';
+import { Instructor } from 'src/app/System Entities/Instructor';
 
 @Component({
   selector: 'app-admin',
@@ -17,6 +18,8 @@ export class AdminComponent implements OnInit{
   adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
+unregisteredInstructors: Instructor[] = [] 
+courses: Course[] = []
   unregisteredInstructorfile : File | null = null;
   unregisteredStudentfile : File | null = null;
   courseForm: FormGroup;
@@ -113,6 +116,12 @@ export class AdminComponent implements OnInit{
 
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
+    if(this.selectedSection == 2){
+      this.showUnregisteredInstructors();
+    }
+    if(this.selectedSection == 3){
+      this.showCourses();
+    }
     console.log(this.selectedSection)
   }
 
@@ -249,4 +258,10 @@ export class AdminComponent implements OnInit{
     return false
   }
 
+  async showCourses(){
+    this.courses = await this.service.getAllCourses()
+  }
+  async showUnregisteredInstructors(){
+    this.unregisteredInstructors = await this.service.getAllUnregisteredInstructors()
+  }
 }
