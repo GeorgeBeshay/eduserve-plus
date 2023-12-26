@@ -209,4 +209,40 @@ public class AdminServices {
 
     }
 
+    /**
+     * get all the courses saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of Course objects (possibly an empty one).
+     */
+    public List<Course> getAllCourses() {
+
+        List<Course> courses = dbFacade.getAllCourses();
+        Logger.logMsgFrom(this.getClass().getName(), "get All the Courses successfully ..", 0);
+        return (courses != null)? courses : new ArrayList<>();
+    }
+
+    /**
+     * get all the un registered instructors saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of UnregisteredInstructor objects (possibly an empty one).
+     */
+    public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
+
+        List<UnregisteredInstructor> instructors = dbFacade.getAllUnregisteredInstructors();
+        Logger.logMsgFrom(this.getClass().getName(), "Getting all unregistered instructors..", 0);
+        return (instructors != null)? instructors : new ArrayList<>();
+    }
+
+    /**
+     * get all the un registered students saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of UnregisteredStudent objects (possibly an empty one).
+     */
+    public List<UnregisteredStudent> getAllUnregisteredStudents() {
+
+        List<UnregisteredStudent> students = dbFacade.getAllUnregisteredStudents();
+        Logger.logMsgFrom(this.getClass().getName(), "Getting all unregistered students..", 0);
+        return (students != null)? students : new ArrayList<>();
+    }
+
 }

@@ -113,4 +113,40 @@ public class CourseDAO extends DAO<Course> {
 
     }
 
+    public List<Course> getAllCourses() {
+        try {
+            List<Course> courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
+
+            for (Course course : courses) {
+                List<String> pre = getCoursePrerequisites(course.getCourseCode());
+
+                if (pre == null) {
+                    throw new RuntimeException("Error had occurred while reading the database.");
+                }
+
+                course.setPrerequisite(pre);
+            }
+
+            return courses;
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
+
+    private List<String> getCoursePrerequisites(String courseCode) {
+        try {
+            String sql = """
+                            SELECT preq_id
+                            FROM course_prereq
+                            WHERE course_code = '?';
+                            """;
+            return jdbcTemplate.queryForList(sql, String.class, courseCode);
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+            return null;
+        }
+    }
+
 }
