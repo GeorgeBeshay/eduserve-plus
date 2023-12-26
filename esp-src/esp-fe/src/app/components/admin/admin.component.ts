@@ -357,7 +357,7 @@ export class AdminComponent implements OnInit{
               icon: "error",
               title: "Oops...",
               text: failedRecords,
-              timer: 1500
+              timer: 4000
             });
 
           } else{
