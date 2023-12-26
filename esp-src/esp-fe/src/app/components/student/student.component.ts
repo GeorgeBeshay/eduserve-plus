@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {StudentService} from 'src/app/services/student.service';
 import {Student} from "../../System Entities/Student";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-student',
@@ -49,9 +50,24 @@ export class StudentComponent implements OnInit{
       let isSuccess: boolean | null = await this.service.signIn(id, password);
 
       if (isSuccess) {
-        alert("The student has been signed in successfully")
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Student Sign In Process is Successful.",
+          showConfirmButton: false,
+          timer: 2000
+        });
+
       } else {
-        alert("The ID or the password is not correct")
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "The Given ID or Password is Incorrect.",
+        });
+
       }
 
     }
@@ -99,9 +115,24 @@ export class StudentComponent implements OnInit{
         let isSuccess: boolean | null = await this.service.signUp(student, password, newPassword);
 
       if (isSuccess) {
-        alert("The student has been signed up successfully")
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Student Sign Up Process is Successful.",
+          showConfirmButton: false,
+          timer: 2000
+        });
+
       } else {
-        alert("The student can not sign up")
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Student Sign Up Process has failed.",
+        });
+
       }
     }
 
