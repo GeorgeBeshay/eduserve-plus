@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class CourseDAO extends DAO<Course> {
@@ -114,15 +115,17 @@ public class CourseDAO extends DAO<Course> {
     }
 
     public List<Course> getAllCourses() {
+        List<Course> courses = null;
         try {
-            List<Course> courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
+            courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
 
             for (Course course : courses) {
+                System.out.println(course.toString());
                 List<String> pre = getCoursePrerequisites(course.getCourseCode());
 
-                if (pre == null) {
-                    throw new RuntimeException("Error had occurred while reading the database.");
-                }
+//                if (pre == null) {
+//                    throw new RuntimeException("Error had occurred while reading the database.");
+//                }
 
                 course.setPrerequisite(pre);
             }
@@ -131,7 +134,7 @@ public class CourseDAO extends DAO<Course> {
         }
         catch (Exception error) {
             Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
-            return null;
+            return courses;
         }
     }
 
@@ -140,8 +143,9 @@ public class CourseDAO extends DAO<Course> {
             String sql = """
                             SELECT preq_id
                             FROM course_prereq
-                            WHERE course_code = '?';
+                            WHERE course_code = ?;
                             """;
+            System.out.println(jdbcTemplate.queryForList(sql, String.class, courseCode));
             return jdbcTemplate.queryForList(sql, String.class, courseCode);
         } catch (Exception e) {
             Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
