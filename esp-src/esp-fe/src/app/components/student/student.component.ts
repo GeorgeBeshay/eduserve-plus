@@ -10,10 +10,16 @@ import Swal from "sweetalert2";
   styleUrls: ['./student.component.css']
 })
 export class StudentComponent implements OnInit{
+  student: Student | null;
+  selectedSection: number;
+
   signInForm: FormGroup;
   signUpForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private service:StudentService) {
+    this.student = null;
+    this.selectedSection = 0;
+
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
       password: ['', Validators.required]
@@ -39,6 +45,11 @@ export class StudentComponent implements OnInit{
     // Any initialization logic
   }
 
+  selectSection (sectionIndex: number) {
+    this.selectedSection = sectionIndex
+    console.log(this.selectedSection)
+  }
+
   async onSubmit() {
     if (this.signInForm.valid) {
       const id = this.signInForm.value.id;
@@ -59,6 +70,8 @@ export class StudentComponent implements OnInit{
           showConfirmButton: false,
           timer: 2000
         });
+
+        this.student = new Student(id, "", "", "", "", "", "", "", "", "", "", "");
 
       } else {
 
@@ -124,6 +137,8 @@ export class StudentComponent implements OnInit{
           showConfirmButton: false,
           timer: 2000
         });
+
+        this.student = student;
 
       } else {
 
