@@ -117,10 +117,10 @@ export class AdminService {
     return [];
   }
 
-  async getAllUnregisteredStudents(): Promise<UnregisteredStudent[]> {
+  async getAllUnregisteredStudents(): Promise<Student[]> {
     try {
       return await firstValueFrom(
-        this.http.post<UnregisteredStudent[]>(this.URL + 'getAllUnregisteredStudents', {}, {responseType:'json'})
+        this.http.post<Student[]>(this.URL + 'getAllUnregisteredStudents', {}, {responseType:'json'})
       );
     } catch (error) {
       if(error instanceof HttpErrorResponse)

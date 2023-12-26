@@ -22,7 +22,7 @@ export class AdminComponent implements OnInit{
   selectedSection: number
   unregisteredInstructors: Instructor[] = [] 
   courses: Course[] = []
-  unregisteredStudents: UnregisteredStudent[] = []
+  unregisteredStudents: Student[] = []
   unregisteredInstructorfile : File | null = null;
   unregisteredStudentfile : File | null = null;
   courseForm: FormGroup;
@@ -267,7 +267,6 @@ export class AdminComponent implements OnInit{
 
   async showCourses(){
     this.courses = await this.service.getAllCourses()
-    console.log(this.courses)
   }
 
   async showUnregisteredInstructors(){
