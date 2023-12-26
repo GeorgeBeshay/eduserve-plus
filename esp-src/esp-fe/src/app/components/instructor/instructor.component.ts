@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Instructor} from "../../System Entities/Instructor";
 import { InstructorService } from 'src/app/services/instructor.service';
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-instructor',
@@ -42,9 +43,24 @@ export class InstructorComponent implements OnInit {
       console.log('Signing in with ID:', id, 'and password:', password);
       let isSuccess:boolean | null = await this.service.signIn(id,password);
       if(isSuccess){
-        alert('Instructor successfully signed in');}
-      else{
-        alert('Instructor failed to sign in');
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Instructor Sign In Process is Successful.",
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+      } else {
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "The Given ID or Password is Incorrect.",
+        });
+
       }
       // call API
     }
@@ -53,6 +69,7 @@ export class InstructorComponent implements OnInit {
   async onSignUp() {
     console.log(this.signUpForm.value)
     if (this.signUpForm.valid) {
+
       // const name = this.signUpForm.value.name;
       const id = this.signUpForm.value.id;
       const password = this.signUpForm.value.password;
@@ -70,9 +87,25 @@ export class InstructorComponent implements OnInit {
 
       let isSuccess: boolean | null = await this.service.signUp(newPassword,password,instructor);
       if(isSuccess){
-        alert('Instructor has been successfully signed up');}
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Instructor Sign Up Process is Successful.",
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+      }
       else{
-        alert('Failed to sign up instructor');
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Instructor Sign Up Process has failed.",
+        });
+
       }
     }
 
