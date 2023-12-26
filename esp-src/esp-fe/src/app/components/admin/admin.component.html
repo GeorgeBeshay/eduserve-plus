@@ -1,5 +1,5 @@
 <div class="holder">
-  <ng-container *ngIf="admin != null; else loggedIn">
+  <ng-container *ngIf="admin == null; else loggedIn">
     <div class="sign-in-form">
       <mat-tab-group>
         <!--     Sign In Tab -->
