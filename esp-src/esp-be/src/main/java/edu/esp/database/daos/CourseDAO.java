@@ -113,6 +113,18 @@ public class CourseDAO extends DAO<Course> {
 
     }
 
+    public boolean courseRegistrationOpen() {
+        try {
+            Integer bit = jdbcTemplate.queryForObject("SELECT course_registration_allowed FROM system_state", Integer.class);
+            assert bit != null : "Bit returned from the system state in the database is null.";
+            return bit == 1;
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return false;
+        }
+    }
+
     /**
      * @return A list of courses that meet the conjunction of the following criteria:
      * <pre>1. Has the same department ID as the student</pre>

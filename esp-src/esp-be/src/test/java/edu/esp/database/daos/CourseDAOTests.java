@@ -229,6 +229,22 @@ public class CourseDAOTests {
     }
 
     @Test
+    @DisplayName("Testing checking whether registration is open or not")
+    public void registrationIsOpenOrNot() {
+        Integer originalValue = jdbcTemplate.queryForObject("SELECT course_registration_allowed FROM system_state", Integer.class);
+        // Arrange
+        jdbcTemplate.update("UPDATE system_state SET course_registration_allowed = 1 WHERE handle = 0");
+        // Act & Assert
+        assertTrue(courseDAO.courseRegistrationOpen());
+        // Arrange
+        jdbcTemplate.update("UPDATE system_state SET course_registration_allowed = 0 WHERE handle = 0");
+        // Act & Assert
+        assertFalse(courseDAO.courseRegistrationOpen());
+        // Clean
+        jdbcTemplate.update("UPDATE system_state SET course_registration_allowed = %d WHERE handle = 0".formatted(originalValue));
+    }
+
+    @Test
     @DisplayName("Testing all scenarios of available courses for registration")
     public void getAvailableRegistrationCourses() {
         // Arrange
