@@ -117,4 +117,15 @@ public class CourseDAO extends DAO<Course> {
         // TODO get the list of courses that are available for the student to register by a stored procedure
         return null;
     }
+
+    public List<Course> getAvailableWithdrawCourses(int studentId) {
+        try {
+            return jdbcTemplate.query("EXEC dbo.getAvailableWithdrawCourses " + studentId, rowMapper);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
+
 }
