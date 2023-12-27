@@ -86,4 +86,25 @@ export class AdminService {
 
   }
 
+  async uploadUnregisteredInstructors(file: File) {
+
+    const formData: FormData = new FormData();
+    formData.append('unregisteredInstructors', file);
+
+    try {
+      return await firstValueFrom (
+        this.http.post<{"instructorsAdded": number, "instructorsNotAdded": number[]}>(this.URL + 'addUnregisteredInstructors', formData)
+      );
+    }
+
+    catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return {"instructorsAdded": 0, "instructorsNotAdded": []};
+
+  }
+
 }

@@ -93,7 +93,7 @@ public class AdminEndPoint {
 
         Map<String, Object> resultOfAddingInstructors = this.adminServices.addUnregisteredInstructors(unregisteredInstructors);
 
-        return (!resultOfAddingInstructors.get("studentsSuccessfullyAdded").equals(0))
+        return (!resultOfAddingInstructors.get("instructorsAdded").equals(0))
                 ? new ResponseEntity<>(resultOfAddingInstructors, HttpStatus.OK)
                 : new ResponseEntity<>(resultOfAddingInstructors, HttpStatus.BAD_REQUEST);
 
