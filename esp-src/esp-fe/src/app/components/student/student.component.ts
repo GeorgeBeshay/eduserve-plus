@@ -42,7 +42,10 @@ export class StudentComponent implements OnInit{
   }
 
   ngOnInit() {
-    // Any initialization logic
+    // Restoring cached object.
+    let tempObj = sessionStorage.getItem("studentObject");
+    if(tempObj != null)
+      this.student = JSON.parse(tempObj);
   }
 
   selectSection (sectionIndex: number) {
@@ -72,6 +75,9 @@ export class StudentComponent implements OnInit{
         });
 
         this.student = new Student(id, "", "", "", "", "", "", "", "", "", "", "");
+
+        // caching object.
+        sessionStorage.setItem("studentObject", JSON.stringify(this.student));
 
       } else {
 
