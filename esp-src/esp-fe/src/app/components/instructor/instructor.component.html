@@ -63,7 +63,7 @@
             Password Confirmation is required.
           </div>
           <div
-            **ngIf="signUpForm.get('confirmNewPassword').value != signUpForm.get('newPassword').value" class="input-error">
+            *ngIf="signUpForm.get('confirmNewPassword')?.value != signUpForm.get('newPassword')?.value" class="input-error">
             Passwords do not match.
           </div>
           

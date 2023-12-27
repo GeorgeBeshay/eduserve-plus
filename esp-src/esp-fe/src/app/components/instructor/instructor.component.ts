@@ -20,6 +20,7 @@ export class InstructorComponent implements OnInit {
 
     this.signUpForm = this.formBuilder.group({
       id: ['', Validators.required],
+      instructorName: ['', Validators.required],
       password: ['', Validators.required],
       newPassword: ['', Validators.required],
       confirmNewPassword: ['', Validators.required],
@@ -31,7 +32,10 @@ export class InstructorComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Any initialization logic
+    let tempObj = sessionStorage.getItem("instructorObj");
+    // TODO: uncomment the following upon creating the instructor object.
+    // if(tempObj != null)
+      // this.instructor = JSON.parse(tempObj);
   }
 
   async onSubmit() {

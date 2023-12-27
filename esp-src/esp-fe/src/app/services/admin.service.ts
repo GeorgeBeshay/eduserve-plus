@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, firstValueFrom } from 'rxjs';
 import {Admin} from "../System Entities/Admin";
-import { Course } from '../System Entities/course';
+import { Course } from '../System Entities/Course';
 import { Instructor } from '../System Entities/Instructor';
 import { Student } from '../System Entities/Student';
 
@@ -101,7 +101,27 @@ export class AdminService {
     }
     return [];
   }
+  
+  async uploadUnregisteredInstructors(file: File) {
 
+    const formData: FormData = new FormData();
+    formData.append('unregisteredInstructors', file);
+
+    try {
+      return await firstValueFrom (
+        this.http.post<{"instructorsAdded": number, "instructorsNotAdded": number[]}>(this.URL + 'addUnregisteredInstructors', formData)
+      );
+    }
+
+    catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return {"instructorsAdded": 0, "instructorsNotAdded": []};
+  }
+      
   async getAllUnregisteredInstructors(): Promise<Instructor[]> {
     try {
       return await firstValueFrom(
