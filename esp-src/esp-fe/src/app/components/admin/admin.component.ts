@@ -18,8 +18,8 @@ export class AdminComponent implements OnInit{
   adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
-  unregisteredInstructorfile : File | null = null;
-  unregisteredStudentfile : File | null = null;
+  unregisteredInstructorFile : File | null = null;
+  unregisteredStudentFile : File | null = null;
   courseForm: FormGroup;
 
 
@@ -65,7 +65,10 @@ export class AdminComponent implements OnInit{
   }
 
   ngOnInit() {
-    // Any initialization logic
+    // Restoring cached object.
+    let tempObj = sessionStorage.getItem("adminObject");
+    if(tempObj != null)
+      this.admin = JSON.parse(tempObj);
   }
 
   async onSubmit() {
@@ -89,7 +92,10 @@ export class AdminComponent implements OnInit{
           timer: 2000
         });
 
-        this.admin = new Admin("", "", "", "")
+        this.admin = new Admin(id, password, "", "")
+
+        // caching object.
+        sessionStorage.setItem("adminObject", JSON.stringify(this.admin));
 
       } else {
 
@@ -214,7 +220,7 @@ export class AdminComponent implements OnInit{
 
   onInstructorFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.unregisteredInstructorfile = event.target.files[0];
+      this.unregisteredInstructorFile = event.target.files[0];
     }
   }
 
@@ -223,7 +229,7 @@ export class AdminComponent implements OnInit{
     if(this.adminUploadInstructorsForm.valid
       && this.csvFileValidator(this.adminUploadInstructorsForm)){
 
-      let uploaded_file = this.unregisteredInstructorfile;
+      let uploaded_file = this.unregisteredInstructorFile;
       console.log(uploaded_file)
 
       let timerInterval: any;
@@ -296,7 +302,7 @@ export class AdminComponent implements OnInit{
 
   onStudentFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.unregisteredStudentfile = event.target.files[0];
+      this.unregisteredStudentFile = event.target.files[0];
     }
   }
 
@@ -305,7 +311,7 @@ export class AdminComponent implements OnInit{
     if(this.adminUploadStudentsForm
       && this.csvFileValidator(this.adminUploadStudentsForm)) {
 
-        let uploaded_file = this.unregisteredStudentfile;
+        let uploaded_file = this.unregisteredStudentFile;
         console.log('Uploading Students from CSV file: ', uploaded_file);
 
       let timerInterval: any;

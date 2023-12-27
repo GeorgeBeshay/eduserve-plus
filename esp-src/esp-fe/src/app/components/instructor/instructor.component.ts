@@ -31,7 +31,10 @@ export class InstructorComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Any initialization logic
+    let tempObj = sessionStorage.getItem("instructorObj");
+    // TODO: uncomment the following upon creating the instructor object.
+    // if(tempObj != null)
+      // this.instructor = JSON.parse(tempObj);
   }
 
   async onSubmit() {
