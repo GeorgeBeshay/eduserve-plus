@@ -1,5 +1,6 @@
 package edu.esp.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
@@ -9,6 +10,7 @@ import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,5 +105,21 @@ public class StudentServices {
         // TODO maybe create a new DAO for the "attends" table
         // TODO get student available credit hours
         return 0;
+    }
+
+    public int withdrawCourses(Map<String, Object> requestMap){
+        int studentId = (int) requestMap.get("studentId");
+        List<Course> courses = (new ObjectMapper()).convertValue(requestMap.get("courses"), new TypeReference<List<Course>>() {});
+        return dbFacade.withdrawFromCourses(studentId, courses);
+    }
+
+    public List<Course> getAvailableWithdrawCourses(int studentId){
+        List<Course> courses = dbFacade.getAvailableWithdrawCourses(studentId);
+        if (courses != null){
+            return courses;
+        }
+        else{
+            return new ArrayList<>();
+        }
     }
 }
