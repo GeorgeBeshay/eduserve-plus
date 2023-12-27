@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class CourseDAO extends DAO<Course> {
@@ -111,6 +112,41 @@ public class CourseDAO extends DAO<Course> {
             return null;
         }
 
+    }
+
+    public List<Course> getAllCourses() {
+        List<Course> courses = null;
+        try {
+            courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
+
+            for (Course course : courses) {
+                System.out.println(course.toString());
+                List<String> pre = getCoursePrerequisites(course.getCourseCode());
+
+                course.setPrerequisite(pre);
+            }
+
+            return courses;
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return courses;
+        }
+    }
+
+    private List<String> getCoursePrerequisites(String courseCode) {
+        try {
+            String sql = """
+                            SELECT preq_id
+                            FROM course_prereq
+                            WHERE course_code = ?;
+                            """;
+            System.out.println(jdbcTemplate.queryForList(sql, String.class, courseCode));
+            return jdbcTemplate.queryForList(sql, String.class, courseCode);
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+            return null;
+        }
     }
 
     public List<Course> getAvailableCourses(int studentId) {

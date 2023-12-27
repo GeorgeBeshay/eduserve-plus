@@ -2,7 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
 import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
-import {Course} from 'src/app/System Entities/Course';
+import { Course } from 'src/app/System Entities/Course';
+import { AbstractControl } from '@angular/forms';
+import { Instructor } from 'src/app/System Entities/Instructor';
+import { Student } from 'src/app/System Entities/Student';
 import Swal from 'sweetalert2';
 
 
@@ -18,6 +21,9 @@ export class AdminComponent implements OnInit{
   adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
+  unregisteredInstructors: Instructor[] = [] 
+  courses: Course[] = []
+  unregisteredStudents: Student[] = []
   unregisteredInstructorFile : File | null = null;
   unregisteredStudentFile : File | null = null;
   courseForm: FormGroup;
@@ -151,6 +157,16 @@ export class AdminComponent implements OnInit{
 
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
+    if(this.selectedSection == 5){
+      this.showUnregisteredInstructors();
+    }
+    if(this.selectedSection == 6){
+      this.showUnregisteredStudents();
+    }
+    if(this.selectedSection == 7){
+      this.showCourses();
+    }
+    
     console.log(this.selectedSection)
   }
 
@@ -410,4 +426,15 @@ export class AdminComponent implements OnInit{
     return false
   }
 
+  async showCourses(){
+    this.courses = await this.service.getAllCourses()
+  }
+
+  async showUnregisteredInstructors(){
+    this.unregisteredInstructors = await this.service.getAllUnregisteredInstructors()
+  }
+
+  async showUnregisteredStudents(){
+    this.unregisteredStudents = await this.service.getAllUnregisteredStudents()
+  }
 }
