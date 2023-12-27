@@ -266,6 +266,20 @@ export class AdminComponent implements OnInit{
             timer: 2000
           });
 
+          let failedRecords = "";
+          for (const fail of results.instructorsNotAdded) {
+            failedRecords += `Failed to add instructor in row ${fail}.\n`;
+          }
+
+          if (failedRecords != "") {
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: failedRecords,
+              timer: 4000
+            });
+          }
+
         } else {
 
           await Swal.fire({
@@ -348,12 +362,14 @@ export class AdminComponent implements OnInit{
               failedRecords += `Failed To Add Student in Row ${fail}.\n`;
             }
 
-            await Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: failedRecords,
-              timer: 4000
-            });
+            if (failedRecords != "") {
+              await Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: failedRecords,
+                timer: 4000
+              });
+            }
 
           } else{
 
