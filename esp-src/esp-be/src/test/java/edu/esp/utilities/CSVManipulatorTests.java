@@ -26,11 +26,6 @@ public class CSVManipulatorTests {
         csvRoot = manipulator.csvFolderPrefix;
     }
 
-    @AfterEach
-    public void cleanup() throws IOException {
-        Files.delete(Paths.get(csvRoot + filename));
-    }
-
     // Method to encapsulate creating a file and writing to it
     private void writeFile(String file, String content) throws IOException {
         filename = file;
