@@ -19,6 +19,7 @@ export class InstructorComponent implements OnInit {
 
     this.signUpForm = this.formBuilder.group({
       id: ['', Validators.required],
+      instructorName: ['', Validators.required],
       password: ['', Validators.required],
       newPassword: ['', Validators.required],
       confirmNewPassword: ['', Validators.required],
