@@ -252,4 +252,17 @@ export class StudentComponent implements OnInit{
   }
 
 
+  async getStudentEnrolledCourses(studentId: string) {
+    let courses: Course[] | null = await this.studentService.getStudentEnrolledCourses(studentId);
+
+    return courses;
+  }
+
+  async withdrawCourses(studentId: string, courses: Course[]) {
+    let isSuccess: boolean = await this.studentService.withdrawCourses(studentId, courses);
+
+    return isSuccess;
+  }
+
+
 }
