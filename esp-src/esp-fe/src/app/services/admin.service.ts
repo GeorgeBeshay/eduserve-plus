@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {Admin} from "../System Entities/Admin";
-import { Course } from '../System Entities/course';
+import { Course } from '../System Entities/Course';
 
 @Injectable({
   providedIn: 'root'

@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {StudentService} from 'src/app/services/student.service';
 import {Student} from "../../System Entities/Student";
 import Swal from "sweetalert2";
+import {Course} from "../../System Entities/Course";
 
 @Component({
   selector: 'app-student',
@@ -16,7 +17,7 @@ export class StudentComponent implements OnInit{
   signInForm: FormGroup;
   signUpForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private service:StudentService) {
+  constructor(private formBuilder: FormBuilder, private studentService:StudentService) {
     this.student = null;
     this.selectedSection = 0;
 
@@ -50,7 +51,10 @@ export class StudentComponent implements OnInit{
 
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
-    console.log(this.selectedSection)
+
+    if(this.selectedSection == 1) {
+      this.loadCourses()
+    }
   }
 
   async onSubmit() {
@@ -61,7 +65,7 @@ export class StudentComponent implements OnInit{
       // Placeholder: Simulate authentication logic
       console.log('Signing in with ID:', id, 'and password:', password);
 
-      let isSuccess: boolean | null = await this.service.signIn(id, password);
+      let isSuccess: boolean | null = await this.studentService.signIn(id, password);
 
       if (isSuccess) {
 
@@ -131,7 +135,7 @@ export class StudentComponent implements OnInit{
         ', gender: ', gender);
 
         //cal API
-        let isSuccess: boolean | null = await this.service.signUp(student, password, newPassword);
+        let isSuccess: boolean | null = await this.studentService.signUp(student, password, newPassword);
 
       if (isSuccess) {
 
@@ -163,4 +167,89 @@ export class StudentComponent implements OnInit{
   onTabChanged(event: number) {
     console.log('Tab changed to index:', event);
   }
+
+  // Course Enrollment Related Methods
+  courses: Course[] = [
+    { courseCode: 'ABC123', courseName: 'Course 1', creditHrs: 3, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF456', courseName: 'Course 2', creditHrs: 4, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF452', courseName: 'Course 3', creditHrs: 4, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF453', courseName: 'Course 4', creditHrs: 4, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF454', courseName: 'Course 5', creditHrs: 4, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF455', courseName: 'Course 6', creditHrs: 4, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+
+  ];  // TODO: let courses = [] when implementing the endpoint ..
+
+  enrolledCourses: Course[] = []; // Initially enrolled courses
+
+  totalAvailableCreditHours: number = 21; // Example total available credit hours
+
+  isEnrolled(course: Course): boolean {
+    return this.enrolledCourses.some(c => c.courseCode === course.courseCode);
+  }
+
+  async enroll(course: Course): Promise<void> {
+
+    if (course.creditHrs > this.totalAvailableCreditHours) {
+      await Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You are out of Credit Hours ..",
+      });
+      return;
+    }
+
+    this.totalAvailableCreditHours -= course.creditHrs;
+    this.enrolledCourses.push(course);
+  }
+
+  unEnroll(course: Course): void {
+    this.enrolledCourses = this.enrolledCourses.filter(c => c.courseCode !== course.courseCode);
+    this.totalAvailableCreditHours += course.creditHrs;
+  }
+
+  truncateDescription(description: string, limit: number): string {
+    if (description.length > limit) {
+      return description.substring(0, limit) + '...';
+    }
+    return description;
+  }
+
+  computeSelectedCoursesHrs() {
+    let ans = 0;
+    for (const course of this.enrolledCourses) {
+      ans += course.creditHrs;
+    }
+    return ans;
+  }
+
+  /**
+   * Functions calls the suitable method from the service object, to register the selected courses.
+   */
+  registerCourses() {
+    // TODO: Call the appropriate end point method from the studentService to register the selected courses.
+    let studentId = this.student?.studentId;
+    let selectedCourses = this.enrolledCourses  // list of objects containing all the course data.
+    let totalRegisteredHours = this.computeSelectedCoursesHrs();
+    // this.studentService.registerSelectedCourses(bla bla..)
+    // use sweet alert function (Swal.fire()) to display the alerts in a pretty form !
+
+    // TODO: Remove those statements
+    console.log(this.enrolledCourses);
+    console.log(totalRegisteredHours);
+  }
+
+  /**
+   * Function must be called upon navigating to the course enrollment page to fetch the suitable courses.
+   */
+  loadCourses() {
+    let studentId = this.student?.studentId;
+    // TODO: Call the appropriate end point method from the studentService.
+    // let tempObj = this.studentService.loadAvailableCoursesForRegistration(this.student?.studentId);
+    // this.courses = extract courses from tempObj
+
+    // in case of varying # of hours uncomment the following:
+    // this.totalAvailableCreditHours = extract # of hours from tempObj
+  }
+
+
 }

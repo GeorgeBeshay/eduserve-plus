@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
 import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
-import {Course} from 'src/app/System Entities/course';
+import {Course} from 'src/app/System Entities/Course';
 import Swal from 'sweetalert2';
 
 
