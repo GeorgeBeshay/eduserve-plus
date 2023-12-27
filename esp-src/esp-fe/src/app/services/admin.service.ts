@@ -5,7 +5,6 @@ import {Admin} from "../System Entities/Admin";
 import { Course } from '../System Entities/course';
 import { Instructor } from '../System Entities/Instructor';
 import { Student } from '../System Entities/Student';
-import { UnregisteredStudent } from '../System Entities/unregisterStudent';
 
 @Injectable({
   providedIn: 'root'
