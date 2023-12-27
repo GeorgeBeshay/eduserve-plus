@@ -259,32 +259,40 @@ export class AdminComponent implements OnInit{
 
       if(uploaded_file){
 
-        let InstructorsAdded: number = 0
-        // Add the code here to send the CSV file to the backend
+        let results = await this.service.uploadUnregisteredInstructors(uploaded_file)
 
-        // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
-        // in the admin service
-
-        // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
-
-        if(InstructorsAdded > 0){
+        if(results.instructorsAdded > 0){
 
           await Swal.fire({
             position: "center",
             icon: "success",
             title: "Successful",
-            text: `Added ${InstructorsAdded} Instructors Successfully`,
+            text: `Added ${results.instructorsAdded} Instructors Successfully`,
             showConfirmButton: false,
-            timer: 1500
+            timer: 2000
           });
+
+          let failedRecords = "";
+          for (const fail of results.instructorsNotAdded) {
+            failedRecords += `Failed to add instructor in row ${fail}.\n`;
+          }
+
+          if (failedRecords != "") {
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: failedRecords,
+              timer: 4000
+            });
+          }
 
         } else {
 
           await Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Couldn't Add Instructors.",
-            timer: 1500
+            text: "No instructors were added.",
+            timer: 4000
           });
 
         }
@@ -295,6 +303,7 @@ export class AdminComponent implements OnInit{
         icon: "error",
         title: "Oops...",
         text: "Only CSV Files are Allowed !",
+        timer: 1500
       });
 
     }
@@ -359,12 +368,14 @@ export class AdminComponent implements OnInit{
               failedRecords += `Failed To Add Student in Row ${fail}.\n`;
             }
 
-            await Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: failedRecords,
-              timer: 4000
-            });
+            if (failedRecords != "") {
+              await Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: failedRecords,
+                timer: 4000
+              });
+            }
 
           } else{
 
