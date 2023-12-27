@@ -24,8 +24,6 @@ export class AdminComponent implements OnInit{
   unregisteredInstructors: Instructor[] = [] 
   courses: Course[] = []
   unregisteredStudents: Student[] = []
-  unregisteredInstructorfile : File | null = null;
-  unregisteredStudentfile : File | null = null;
   unregisteredInstructorFile : File | null = null;
   unregisteredStudentFile : File | null = null;
   courseForm: FormGroup;
