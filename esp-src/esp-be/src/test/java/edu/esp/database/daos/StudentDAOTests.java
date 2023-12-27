@@ -2,11 +2,14 @@ package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
 import edu.esp.system_entities.system_users.Student;
+import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import edu.esp.system_entities.system_users.UnregisteredStudent;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -381,6 +384,50 @@ public class StudentDAOTests {
     @DisplayName("Student DAO - deleting an invalid unregistered student")
     public void testDeleteInvalidUnregisteredStudent() {
         assertFalse(this.studentDAO.deleteUnregisteredStudentById(10));
+    }
+
+    @Test
+    @DisplayName("get all unregistered Students where there exist students in the database.")
+    public void GetAllUnregisteredStudentsExist() {
+
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
+                VALUES (13, 420, 103);
+                """);
+
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_student (student_id, student_temp_pw_hash, dpt_id)
+                VALUES (14, 420, 103);
+                """);
+        List<UnregisteredStudent> students = studentDAO.getAllUnregisteredStudents();
+
+        assertTrue(students.size() >= 2);
+
+        List<Integer> Ids = new ArrayList<>();
+
+        for (UnregisteredStudent student: students) {
+            Ids.add(student.getStudentId());
+        }
+
+        assertTrue(Ids.contains(13));
+        assertTrue(Ids.contains(14));
+
+
+        jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = %d;".formatted(13));
+        jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id = %d;".formatted(14));
+
+    }
+
+    @Test
+    @Disabled
+    @DisplayName("get all unregistered instructors where there don't exist instructors in the database.")
+    public void GetAllUnregisteredInstructorsNotExist() {
+
+        List<UnregisteredStudent> students = studentDAO.getAllUnregisteredStudents();
+
+        assertNotNull(students);
+        assertTrue(students.isEmpty());
+
     }
 
     //TODO enforce DB constraint on unregistered_student id to be non-negative

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {Student} from "../System Entities/Student";
+import { Course } from './../System Entities/Course';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
@@ -49,5 +50,40 @@ export class StudentService {
     }
     return null;
   }
+
+  async getStudentEnrolledCourses(studentId: string) {
+
+    try {
+      return await firstValueFrom (
+        this.http.post<Course[]>(this.URL + 'getStudentEnrolledCourses', Number(studentId), {responseType:'json'})
+      );
+
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+
+      else
+        console.error('Error');
+    }
+    return [];
+  }
+
+  async withdrawCourses(studentId: string, courses: Course[]) {
+
+    try {
+      return await firstValueFrom (
+        this.http.post<boolean>(this.URL + 'withdrawCourses', {"studentId": Number(studentId), "courses": courses}, {responseType:'json'})
+      );
+
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+
+      else
+        console.error('Error');
+    }
+    return false;
+  }
+
 
 }

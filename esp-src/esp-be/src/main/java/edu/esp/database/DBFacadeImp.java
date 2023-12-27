@@ -97,4 +97,16 @@ public class DBFacadeImp {
     public int withdrawFromCourses(int studentId, List<Course> courses){
         return this.GradeDAO.withdrawFromCourses(studentId, courses);
     }
+    public List<Course> getAllCourses() {
+        return this.courseDAO.getAllCourses();
+    }
+
+    public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
+        return this.instructorDAO.getAllUnregisteredInstructors();
+    }
+
+    public List<UnregisteredStudent> getAllUnregisteredStudents() {
+        return this.studentDAO.getAllUnregisteredStudents();
+    }
+    
 }

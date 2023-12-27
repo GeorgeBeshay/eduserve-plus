@@ -209,4 +209,86 @@ public class AdminServices {
 
     }
 
+     /**
+     * get all the courses saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of Course objects (possibly an empty one).
+     */
+    public List<Course> getAllCourses() {
+
+        List<Course> courses = dbFacade.getAllCourses();
+        Logger.logMsgFrom(this.getClass().getName(), "get All the Courses successfully ..", 0);
+        return (courses != null)? courses : new ArrayList<>();
+    }
+
+    /**
+     * get all the un registered instructors saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of UnregisteredInstructor objects (possibly an empty one).
+     */
+    public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
+
+        List<UnregisteredInstructor> instructors = dbFacade.getAllUnregisteredInstructors();
+        Logger.logMsgFrom(this.getClass().getName(), "Getting all unregistered instructors..", 0);
+        return (instructors != null)? instructors : new ArrayList<>();
+    }
+
+    /**
+     * get all the un registered students saved in the database.
+     * It relies on the method provided by the dbFacade from the layer below it.
+     * @return A list of UnregisteredStudent objects (possibly an empty one).
+     */
+    public List<UnregisteredStudent> getAllUnregisteredStudents() {
+
+        List<UnregisteredStudent> students = dbFacade.getAllUnregisteredStudents();
+        Logger.logMsgFrom(this.getClass().getName(), "Getting all unregistered students..", 0);
+        return (students != null)? students : new ArrayList<>();
+    }
+
+     /**
+     * This service receives the file at the endpoint and passes it to csv manipulator to save it
+     * @param unregisteredInstructorsFile the csv file received at the endpoint
+     * @return Map containing number of added students and a list of students that the method failed to add
+     */
+    public Map<String, Object> addUnregisteredInstructors (MultipartFile unregisteredInstructorsFile) {
+
+        CSVManipulator csvManipulator = new CSVManipulator();
+
+        List<UnregisteredInstructor> unregisteredInstructors = null;
+        if (csvManipulator.saveCSVFile(unregisteredInstructorsFile)) {
+            unregisteredInstructors = csvManipulator.readUnregisteredInstructors(unregisteredInstructorsFile.getOriginalFilename());
+        }
+
+        return addUnregisteredInstructors(unregisteredInstructors);
+    }
+
+    /**
+     * This is a private function used to add the unregistered instructors
+     * @param unregisteredInstructors the instructors needed to be added
+     * @return Map of 2 things: the number of successfully added instructors and the row indexes of failed instructors to be added
+     */
+
+    private Map<String, Object> addUnregisteredInstructors(List<UnregisteredInstructor> unregisteredInstructors) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        List<Integer> instructorsNotAdded = new ArrayList<>();
+
+        if (unregisteredInstructors == null) {
+            result.put("instructorsAdded", 0);
+            result.put("instructorsNotAdded", instructorsNotAdded);
+            return result;
+        }
+
+        for (int i = 0 ; i < unregisteredInstructors.size() ; i++) {
+            if (!dbFacade.addNewUnregisteredInstructor(unregisteredInstructors.get(i))) {
+                instructorsNotAdded.add(i + 2);
+            }
+        }
+
+        result.put("instructorsAdded", unregisteredInstructors.size() - instructorsNotAdded.size());
+        result.put("instructorsNotAdded", instructorsNotAdded);
+
+        return result;
+    }
 }

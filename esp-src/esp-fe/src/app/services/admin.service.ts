@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import {Admin} from "../System Entities/Admin";
-import { Course } from '../System Entities/course';
+import { Course } from '../System Entities/Course';
+import { Instructor } from '../System Entities/Instructor';
+import { Student } from '../System Entities/Student';
 
 @Injectable({
   providedIn: 'root'
@@ -84,6 +86,68 @@ export class AdminService {
     }
     return {"studentsSuccessfullyAdded": 0, "failedStudentsToBeAdded": []};
 
+  }
+
+  async getAllCourses(): Promise<Course[]> {
+    try {
+      return await firstValueFrom(
+        this.http.post<Course[]>(this.URL + 'getAllCourses', {}, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return [];
+  }
+  
+  async uploadUnregisteredInstructors(file: File) {
+
+    const formData: FormData = new FormData();
+    formData.append('unregisteredInstructors', file);
+
+    try {
+      return await firstValueFrom (
+        this.http.post<{"instructorsAdded": number, "instructorsNotAdded": number[]}>(this.URL + 'addUnregisteredInstructors', formData)
+      );
+    }
+
+    catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return {"instructorsAdded": 0, "instructorsNotAdded": []};
+  }
+      
+  async getAllUnregisteredInstructors(): Promise<Instructor[]> {
+    try {
+      return await firstValueFrom(
+        this.http.post<Instructor[]>(this.URL + 'getAllUnregisteredInstructors', {}, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return [];
+  }
+
+  async getAllUnregisteredStudents(): Promise<Student[]> {
+    try {
+      return await firstValueFrom(
+        this.http.post<Student[]>(this.URL + 'getAllUnregisteredStudents', {}, {responseType:'json'})
+      );
+    } catch (error) {
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+    }
+    return [];
   }
 
 }

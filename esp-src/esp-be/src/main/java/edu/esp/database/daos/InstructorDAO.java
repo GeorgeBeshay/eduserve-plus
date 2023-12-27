@@ -137,4 +137,16 @@ public class InstructorDAO extends DAO<Instructor> {
             return false;
         }
     }
+
+    public List<UnregisteredInstructor> getAllUnregisteredInstructors() {
+        try {
+            BeanPropertyRowMapper<UnregisteredInstructor> rm = new BeanPropertyRowMapper<>(UnregisteredInstructor.class);
+            this.rowMapper.setPrimitivesDefaultedForNullValue(true);
+            return jdbcTemplate.query("SELECT * FROM unregistered_instructor;",rm);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
 }
