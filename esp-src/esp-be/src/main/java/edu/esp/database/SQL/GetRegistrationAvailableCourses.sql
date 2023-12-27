@@ -1,3 +1,6 @@
+-- NOTE 1: Run the function script first, then the procedure script.
+-- NOTE 2: Change permissions of espadmin to be able to exec the function and procedure.
+
 -- Function to return whether the given student has passed the given course's prerequisites or not
 
 CREATE FUNCTION finishedPrerequisites(@studentId INT, @courseCode VARCHAR(7))

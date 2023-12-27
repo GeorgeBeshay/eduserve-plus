@@ -113,8 +113,21 @@ public class CourseDAO extends DAO<Course> {
 
     }
 
+    /**
+     * @return A list of courses that meet the conjunction of the following criteria:
+     * <pre>1. Has the same department ID as the student</pre>
+     * <pre>2. Being offered this semester</pre>
+     * <pre>3. Not passed or taken before</pre>
+     * <pre>4. Not already registered this semester</pre>
+     * <pre>5. All its prerequisites have been passed by the student</pre>
+     */
     public List<Course> getAvailableCourses(int studentId) {
-        // TODO get the list of courses that are available for the student to register by a stored procedure
-        return null;
+        try {
+            return jdbcTemplate.query("EXEC dbo.getAvailableCourses " + studentId, rowMapper);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
     }
 }
