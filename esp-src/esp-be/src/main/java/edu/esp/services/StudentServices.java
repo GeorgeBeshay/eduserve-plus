@@ -110,15 +110,19 @@ public class StudentServices {
     public int withdrawCourses(Map<String, Object> requestMap){
         int studentId = (int) requestMap.get("studentId");
         List<Course> courses = (new ObjectMapper()).convertValue(requestMap.get("courses"), new TypeReference<List<Course>>() {});
-        return dbFacade.withdrawFromCourses(studentId, courses);
+        int result = dbFacade.withdrawFromCourses(studentId, courses);
+        Logger.logMsgFrom(this.getClass().getName(), "withdrawed from: %d courses".formatted(result), 0);
+        return result;
     }
 
     public List<Course> getAvailableWithdrawCourses(int studentId){
         List<Course> courses = dbFacade.getAvailableWithdrawCourses(studentId);
         if (courses != null){
+            Logger.logMsgFrom(this.getClass().getName(), "get available withdrawal courses successfully", 0);
             return courses;
         }
         else{
+            Logger.logMsgFrom(this.getClass().getName(), "there isn't available courses for withdrawal", 0);
             return new ArrayList<>();
         }
     }
