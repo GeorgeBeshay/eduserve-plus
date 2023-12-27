@@ -85,4 +85,17 @@ public class AdminEndPoint {
 
     }
 
+    @PostMapping("addUnregisteredInstructors")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addUnregisteredInstructors (@RequestParam("unregisteredInstructors") MultipartFile unregisteredInstructors) {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to add unregistered instructors .. processing the request ..", -1);
+
+        Map<String, Object> resultOfAddingInstructors = this.adminServices.addUnregisteredInstructors(unregisteredInstructors);
+
+        return (!resultOfAddingInstructors.get("studentsSuccessfullyAdded").equals(0))
+                ? new ResponseEntity<>(resultOfAddingInstructors, HttpStatus.OK)
+                : new ResponseEntity<>(resultOfAddingInstructors, HttpStatus.BAD_REQUEST);
+
+    }
 }
