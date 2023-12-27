@@ -90,4 +90,8 @@ public class DBFacadeImp {
     public List<Course> fetchCoursesOfferedByDpt(byte offeringDpt) {
         return this.courseDAO.findByOfferingDpt(offeringDpt);
     }
+
+    public List<Course> fetchAvailableRegistrationCourses(int studentId) {
+        return this.courseDAO.getAvailableCourses(studentId);
+    }
 }
