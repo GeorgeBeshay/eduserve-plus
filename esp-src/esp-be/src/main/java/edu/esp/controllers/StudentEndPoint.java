@@ -1,5 +1,6 @@
 package edu.esp.controllers;
 
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Student;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import java.util.Map;
+import java.util.*;
 
 @ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
 @RestController
@@ -67,12 +68,33 @@ public class StudentEndPoint {
 
     /**
      * @param requestMap A map which includes the student ID along with the courses they wish to withdraw
+     *                   The map will include the attributes as the following:
+     *                   "studentId" -> Integer
+     *                   "courses" -> List<Course>
      * @return A boolean which indicates success or failure
      */
     @PostMapping("withdrawCourses")
     @ResponseBody
     public ResponseEntity<Boolean> withdrawCourses(@RequestBody Map<String, Object> requestMap) {
-        // TODO withdraw the given courses from the current semester of the given student id
-        return null;
+        Logger.logMsgFrom(this.getClass().getName(), "A Student has requested to withdraw courses .. processing the request ..", -1);
+
+        return (this.studentServices.withdrawCourses(requestMap) > 0)
+                ? new ResponseEntity<>(true, HttpStatus.OK)
+                : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * @param studentId to get all his enrolled courses
+     * @return return all the courses that the student has enrolled in it
+     */
+    @PostMapping("getStudentEnrolledCourses")
+    @ResponseBody
+    public ResponseEntity<List<Course>> getStudentEnrolledCourses(@RequestBody Integer studentId) {
+        Logger.logMsgFrom(this.getClass().getName(), "A Student has requested to get all enrolled courses .. processing the request ..", -1);
+
+        List<Course> enrolledCourses = this.studentServices.getAvailableWithdrawCourses(studentId);
+        return (enrolledCourses.size() != 0)
+                ? new ResponseEntity<>(enrolledCourses, HttpStatus.OK)
+                : new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
 }
