@@ -1,5 +1,7 @@
 /* YourComponent.css or styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300&display=swap');
 
 .holder {
   display: flex;
@@ -168,4 +170,109 @@ input {
 
 .register-courses-button:hover {
   background-color: #218838;
+}
+
+.select-withdraw-button{
+  padding: 4px 8px;
+  background-color: hsl(20, 100%, 49%);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 80px;
+  height: 40px;
+  font-weight: 550;
+  transition: background-color 0.35s, color 0.35s;
+}
+
+.select-withdraw-button:hover {
+  background-color: hwb(20 0% 15%);
+}
+
+.deselect-withdraw-button{
+  padding: 4px 8px;
+  background-color: hsl(0, 0%, 54%);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 80px;
+  height: 40px;
+  font-weight: 550;
+  transition: background-color 0.35s, color 0.35s;
+}
+
+.deselect-withdraw-button:hover {
+  background-color: hsl(0, 0%, 45%);
+}
+
+.course-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-height: 90%;
+  overflow-y: auto;
+}
+
+.withdraw-course-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #0a4c8f;
+  width: 98%;
+  margin-bottom: 10px;
+  padding: 15px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.course-details {
+  display: block;
+  margin-top: 10px;
+}
+
+.withdraw-course-name {
+  font-family: 'Readex Pro', sans-serif;
+  color: #fff;
+  font-size: x-large;
+  width: 25%;
+}
+
+.withdraw-course-code {
+  font-family: 'Cairo', sans-serif;
+  color: #fff;
+  font-size: large;
+  width: 15%;
+}
+
+.withdraw-course-description {
+  font-family: 'Readex Pro', sans-serif;
+  color: #c4c4c4;
+  font-size: small;
+  font-weight: lighter;
+  width: 25%;
+}
+
+.confirm-withdraw {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.confirm-withdraw button {
+  padding: 10px 20px;
+  background-color: hsl(12, 99%, 39%);
+  color: #fff;
+  border: 10px solid hsl(0, 100%, 33%);
+  border-radius: 7px;
+  cursor: pointer;
+  width: auto;
+  height: 80px;
+  font-weight: 600;
+  font-size: large;
+  transition: background-color 0.35s, color 0.35s;
+}
+
+.confirm-withdraw button:hover {
+  background-color: hsl(0, 100%, 33%);
 }

@@ -51,7 +51,7 @@ export class StudentService {
     return null;
   }
 
-  async getStudentEnrolledCourses(studentId: string) {
+  async getStudentEnrolledCourses(studentId: string | undefined) {
 
     try {
       return await firstValueFrom (
@@ -68,7 +68,7 @@ export class StudentService {
     return [];
   }
 
-  async withdrawCourses(studentId: string, courses: Course[]) {
+  async withdrawCourses(studentId: string | undefined, courses: Course[]) {
 
     try {
       return await firstValueFrom (

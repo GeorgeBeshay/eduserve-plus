@@ -53,7 +53,9 @@ export class StudentComponent implements OnInit{
     this.selectedSection = sectionIndex
 
     if(this.selectedSection == 1) {
-      this.loadCourses()
+      this.loadCourses();
+    } else if(this.selectedSection == 2) {
+      this.getStudentEnrolledCourses();
     }
   }
 
@@ -252,16 +254,66 @@ export class StudentComponent implements OnInit{
   }
 
 
-  async getStudentEnrolledCourses(studentId: string) {
-    let courses: Course[] | null = await this.studentService.getStudentEnrolledCourses(studentId);
+  // Course withdrawal methods
+  
+  registeredCourses: Course[] = [];
 
-    return courses;
+  withdrawnCourses: Course[] = [];
+
+  selectToWithdraw(course: Course) {
+    this.withdrawnCourses.push(course);
   }
 
-  async withdrawCourses(studentId: string, courses: Course[]) {
-    let isSuccess: boolean = await this.studentService.withdrawCourses(studentId, courses);
+  deselectFromWithdrawn(course: Course) {
+    this.withdrawnCourses = this.withdrawnCourses.filter(c => c.courseCode !== course.courseCode);
+  }
 
-    return isSuccess;
+  isSelectedToWithdraw(course: Course): boolean {
+    return this.withdrawnCourses.some(c => c.courseCode == course.courseCode);
+  }
+ 
+  async getStudentEnrolledCourses() {
+    this.studentService.getStudentEnrolledCourses(this.student?.studentId).then(
+      (result) => this.registeredCourses = result
+    );
+  }
+
+  async withdrawCourses(courses: Course[]) {
+    // Construct warning text
+    let warningString = "You are about to withdraw the following courses: ";
+    for (var c of this.withdrawnCourses) {
+      warningString += c.courseName + ", "
+    }
+    warningString += "are you sure you want to proceed? This action CANNOT be undone!"
+    // Warn the user
+    await Swal.fire({
+      title: 'Warning!',
+      text: warningString,
+      icon: 'warning',
+      showDenyButton: true,
+      // showCancelButton: true,
+      confirmButtonText: 'Proceed',
+      denyButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User clicked "Proceed"
+        this.studentService.withdrawCourses(this.student?.studentId, courses).then(
+          (result) => {
+            if (result) {
+              Swal.fire('Withdrawal Complete', 'Your action was successful.', 'success');
+            } else {
+              Swal.fire('Withdrawal Failed', 'Your action was unsuccessful.', 'error');
+            }
+          }
+        );
+        // Refresh the display to re-fetch registered courses
+        this.getStudentEnrolledCourses();
+        this.withdrawnCourses = []
+      } else if (result.isDenied) {
+        // User clicked "Cancel" or closed the modal
+        Swal.fire('Withdrawal Failed', 'Your action was cancelled.', 'error');
+      }
+    });
   }
 
 
