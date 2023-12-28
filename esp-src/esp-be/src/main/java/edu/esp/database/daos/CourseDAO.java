@@ -120,9 +120,7 @@ public class CourseDAO extends DAO<Course> {
             courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
 
             for (Course course : courses) {
-                System.out.println(course.toString());
                 List<String> pre = getCoursePrerequisites(course.getCourseCode());
-
                 course.setPrerequisite(pre);
             }
 

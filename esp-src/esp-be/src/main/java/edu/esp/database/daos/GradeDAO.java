@@ -5,6 +5,7 @@ import edu.esp.system_entities.system_uni_objs.Grade;
 import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GradeDAO extends DAO<Grade> {
@@ -16,7 +17,7 @@ public class GradeDAO extends DAO<Grade> {
 
         int result = jdbcTemplate.update("DELETE FROM grades" +
                 " WHERE course_code = ? and student_id = ?" +
-                "and season = ? and academic_year = ?"
+                "and season = ? and academic_year = ? and passed IS NULL;"
                 ,courseCode ,id, season, academicYear);
 
         return result == 1;
@@ -48,6 +49,12 @@ public class GradeDAO extends DAO<Grade> {
             return 0;
         }
 
+    }
+
+    public List<Grade> getAllGrades(){
+        List<Grade> grades = null;
+        grades = jdbcTemplate.query("SELECT * FROM grades;", rowMapper);
+        return grades;
     }
 
 
