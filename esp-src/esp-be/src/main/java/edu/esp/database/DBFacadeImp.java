@@ -90,6 +90,18 @@ public class DBFacadeImp {
         return this.courseDAO.findByOfferingDpt(offeringDpt);
     }
 
+    public boolean courseRegistrationOpen() {
+        return this.courseDAO.courseRegistrationOpen();
+    }
+
+    public List<Course> fetchAvailableRegistrationCourses(int studentId) {
+        return this.courseDAO.getAvailableCourses(studentId);
+    }
+
+    public int registerCourses(int studentId, List<String> courseCodes) {
+        return this.courseDAO.registerCourses(studentId, courseCodes);
+    }
+  
     public List<Course> getAvailableWithdrawCourses(int studentId){
         return this.courseDAO.getAvailableWithdrawCourses(studentId);
     }

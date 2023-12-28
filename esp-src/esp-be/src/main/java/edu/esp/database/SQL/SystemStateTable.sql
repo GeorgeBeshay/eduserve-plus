@@ -1,4 +1,5 @@
 -- This is a table which will keep the system state / global variables, we can edit it later.
+-- Make sure to change the espadmin permissions to select and update this table
 CREATE TABLE system_state (
 	handle INT,
 	current_season TINYINT,

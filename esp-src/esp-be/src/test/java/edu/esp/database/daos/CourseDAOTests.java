@@ -229,8 +229,102 @@ public class CourseDAOTests {
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
         jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
     }
+                            
+    @Test
+    @DisplayName("Testing checking whether registration is open or not")
+    public void registrationIsOpenOrNot() {
+        Integer originalValue = jdbcTemplate.queryForObject("SELECT course_registration_allowed FROM system_state", Integer.class);
+        // Arrange
+        jdbcTemplate.update("UPDATE system_state SET course_registration_allowed = 1 WHERE handle = 0");
+        // Act & Assert
+        assertTrue(courseDAO.courseRegistrationOpen());
+        // Arrange
+        jdbcTemplate.update("UPDATE system_state SET course_registration_allowed = 0 WHERE handle = 0");
+        // Act & Assert
+        assertFalse(courseDAO.courseRegistrationOpen());
+        // Clean
+        jdbcTemplate.update("UPDATE system_state SET course_registration_allowed = %d WHERE handle = 0".formatted(originalValue));
+    }
 
+    @Test
+    @DisplayName("Testing all scenarios of available courses for registration")
+    public void getAvailableRegistrationCourses() {
+        // Arrange
+        Integer currentSeason = jdbcTemplate.queryForObject("SELECT current_season from system_state;", Integer.class);
+        String currentYear = jdbcTemplate.queryForObject("SELECT current_academic_year from system_state;", String.class);
+        String sqlSetup = """
+                INSERT INTO instructor
+                VALUES
+                    (1, 135790, 101, 'Prof. Anderson', '555-4321', 'prof.anderson@example.com', 'Monday 10am-12pm, Wednesday 2pm-4pm'),
+                    (3, 987123, 103, 'Prof. Williams', '555-9876', 'prof.williams@example.com', 'Friday 3pm-5pm, Saturday 10am-12pm');
+                
+                INSERT INTO student
+                VALUES (1, 456789, 101, 2, 3.5, 'John Doe', '12345678901234', '2000-01-01', '123 Main St', '555-1234', '123-4567', 1, 'john.doe@example.com');
+                
+                INSERT INTO semester
+                VALUES (1, '2022', '2022-2-2', '2022-6-6');
+                
+                INSERT INTO course (course_code, course_name, offering_dpt, credit_hrs)
+                VALUES
+                    ('T0', 'Test Course 0', 101, 2), -- Won't show (passed)
+                    ('T1', 'Test Course 1', 101, 3), -- Won't show (passed)
+                    ('T2', 'Test Course 2', 101, 2), -- Will show (not taken)
+                    ('T3', 'Test Course 3', 101, 3), -- Will show (not passed)
+                    ('T4', 'Test Course 4', 103, 2), -- Won't show (different department)
+                    ('T5', 'Test Course 5', 101, 3), -- Won't show (not offered)
+                    ('T6', 'Test Course 6', 101, 3), -- Won't show (already registered this semester)
+                    ('T7', 'Test Course 7', 101, 2); -- Won't show (one out of 2 prerequisites completed)
+                
+                INSERT INTO course_prereq
+                VALUES ('T2', 'T0'), ('T2', 'T1'), ('T3', 'T0'), ('T3', 'T1'), ('T7', 'T3'), ('T7', 'T1');
+                
+                INSERT INTO grades
+                VALUES
+                    ('T0', 1, 1, '2022', 30, 50, 80, 1), ('T1', 1, 1, '2022', 25, 48, 80, 1),
+                    ('T3', 1, 1, '2022', 2, 12, 50, 0), ('T6', 1, %d, %s, null, null, null, 0);
+                    
+                INSERT INTO instructs
+                VALUES
+                    (1, 'T0', %d, '%s'), (1, 'T1', %d, '%s'), (1, 'T2', %d, '%s'), (1, 'T3', %d, '%s'),
+                    (3, 'T4', %d, '%s'), (1, 'T6', %d, '%s'), (1, 'T7', %d, '%s');
+                """.formatted(
+                        currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear,
+                        currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear
+                );
+        jdbcTemplate.batchUpdate(sqlSetup);
 
+        // Act
+        List<Course> availableCourses = courseDAO.getAvailableCourses(1);
+
+        // Assert
+        assertEquals(2, availableCourses.size());
+        boolean contains2 = false, contains3 = false;
+        for (Course course : availableCourses) {
+            if (course.getCourseCode().equals("T2")) {
+                contains2 = true;
+                assertEquals("Test Course 2", course.getCourseName());
+                assertEquals((byte)101, course.getOfferingDpt());
+                assertEquals((byte)2, course.getCreditHrs());
+            } else if (course.getCourseCode().equals("T3")) {
+                contains3 = true;
+                assertEquals("Test Course 3", course.getCourseName());
+                assertEquals((byte)101, course.getOfferingDpt());
+                assertEquals((byte)3, course.getCreditHrs());
+            }
+        }
+        assertTrue(contains2 && contains3);
+
+        // Clean
+        String sqlFinish = """
+                DELETE FROM instructs WHERE instructor_id IN (1,3);
+                DELETE FROM grades WHERE student_id = 1;
+                DELETE FROM course WHERE course_code IN ('T0','T1','T2','T3','T4','T5','T6','T7');
+                DELETE FROM semester WHERE season = 1 AND academic_year = '2022';
+                DELETE FROM student WHERE student_id = 1;
+                DELETE FROM instructor WHERE instructor_id IN (1,3);
+                """;
+        jdbcTemplate.batchUpdate(sqlFinish);
+    }
 
     @Test
     @DisplayName("get all courses where there exist courses in the database.")
@@ -389,8 +483,5 @@ public class CourseDAOTests {
 
 
     }
-
-
-
 
 }

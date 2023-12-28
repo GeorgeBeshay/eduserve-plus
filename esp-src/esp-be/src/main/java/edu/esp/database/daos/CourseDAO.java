@@ -147,13 +147,48 @@ public class CourseDAO extends DAO<Course> {
         }
     }
 
-    public List<Course> getAvailableCourses(int studentId) {
-        // TODO get the list of courses that are available for the student to register by a stored procedure
-        return null;
+    public boolean courseRegistrationOpen() {
+        try {
+            Integer bit = jdbcTemplate.queryForObject("SELECT course_registration_allowed FROM system_state", Integer.class);
+            assert bit != null : "Bit returned from the system state in the database is null.";
+            return bit == 1;
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return false;
+        }
     }
 
+    /**
+     * @return A list of courses that meet the conjunction of the following criteria:
+     * <pre>1. Has the same department ID as the student</pre>
+     * <pre>2. Being offered this semester</pre>
+     * <pre>3. Not passed or taken before</pre>
+     * <pre>4. Not already registered this semester</pre>
+     * <pre>5. All its prerequisites have been passed by the student</pre>
+     */
+    public List<Course> getAvailableCourses(int studentId) {
+        try {
+            return jdbcTemplate.query("EXEC dbo.getAvailableCourses " + studentId, rowMapper);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
 
-
+    public int registerCourses(int studentId, List<String> courseCodes) {
+        // Insert these values only, grades and passed bit will be null
+        String sql = """
+                INSERT INTO grades (course_code, student_id, season, academic_year) VALUES (?, %d, %d, %s)
+                """.formatted(studentId, getCurrentSeason(), getCurrentYear());
+        // Insert into grades the course codes and return number of successfully inserted rows
+        int rows = 0;
+        for (String code : courseCodes) {
+            rows += jdbcTemplate.update(sql, code);
+        }
+        return rows;
+    }
 
     /**
      * @return A list of courses that meet the conjunction of the following criteria:
