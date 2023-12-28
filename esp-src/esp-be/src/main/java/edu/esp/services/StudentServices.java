@@ -1,5 +1,6 @@
 package edu.esp.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
@@ -9,6 +10,7 @@ import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,5 +105,38 @@ public class StudentServices {
         // TODO maybe create a new DAO for the "attends" table
         // TODO get student available credit hours
         return 0;
+    }
+
+    /**
+     * @param requestMap that contains (Integer) studentId and (List<Course>) courses
+     * @return int number of successfully withdrawal courses ... in case of a bad request return -1
+     */
+    public int withdrawCourses(Map<String, Object> requestMap){
+        Integer studentId = (Integer) requestMap.get("studentId");
+        List<Course> courses = (new ObjectMapper()).convertValue(requestMap.get("courses"), new TypeReference<List<Course>>() {});
+
+        if (studentId == null || courses == null){
+            Logger.logMsgFrom(this.getClass().getName(), "bad request for function withdrawCourses", 1);
+            return -1;
+        }
+        int result = dbFacade.withdrawFromCourses(studentId, courses);
+        Logger.logMsgFrom(this.getClass().getName(), "withdrawed from: %d courses".formatted(result), 0);
+        return result;
+    }
+
+    /**
+     * @param studentId int
+     * @return available courses the student can make with draw ... it could be an empty list
+     */
+    public List<Course> getAvailableWithdrawCourses(int studentId){
+        List<Course> courses = dbFacade.getAvailableWithdrawCourses(studentId);
+        if (courses != null){
+            Logger.logMsgFrom(this.getClass().getName(), "get available withdrawal courses successfully", 0);
+            return courses;
+        }
+        else{
+            Logger.logMsgFrom(this.getClass().getName(), "there isn't available courses for withdrawal", 0);
+            return new ArrayList<>();
+        }
     }
 }
