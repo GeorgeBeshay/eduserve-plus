@@ -202,8 +202,11 @@
                   </div>
               </div>
             </div>
-            <div class="confirm-withdraw">
-              <button (click)="withdrawCourses('11', withdrawnCourses)">WITHDRAW SELECTED COURSES</button> <!-- Needs to be replaced by ID of current student -->
+            <div class="confirm-withdraw" *ngIf="this.registeredCourses.length != 0">
+              <button (click)="withdrawCourses(withdrawnCourses)"> WITHDRAW SELECTED COURSES</button>
+            </div>
+            <div *ngIf="this.registeredCourses.length == 0">
+              <label>There are no registered courses to withdraw.</label>
             </div>
           </div>
         </ng-container>

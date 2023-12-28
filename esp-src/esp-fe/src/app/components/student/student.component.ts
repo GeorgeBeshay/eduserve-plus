@@ -53,7 +53,9 @@ export class StudentComponent implements OnInit{
     this.selectedSection = sectionIndex
 
     if(this.selectedSection == 1) {
-      this.loadCourses()
+      this.loadCourses();
+    } else if(this.selectedSection == 2) {
+      this.getStudentEnrolledCourses();
     }
   }
 
@@ -253,17 +255,8 @@ export class StudentComponent implements OnInit{
 
 
   // Course withdrawal methods
-
-  // Example registered courses list
-  registeredCourses: Course[] = [
-    { courseCode: 'ABC123', courseName: 'Course 1', creditHrs: 3, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
-    { courseCode: 'DEF456', courseName: 'Artificial Intelligence', creditHrs: 4, courseDescription: "This is the second course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
-    { courseCode: 'DEF452', courseName: 'Course 3', creditHrs: 4, courseDescription: "This is the third course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
-    { courseCode: 'DEF453', courseName: 'Course 4', creditHrs: 4, courseDescription: "This is the fourth course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
-    { courseCode: 'DEF454', courseName: 'Course 5', creditHrs: 4, courseDescription: "This is the fifth course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
-    { courseCode: 'DEF455', courseName: 'Course 6', creditHrs: 4, courseDescription: "This is the sixth course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
-
-  ];  // TODO: let registeredCourses = [] when implementing the endpoint ..
+  
+  registeredCourses: Course[] = [];
 
   withdrawnCourses: Course[] = [];
 
@@ -279,18 +272,48 @@ export class StudentComponent implements OnInit{
     return this.withdrawnCourses.some(c => c.courseCode == course.courseCode);
   }
  
-  async getStudentEnrolledCourses(studentId: string) {
-    let courses: Course[] | null = await this.studentService.getStudentEnrolledCourses(studentId);
-
-    return courses;
+  async getStudentEnrolledCourses() {
+    this.studentService.getStudentEnrolledCourses(this.student?.studentId).then(
+      (result) => this.registeredCourses = result
+    );
   }
 
-  async withdrawCourses(studentId: string, courses: Course[]) {
-    // TODO SweetAlert for confirmation or cancelling (lw nefe3 ya3ny)
-    // "You are about to withdraw the following courses: ...... Are ypu sure you want to proceed? This action cannot be undone!"
-    let isSuccess: boolean = await this.studentService.withdrawCourses(studentId, courses);
-    // Refresh the display to re-fetch registered courses
-    return isSuccess;
+  async withdrawCourses(courses: Course[]) {
+    // Construct warning text
+    let warningString = "You are about to withdraw the following courses: ";
+    for (var c of this.withdrawnCourses) {
+      warningString += c.courseName + ", "
+    }
+    warningString += "are you sure you want to proceed? This action CANNOT be undone!"
+    // Warn the user
+    await Swal.fire({
+      title: 'Warning!',
+      text: warningString,
+      icon: 'warning',
+      showDenyButton: true,
+      // showCancelButton: true,
+      confirmButtonText: 'Proceed',
+      denyButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User clicked "Proceed"
+        this.studentService.withdrawCourses(this.student?.studentId, courses).then(
+          (result) => {
+            if (result) {
+              Swal.fire('Withdrawal Complete', 'Your action was successful.', 'success');
+            } else {
+              Swal.fire('Withdrawal Failed', 'Your action was unsuccessful.', 'error');
+            }
+          }
+        );
+        // Refresh the display to re-fetch registered courses
+        this.getStudentEnrolledCourses();
+        this.withdrawnCourses = []
+      } else if (result.isDenied) {
+        // User clicked "Cancel" or closed the modal
+        Swal.fire('Withdrawal Failed', 'Your action was cancelled.', 'error');
+      }
+    });
   }
 
 
