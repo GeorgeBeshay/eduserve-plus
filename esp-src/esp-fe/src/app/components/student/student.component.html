@@ -189,7 +189,23 @@
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 2">
-          This is the withdraw from courses page!
+          <div>
+
+            <div class="course-list-container">
+              <div *ngFor="let course of registeredCourses;" class="withdraw-course-item">
+                  <div class="withdraw-course-name">{{ course.courseName }}</div>
+                  <div class="withdraw-course-code">{{ course.courseCode }}</div>
+                  <div class="withdraw-course-description">{{ course.courseDescription }}</div>
+                  <div>
+                    <button class="select-withdraw-button" *ngIf="!isSelectedToWithdraw(course)" (click)="selectToWithdraw(course)">Select</button>
+                    <button class ="deselect-withdraw-button" *ngIf="isSelectedToWithdraw(course)" (click)="deselectFromWithdrawn(course)">Deselect</button>
+                  </div>
+              </div>
+            </div>
+            <div class="confirm-withdraw">
+              <button (click)="withdrawCourses('11', withdrawnCourses)">WITHDRAW SELECTED COURSES</button> <!-- Needs to be replaced by ID of current student -->
+            </div>
+          </div>
         </ng-container>
 
       </div>

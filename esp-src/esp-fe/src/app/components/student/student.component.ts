@@ -252,6 +252,33 @@ export class StudentComponent implements OnInit{
   }
 
 
+  // Course withdrawal methods
+
+  // Example registered courses list
+  registeredCourses: Course[] = [
+    { courseCode: 'ABC123', courseName: 'Course 1', creditHrs: 3, courseDescription: "This is the first course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF456', courseName: 'Artificial Intelligence', creditHrs: 4, courseDescription: "This is the second course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF452', courseName: 'Course 3', creditHrs: 4, courseDescription: "This is the third course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF453', courseName: 'Course 4', creditHrs: 4, courseDescription: "This is the fourth course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF454', courseName: 'Course 5', creditHrs: 4, courseDescription: "This is the fifth course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+    { courseCode: 'DEF455', courseName: 'Course 6', creditHrs: 4, courseDescription: "This is the sixth course description", offeringDpt: 1, prerequisite: ["Pre req1"] },
+
+  ];  // TODO: let registeredCourses = [] when implementing the endpoint ..
+
+  withdrawnCourses: Course[] = [];
+
+  selectToWithdraw(course: Course) {
+    this.withdrawnCourses.push(course);
+  }
+
+  deselectFromWithdrawn(course: Course) {
+    this.withdrawnCourses = this.withdrawnCourses.filter(c => c.courseCode !== course.courseCode);
+  }
+
+  isSelectedToWithdraw(course: Course): boolean {
+    return this.withdrawnCourses.some(c => c.courseCode == course.courseCode);
+  }
+ 
   async getStudentEnrolledCourses(studentId: string) {
     let courses: Course[] | null = await this.studentService.getStudentEnrolledCourses(studentId);
 
@@ -259,8 +286,10 @@ export class StudentComponent implements OnInit{
   }
 
   async withdrawCourses(studentId: string, courses: Course[]) {
+    // TODO SweetAlert for confirmation or cancelling (lw nefe3 ya3ny)
+    // "You are about to withdraw the following courses: ...... Are ypu sure you want to proceed? This action cannot be undone!"
     let isSuccess: boolean = await this.studentService.withdrawCourses(studentId, courses);
-
+    // Refresh the display to re-fetch registered courses
     return isSuccess;
   }
 
