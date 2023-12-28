@@ -120,9 +120,7 @@ public class CourseDAO extends DAO<Course> {
             courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
 
             for (Course course : courses) {
-                System.out.println(course.toString());
                 List<String> pre = getCoursePrerequisites(course.getCourseCode());
-
                 course.setPrerequisite(pre);
             }
 
@@ -153,4 +151,24 @@ public class CourseDAO extends DAO<Course> {
         // TODO get the list of courses that are available for the student to register by a stored procedure
         return null;
     }
+
+
+
+
+    /**
+     * @return A list of courses that meet the conjunction of the following criteria:
+     * <pre>1. the student has those courses </pre>
+     * <pre>2. the course is in progress ... passed IS NULL </pre>
+     * <pre>3. the course being offered this season and this year </pre>
+     */
+    public List<Course> getAvailableWithdrawCourses(int studentId) {
+        try {
+            return jdbcTemplate.query("EXEC dbo.getAvailableWithdrawCourses " + studentId, rowMapper);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
+
 }

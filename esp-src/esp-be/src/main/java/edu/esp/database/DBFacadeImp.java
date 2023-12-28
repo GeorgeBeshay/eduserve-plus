@@ -1,9 +1,6 @@
 package edu.esp.database;
 
-import edu.esp.database.daos.AdminDAO;
-import edu.esp.database.daos.InstructorDAO;
-import edu.esp.database.daos.StudentDAO;
-import edu.esp.database.daos.CourseDAO;
+import edu.esp.database.daos.*;
 import edu.esp.system_entities.system_users.*;
 import edu.esp.system_entities.system_uni_objs.Course;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +16,7 @@ public class DBFacadeImp {
     private final InstructorDAO instructorDAO;
     private final AdminDAO adminDAO;
     private final CourseDAO courseDAO;
+    private final GradeDAO GradeDAO;
 
     @Autowired
     public DBFacadeImp(JdbcTemplate jdbcTemplate){
@@ -27,6 +25,7 @@ public class DBFacadeImp {
         this.instructorDAO = new InstructorDAO(this.jdbcTemplate);
         this.adminDAO = new AdminDAO(this.jdbcTemplate);
         this.courseDAO = new CourseDAO(this.jdbcTemplate);
+        this.GradeDAO = new GradeDAO(this.jdbcTemplate);
     }        
    
     public boolean createStudent(Student st){
@@ -91,6 +90,13 @@ public class DBFacadeImp {
         return this.courseDAO.findByOfferingDpt(offeringDpt);
     }
 
+    public List<Course> getAvailableWithdrawCourses(int studentId){
+        return this.courseDAO.getAvailableWithdrawCourses(studentId);
+    }
+
+    public int withdrawFromCourses(int studentId, List<Course> courses){
+        return this.GradeDAO.withdrawFromCourses(studentId, courses);
+    }
     public List<Course> getAllCourses() {
         return this.courseDAO.getAllCourses();
     }
@@ -102,4 +108,5 @@ public class DBFacadeImp {
     public List<UnregisteredStudent> getAllUnregisteredStudents() {
         return this.studentDAO.getAllUnregisteredStudents();
     }
+    
 }
