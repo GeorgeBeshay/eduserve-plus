@@ -53,7 +53,7 @@ export class StudentService {
   async loadAvailableCoursesForRegistration(studentId: any) {
     try{
       return await firstValueFrom(
-      this.http.post<Course[]>(this.URL+'getAvailableCourses', Number(studentId),{responseType:'json'})
+      this.http.post<Course[]>(this.URL+'courseRegistrationSetup', Number(studentId),{responseType:'json'})
     );
   }catch(error){
     if(error instanceof HttpErrorResponse){
@@ -102,7 +102,7 @@ export class StudentService {
   async registerCourses(studentId: string | undefined, selectedCourses: Course[]) {
     try {
       return await firstValueFrom(
-        this.http.post<boolean>(this.URL + 'registerCourses',{"studentId": Number(studentId),"courses:":selectedCourses},{responseType:'json'})
+        this.http.post<boolean>(this.URL + 'saveRegisteredCourses',{"studentId": Number(studentId),"courses:":selectedCourses},{responseType:'json'})
       );
     }catch (error){
       if(error instanceof HttpErrorResponse)
