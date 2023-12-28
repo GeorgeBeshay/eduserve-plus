@@ -20,12 +20,10 @@ public class GradeDAOTests{
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private GradeDAO gradeDAO;
-    private DBFacadeImp dbFacadeImp;
 
     @BeforeAll
     public void setUp() {
         this.gradeDAO = new GradeDAO( jdbcTemplate );
-        this.dbFacadeImp = new DBFacadeImp( jdbcTemplate );
 
         jdbcTemplate.update("""
                 INSERT INTO department (dpt_id, dpt_name)
@@ -41,13 +39,13 @@ public class GradeDAOTests{
                   (2, 101, 2);
                 """);
 
-        Course course1 = new Course("TEST1","TEST1","description",(byte) 101,(byte) 3);
-        Course course2 = new Course("TEST2","TEST2","description",(byte) 101,(byte) 3);
-        Course course3 = new Course("TEST3","TEST3","description",(byte) 101,(byte) 3);
-
-        dbFacadeImp.addNewCourse(course1);
-        dbFacadeImp.addNewCourse(course2);
-        dbFacadeImp.addNewCourse(course3);
+        jdbcTemplate.update("""
+                INSERT INTO course (course_code, course_name, course_description, offering_dpt, credit_hrs)
+                VALUES
+                  ('TEST1', 'TEST1', 'description', 101, 3),
+                  ('TEST2', 'TEST2', 'description', 101, 3),
+                  ('TEST3', 'TEST3', 'description', 101, 3);
+                """);
 
 
     }
@@ -62,7 +60,7 @@ public class GradeDAOTests{
     }
 
     @Test
-    @DisplayName("Withdraw from multiple courses where all is allowed allowed")
+    @DisplayName("Withdraw from multiple courses where all is allowed")
     public void withdrawMultipleCoursesAllAllowed(){
 
         Integer currentSeason = jdbcTemplate.queryForObject("SELECT current_season from system_state;", Integer.class);
