@@ -107,14 +107,27 @@ public class StudentServices {
         return 0;
     }
 
+    /**
+     * @param requestMap that contains (Integer) studentId and (List<Course>) courses
+     * @return int number of successfully withdrawal courses ... in case of a bad request return -1
+     */
     public int withdrawCourses(Map<String, Object> requestMap){
-        int studentId = (int) requestMap.get("studentId");
+        Integer studentId = (Integer) requestMap.get("studentId");
         List<Course> courses = (new ObjectMapper()).convertValue(requestMap.get("courses"), new TypeReference<List<Course>>() {});
+
+        if (studentId == null || courses == null){
+            Logger.logMsgFrom(this.getClass().getName(), "bad request for function withdrawCourses", 1);
+            return -1;
+        }
         int result = dbFacade.withdrawFromCourses(studentId, courses);
         Logger.logMsgFrom(this.getClass().getName(), "withdrawed from: %d courses".formatted(result), 0);
         return result;
     }
 
+    /**
+     * @param studentId int
+     * @return available courses the student can make with draw ... it could be an empty list
+     */
     public List<Course> getAvailableWithdrawCourses(int studentId){
         List<Course> courses = dbFacade.getAvailableWithdrawCourses(studentId);
         if (courses != null){
