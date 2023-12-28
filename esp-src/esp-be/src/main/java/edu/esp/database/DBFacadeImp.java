@@ -98,4 +98,8 @@ public class DBFacadeImp {
     public List<Course> fetchAvailableRegistrationCourses(int studentId) {
         return this.courseDAO.getAvailableCourses(studentId);
     }
+
+    public int registerCourses(int studentId, List<String> courseCodes) {
+        return this.courseDAO.registerCourses(studentId, courseCodes);
+    }
 }

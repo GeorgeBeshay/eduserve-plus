@@ -142,4 +142,17 @@ public class CourseDAO extends DAO<Course> {
             return null;
         }
     }
+
+    public int registerCourses(int studentId, List<String> courseCodes) {
+        // Insert these values only, grades and passed bit will be null
+        String sql = """
+                INSERT INTO grades (course_code, student_id, season, academic_year) VALUES (?, %d, %d, %s)
+                """.formatted(studentId, getCurrentSeason(), getCurrentYear());
+        // Insert into grades the course codes and return number of successfully inserted rows
+        int rows = 0;
+        for (String code : courseCodes) {
+            rows += jdbcTemplate.update(sql, code);
+        }
+        return rows;
+    }
 }
