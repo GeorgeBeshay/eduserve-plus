@@ -12,6 +12,8 @@ import Swal from "sweetalert2";
 export class InstructorComponent implements OnInit {
   signInForm: FormGroup;
   signUpForm: FormGroup;
+  instructor: Instructor | null;
+  selectedSection: number;
   constructor(private formBuilder: FormBuilder, private service:InstructorService) {
     this.signInForm = this.formBuilder.group({
       id: ['', Validators.required],
@@ -29,13 +31,15 @@ export class InstructorComponent implements OnInit {
       contact_no: ['',Validators.required]
     });
 
+    this.instructor = null
+    this.selectedSection = 0
+
   }
 
   ngOnInit() {
     let tempObj = sessionStorage.getItem("instructorObj");
-    // TODO: uncomment the following upon creating the instructor object.
-    // if(tempObj != null)
-      // this.instructor = JSON.parse(tempObj);
+    if(tempObj != null)
+      this.instructor = JSON.parse(tempObj);
   }
 
   async onSubmit() {
@@ -57,6 +61,10 @@ export class InstructorComponent implements OnInit {
           timer: 2000
         });
 
+        this.instructor = new Instructor(id, password, "", "", "", "", "");
+        // caching the object
+        sessionStorage.setItem("instructorObj", JSON.stringify(this.instructor));
+
       } else {
 
         await Swal.fire({
@@ -66,7 +74,6 @@ export class InstructorComponent implements OnInit {
         });
 
       }
-      // call API
     }
   }
 
@@ -101,6 +108,11 @@ export class InstructorComponent implements OnInit {
           timer: 2000
         });
 
+        this.instructor = instructor;
+
+        // caching the object
+        sessionStorage.setItem("instructorObj", JSON.stringify(this.instructor));
+
       }
       else{
 
@@ -117,5 +129,10 @@ export class InstructorComponent implements OnInit {
 
   onTabChanged(event: number) {
     console.log('Tab changed to index:', event);
+  }
+
+  selectSection (sectionIndex: number) {
+    this.selectedSection = sectionIndex
+    console.log(this.selectedSection)
   }
 }
