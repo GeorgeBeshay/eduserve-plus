@@ -49,13 +49,13 @@ export class StudentComponent implements OnInit{
       this.student = JSON.parse(tempObj);
   }
 
-  selectSection (sectionIndex: number) {
+  async selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
 
     if(this.selectedSection == 1) {
-      this.loadCourses();
+      await this.loadCourses();
     } else if(this.selectedSection == 2) {
-      this.getStudentEnrolledCourses();
+      await this.getStudentEnrolledCourses();
     }
   }
 
@@ -232,7 +232,7 @@ export class StudentComponent implements OnInit{
     let studentId = this.student?.studentId;
     let selectedCourses = this.getCourseCodesOnly(this.enrolledCourses);  // list of objects containing all the course data.
     let totalRegisteredHours = this.computeSelectedCoursesHrs();
-    this.studentService.registerCourses(studentId,selectedCourses);
+    this.studentService.registerCourses(studentId, selectedCourses, totalRegisteredHours);
     // use sweet alert function (Swal.fire()) to display the alerts in a pretty form !
 
     // TODO: Remove those statements
@@ -248,8 +248,10 @@ export class StudentComponent implements OnInit{
     // TODO: Call the appropriate end point method from the studentService.
     // let tempObj = this.studentService.loadAvailableCoursesForRegistration(this.student?.studentId);
     // this.courses = extract courses from tempObj
-    let available_courses: Course[]  = await this.studentService.loadAvailableCoursesForRegistration(studentId);
-    this.courses =  available_courses;
+    let available_courses: {"availableCourses": Course[], "availableCreditHours": number} | null = await this.studentService.loadAvailableCoursesForRegistration(studentId);
+    if (available_courses?.availableCourses != null)
+      this.courses =  available_courses?.availableCourses;
+    console.log(this.courses);
     // in case of varying # of hours uncomment the following:
     // this.totalAvailableCreditHours = extract # of hours from tempObj
   }

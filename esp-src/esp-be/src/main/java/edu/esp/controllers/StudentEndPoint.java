@@ -58,6 +58,7 @@ public class StudentEndPoint {
         // TODO use the getCourseRegistrationSetup method from the student service class
         Logger.logMsgFrom(this.getClass().getName(),"A Student has requested to get available courses for enrollment .. processing the request..",-1);
         Map<String,Object> registrationSetup = this.studentServices.getCourseRegistrationSetup(studentId);
+        System.out.println(registrationSetup);
         return (registrationSetup != null)
                 ? new ResponseEntity<>(registrationSetup,HttpStatus.OK)
                 : new ResponseEntity<>(registrationSetup,HttpStatus.BAD_REQUEST);
@@ -71,7 +72,8 @@ public class StudentEndPoint {
     @ResponseBody
     public ResponseEntity<Integer> saveRegisteredCourses(@RequestBody Map<String, Object> requestMap) {
         // TODO save the courses which the student has chosen
-        Logger.logMsgFrom(this.getClass().getName(),"A Student has requested to get the available courses for enrollment .. processing the request.. ",-1);
+        System.out.println("in endpoint" + requestMap);
+        Logger.logMsgFrom(this.getClass().getName(),"A Student has requested to register courses for enrollment .. processing the request.. ",-1);
         Integer registeredCourses = this.studentServices.registerCourses(requestMap);
         return (registeredCourses > 0)
                 ? new ResponseEntity<>(registeredCourses,HttpStatus.OK)

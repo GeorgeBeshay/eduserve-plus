@@ -174,7 +174,7 @@
                 <h3>{{ course.courseName }}</h3>
                 <p>Code: {{ course.courseCode }}</p>
                 <p>Credit Hours: {{ course.creditHrs }}</p>
-                <p>Description: {{ truncateDescription(course.courseDescription, 80) }}</p>
+                <p>Description: {{ truncateDescription(course.courseDescription, 30) }}</p>
               </div>
               <div class="action-buttons">
                 <button *ngIf="!isEnrolled(course)" (click)="enroll(course)">Add</button>
