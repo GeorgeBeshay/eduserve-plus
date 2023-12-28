@@ -230,7 +230,7 @@ export class StudentComponent implements OnInit{
   registerCourses() {
     // TODO: Call the appropriate end point method from the studentService to register the selected courses.
     let studentId = this.student?.studentId;
-    let selectedCourses = this.enrolledCourses  // list of objects containing all the course data.
+    let selectedCourses = this.getCourseCodesOnly(this.enrolledCourses);  // list of objects containing all the course data.
     let totalRegisteredHours = this.computeSelectedCoursesHrs();
     // this.studentService.registerSelectedCourses(bla bla..)
     // use sweet alert function (Swal.fire()) to display the alerts in a pretty form !
@@ -255,7 +255,7 @@ export class StudentComponent implements OnInit{
 
 
   // Course withdrawal methods
-  
+
   registeredCourses: Course[] = [];
 
   withdrawnCourses: Course[] = [];
@@ -271,7 +271,7 @@ export class StudentComponent implements OnInit{
   isSelectedToWithdraw(course: Course): boolean {
     return this.withdrawnCourses.some(c => c.courseCode == course.courseCode);
   }
- 
+
   async getStudentEnrolledCourses() {
     this.studentService.getStudentEnrolledCourses(this.student?.studentId).then(
       (result) => this.registeredCourses = result
@@ -316,5 +316,11 @@ export class StudentComponent implements OnInit{
     });
   }
 
-
+  getCourseCodesOnly(courses: Course[]) {
+    let courseCodes = []
+    for (const course of courses) {
+      courseCodes.push(course.courseCode);
+    }
+    return courseCodes;
+  }
 }
