@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {Student} from "../System Entities/Student";
 import { Course } from './../System Entities/Course';
 import { HttpErrorResponse } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +50,21 @@ export class StudentService {
     }
     return null;
   }
+  async loadAvailableCoursesForRegistration(studentId: any) {
+    try{
+      return await firstValueFrom(
+      this.http.post<Course[]>(this.URL+'courseRegistrationSetup', Number(studentId),{responseType:'json'})
+    );
+  }catch(error){
+    if(error instanceof HttpErrorResponse){
+      console.error('Bad request');
+    }
+    else{
+      console.error('Error');
+    }
+    return[];
+  }
+}
 
   async getStudentEnrolledCourses(studentId: string | undefined) {
 
@@ -84,6 +99,20 @@ export class StudentService {
     }
     return false;
   }
+  async registerCourses(studentId: string | undefined, selectedCourses: Course[]) {
+    try {
+      return await firstValueFrom(
+        this.http.post<boolean>(this.URL + 'saveRegisteredCourses',{"studentId": Number(studentId),"courses:":selectedCourses},{responseType:'json'})
+      );
+    }catch (error){
+      if(error instanceof HttpErrorResponse)
+        console.error('Bad request');
+      else
+        console.error('Error');
+      }
+      return false;
+  }
+
 
 
 }
