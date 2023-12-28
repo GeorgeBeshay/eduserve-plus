@@ -152,10 +152,14 @@ public class CourseDAO extends DAO<Course> {
         return null;
     }
 
+
+
+
     /**
      * @return A list of courses that meet the conjunction of the following criteria:
-     * <pre>1. the student didn't pass or fail ... passed IS NULL </pre>
-     * <pre>2. Being offered this season and this year </pre>
+     * <pre>1. the student has those courses </pre>
+     * <pre>2. the course is in progress ... passed IS NULL </pre>
+     * <pre>3. the course being offered this season and this year </pre>
      */
     public List<Course> getAvailableWithdrawCourses(int studentId) {
         try {
