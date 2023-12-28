@@ -1,4 +1,10 @@
 /* YourComponent.css or styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+
+.holder {
+  display: flex;
+  width: 100%;
+}
 
 .form-group {
   padding: 5px;
@@ -20,4 +26,146 @@ input {
 
 .input-error {
   color: red;
+}
+
+.sign-in-form {
+  width: 100%;
+}
+
+.student-main-page {
+  display: grid;
+  height: 1000px;
+  width: 100%;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 0.2fr repeat(4, 1fr);
+  grid-column-gap: 0;
+  grid-row-gap: 0;
+  background-color: #f0f4fc;
+}
+
+.student-main-page .header {
+  grid-area: 1 / 1 / 2 / 7;
+}
+
+.student-main-page .sidebar {
+  grid-area: 2 / 1 / 6 / 2;
+  background-color: #051326;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px 10px 0 0;
+}
+
+.student-main-page .main-content {
+  grid-area: 2 / 2 / 6 / 7;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px 0 0 0;
+}
+
+.student-main-page .header h1 {
+  text-align: center;
+  color: #051326;
+  text-transform: uppercase;
+  font-size: 40px;
+  padding: 5px;
+  width: fit-content;
+  margin: 15px auto;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Navigation links styles */
+.student-main-page .sidebar .nav-links {
+  list-style: none;
+  padding: 0;
+}
+
+.student-main-page .sidebar .nav-links li {
+  margin-bottom: 10px;
+}
+
+.student-main-page .sidebar .nav-links a {
+  text-decoration: none;
+  color: #fff;
+  display: block;
+  padding: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.student-main-page .sidebar .nav-links a:hover {
+  background-color: #555;
+  border-radius: 3px;
+}
+
+
+.student-main-page .box {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-inline: 10px;
+}
+
+/* Course Enrollment Styling */
+
+.course-list {
+  max-height: 90%;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.course-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Adjusts items in the card */
+  padding: 15px;
+  width: 90%;
+  max-width: 500px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px auto;
+}
+
+.course-details {
+  flex: 8; /* Expands to fill available space */
+}
+
+.action-buttons {
+  display: flex;
+  flex: 2;
+  gap: 10px; /* Creates space between buttons */
+  margin-left: 20px;
+}
+
+.action-buttons button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100px;
+  height: 50px;
+}
+
+.action-buttons button:hover {
+  background-color: #0056b3;
+}
+
+.register-courses-button {
+  display: block;
+  margin: 20px auto; /* Adjust the margin as needed */
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-courses-button:hover {
+  background-color: #218838;
 }

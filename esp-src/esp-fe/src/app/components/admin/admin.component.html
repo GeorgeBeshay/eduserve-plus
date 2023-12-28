@@ -45,6 +45,9 @@
           <li><a (click)="selectSection(2)">Add Instructors</a></li>
           <li><a (click)="selectSection(3)">Add Students</a></li>
           <li><a (click)="selectSection(4)">Add A Course</a></li>
+          <li><a (click)="selectSection(5)">Unregistered Instructors</a></li>
+          <li><a (click)="selectSection(6)">Unregistered Students</a></li>
+          <li><a (click)="selectSection(7)">All Courses</a></li>
           <!-- Add more navigation links as needed -->
         </ul>
       </div>
@@ -99,14 +102,17 @@
             <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onInstructorFileChange($event)"/>
             <button type="submit">Submit</button>
           </form>
+
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 3">
+
           Upload your CSV file to add students!
           <form class="upload-csv-form" [formGroup]="adminUploadStudentsForm" (ngSubmit)="uploadStudents()">
             <input type="file" class="csv-file" name="csv-file" accept=".csv" formControlName="uploaded_file" (change)="onStudentFileChange($event)"/>
             <button type="submit">Submit</button>
           </form>
+
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 4">
@@ -138,14 +144,15 @@
             </div>
 
             <div class="form-group">
-              <label for="offeringDpt">Offering Department ID:</label>
-              <input id="offeringDpt" type="number" formControlName="offeringDpt" />
-              <div *ngIf="courseForm.get('offeringDpt')?.invalid && (courseForm.get('offeringDpt')?.dirty || courseForm.get('offeringDpt')?.touched)">
-                <div *ngIf="courseForm.get('offeringDpt')?.hasError('required')" class="input-error">Offering Department is required.</div>
-                <div *ngIf="(courseForm.get('offeringDpt')?.hasError('min') || courseForm.get('offeringDpt')?.hasError('max'))" class="input-error">
-                  Offering Department should be between -128 and 127.
+              <label for="offeringDpt">Offering Department:</label>
+              <select id="offeringDpt" type="select" formControlName="offeringDpt" >
+                    <option value = 1>Computer and Systems Engineering</option>
+                    <option value = 2>Mechanical Engineering</option>
+                    <option value = 3>Chemical Engineering</option>
+                <div *ngIf="courseForm.get('offeringDpt')?.invalid && (courseForm.get('offeringDpt')?.dirty || courseForm.get('offeringDpt')?.touched)">
+                  <div *ngIf="courseForm.get('offeringDpt')?.hasError('required')" class="input-error">Offering Department is required.</div>
                 </div>
-              </div>
+              </select>
             </div>
 
             <div class="form-group">
@@ -154,7 +161,7 @@
               <div *ngIf="courseForm.get('creditHrs')?.invalid && (courseForm.get('creditHrs')?.dirty || courseForm.get('creditHrs')?.touched)">
                 <div *ngIf="courseForm.get('creditHrs')?.hasError('required')" class="input-error">Credit Hours is required.</div>
                 <div *ngIf="(courseForm.get('creditHrs')?.hasError('min') || courseForm.get('creditHrs')?.hasError('max'))" class="input-error">
-                  Credit Hours should be between -128 and 127.
+                  Credit Hours should be between 1 and 20.
                 </div>
               </div>
             </div>
@@ -179,6 +186,47 @@
           </form>
 
         </ng-container>
+
+        <ng-container *ngIf="selectedSection == 5">
+          <div class="border">
+            <div *ngFor="let unregisteredInstructor of unregisteredInstructors" class="button">
+              <div class="container">
+                  <div class="from">Instructor ID: {{unregisteredInstructor.instructorId}}</div>
+                  <div class="from">Department ID: {{unregisteredInstructor.dptId}}</div>
+              </div> 
+          </div>
+        </div>
+
+
+        </ng-container>
+        <ng-container *ngIf="selectedSection == 6">
+          <div class="border">
+            <div *ngFor="let unregisteredStudent of unregisteredStudents" class="button">
+              <div class="container">
+                  <div class="from">Student ID: {{unregisteredStudent.studentId}}</div>
+                  <div class="from">Department ID: {{unregisteredStudent.dptId}}</div>
+              </div> 
+          </div>
+        </div>
+
+
+        </ng-container>
+        <ng-container *ngIf="selectedSection == 7">
+          <div class="border">
+            <div *ngFor="let course of courses" class="buttonCourse">
+              <div class="container">
+                  <div class="courseDetails">Course Code: {{course.courseCode}}</div>
+                  <div class="courseDetails">Course Name: {{course.courseName}}</div>
+                  <div class="courseDetails">Credit hours: {{course.creditHrs}}</div>
+                  <div class="courseDetails">Offering Department ID: {{course.offeringDpt}}</div>
+                  <div class="courseDetails">Description: {{course.courseDescription}}</div>
+                  <div class="courseDetails">Prerequisite: {{course.prerequisite}}</div>
+              </div> 
+            </div>
+          </div>
+        </ng-container>
+
+
       </div>
 
     </div>

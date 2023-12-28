@@ -3,6 +3,7 @@ package edu.esp.controllers;
 import edu.esp.services.AdminServices;
 import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
+import edu.esp.system_entities.system_users.UnregisteredStudent;
 import edu.esp.utilities.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
@@ -85,4 +87,45 @@ public class AdminEndPoint {
 
     }
 
+    @PostMapping("getAllCourses")
+    @ResponseBody
+    public ResponseEntity<List<Course>> getAllCourses () {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to get all courses .. processing the request ..", -1);
+        return new ResponseEntity<>(this.adminServices.getAllCourses(), HttpStatus.OK);
+
+    }
+
+    @PostMapping("getAllUnregisteredInstructors")
+    @ResponseBody
+    public ResponseEntity<List<UnregisteredInstructor>> getAllUnregisteredInstructors () {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to get all Unregistered Instructors .. processing the request ..", -1);
+        return new ResponseEntity<>(this.adminServices.getAllUnregisteredInstructors(), HttpStatus.OK);
+
+    }
+
+    @PostMapping("getAllUnregisteredStudents")
+    @ResponseBody
+    public ResponseEntity<List<UnregisteredStudent>> getAllUnregisteredStudents () {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to get all Unregistered Students .. processing the request ..", -1);
+        return new ResponseEntity<>(this.adminServices.getAllUnregisteredStudents(), HttpStatus.OK);
+
+    }
+
+
+    @PostMapping("addUnregisteredInstructors")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addUnregisteredInstructors (@RequestParam("unregisteredInstructors") MultipartFile unregisteredInstructors) {
+
+        Logger.logMsgFrom(this.getClass().getName(), "An admin has requested to add unregistered instructors .. processing the request ..", -1);
+
+        Map<String, Object> resultOfAddingInstructors = this.adminServices.addUnregisteredInstructors(unregisteredInstructors);
+
+        return (!resultOfAddingInstructors.get("instructorsAdded").equals(0))
+                ? new ResponseEntity<>(resultOfAddingInstructors, HttpStatus.OK)
+                : new ResponseEntity<>(resultOfAddingInstructors, HttpStatus.BAD_REQUEST);
+
+    }
 }

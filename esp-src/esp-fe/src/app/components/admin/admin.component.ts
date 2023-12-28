@@ -1,9 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, NonNullableFormBuilder, Validators, FormArray, FormControl} from "@angular/forms";
+import {FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
 import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
-import { Course } from 'src/app/System Entities/course';
+import { Course } from 'src/app/System Entities/Course';
 import { AbstractControl } from '@angular/forms';
+import { Instructor } from 'src/app/System Entities/Instructor';
+import { Student } from 'src/app/System Entities/Student';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-admin',
@@ -17,8 +21,11 @@ export class AdminComponent implements OnInit{
   adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
-  unregisteredInstructorfile : File | null = null;
-  unregisteredStudentfile : File | null = null;
+  unregisteredInstructors: Instructor[] = [] 
+  courses: Course[] = []
+  unregisteredStudents: Student[] = []
+  unregisteredInstructorFile : File | null = null;
+  unregisteredStudentFile : File | null = null;
   courseForm: FormGroup;
 
 
@@ -53,8 +60,8 @@ export class AdminComponent implements OnInit{
       courseCode: ['', [Validators.required, Validators.maxLength(7)]],
       courseName: ['', [Validators.required, Validators.maxLength(40)]],
       courseDescription: ['', Validators.required],
-      offeringDpt: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
-      creditHrs: [null, [Validators.required, Validators.min(-128), Validators.max(127)]],
+      offeringDpt: ['', Validators.required],
+      creditHrs: [null, [Validators.required, Validators.min(1), Validators.max(20)]],
       prerequisite: this.formBuilder.array([])
     });
 
@@ -64,7 +71,10 @@ export class AdminComponent implements OnInit{
   }
 
   ngOnInit() {
-    // Any initialization logic
+    // Restoring cached object.
+    let tempObj = sessionStorage.getItem("adminObject");
+    if(tempObj != null)
+      this.admin = JSON.parse(tempObj);
   }
 
   async onSubmit() {
@@ -78,10 +88,29 @@ export class AdminComponent implements OnInit{
       let isSuccess: boolean | null = await this.service.signIn(id, password);
 
       if (isSuccess) {
-        alert("The admin has been signIn successfully")
-        this.admin = new Admin("", "", "", "")
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Admin Sign In Process is Successful.",
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        this.admin = new Admin(id, password, "", "")
+
+        // caching object.
+        sessionStorage.setItem("adminObject", JSON.stringify(this.admin));
+
       } else {
-        alert("The ID or the password is not correct")
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "The Given ID or Password is Incorrect.",
+        });
+
       }
 
     }
@@ -104,15 +133,40 @@ export class AdminComponent implements OnInit{
 
       let isSuccess: boolean | null = await this.service.createAdmin(admin, this.AdminCreationForm.get('NewAdminPassword')?.value)
       if(isSuccess) {
-        alert("Created an Admin successfully.")
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Admin Creation Process is Successful.",
+          showConfirmButton: false,
+          timer: 2000
+        });
+
       } else {
-        alert("Failed to create an Admin.")
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to create an Admin.",
+        });
+
       }
     }
   }
 
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
+    if(this.selectedSection == 5){
+      this.showUnregisteredInstructors();
+    }
+    if(this.selectedSection == 6){
+      this.showUnregisteredStudents();
+    }
+    if(this.selectedSection == 7){
+      this.showCourses();
+    }
+    
     console.log(this.selectedSection)
   }
 
@@ -139,10 +193,25 @@ export class AdminComponent implements OnInit{
       let isSuccess: boolean | null = await this.service.addCourse(newCourse)
 
       if(isSuccess){
-        alert("The course has been added successfully")
+
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successful",
+          text: "Course Addition Process is Successful.",
+          showConfirmButton: false,
+          timer: 1500
+        });
+
       }
       else{
-        alert("The course has not been added successfully")
+
+        await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Course Addition Process Failed.",
+        });
+
       }
     }
   }
@@ -167,7 +236,7 @@ export class AdminComponent implements OnInit{
 
   onInstructorFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.unregisteredInstructorfile = event.target.files[0];
+      this.unregisteredInstructorFile = event.target.files[0];
     }
   }
 
@@ -176,36 +245,89 @@ export class AdminComponent implements OnInit{
     if(this.adminUploadInstructorsForm.valid
       && this.csvFileValidator(this.adminUploadInstructorsForm)){
 
-      let uploaded_file = this.unregisteredInstructorfile;
+      let uploaded_file = this.unregisteredInstructorFile;
       console.log(uploaded_file)
-      alert('Uploading Instructors from CSV file please wait a moment')
+
+      let timerInterval: any;
+      await Swal.fire({
+        title: "Loading",
+        html: `Uploading Instructors CSV File ... <br>Estimated remaining time: <b></b> ms.`,
+        timer: 3500,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          // @ts-ignore
+          const timer = Swal.getPopup().querySelector("b");
+          timerInterval = setInterval(() => {
+            // @ts-ignore
+            timer.textContent = `${Swal.getTimerLeft()}`;
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log("Timer - SweetAlert Closed");
+        }
+      });
 
       if(uploaded_file){
 
-        let InstructorsAdded: number = 0
-        // Add the code here to send the CSV file to the backend
+        let results = await this.service.uploadUnregisteredInstructors(uploaded_file)
 
-        // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
-        // in the admin service
+        if(results.instructorsAdded > 0){
 
-        // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
+          await Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Successful",
+            text: `Added ${results.instructorsAdded} Instructors Successfully`,
+            showConfirmButton: false,
+            timer: 2000
+          });
 
-        if(InstructorsAdded > 0){
-          alert(InstructorsAdded + ' Added Successfully')
-        }
-        else{
-          alert('Error: No students were added')
+          let failedRecords = "";
+          for (const fail of results.instructorsNotAdded) {
+            failedRecords += `Failed to add instructor in row ${fail}.\n`;
+          }
+
+          if (failedRecords != "") {
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: failedRecords,
+              timer: 4000
+            });
+          }
+
+        } else {
+
+          await Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "No instructors were added.",
+            timer: 4000
+          });
+
         }
       }
-    }
-    else{
-      alert('Only CSV files are allowed');
+    } else {
+
+      await Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Only CSV Files are Allowed !",
+        timer: 1500
+      });
+
     }
   }
 
   onStudentFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.unregisteredStudentfile = event.target.files[0];
+      this.unregisteredStudentFile = event.target.files[0];
     }
   }
 
@@ -214,27 +336,83 @@ export class AdminComponent implements OnInit{
     if(this.adminUploadStudentsForm
       && this.csvFileValidator(this.adminUploadStudentsForm)) {
 
-        let uploaded_file = this.unregisteredStudentfile;
+        let uploaded_file = this.unregisteredStudentFile;
         console.log('Uploading Students from CSV file: ', uploaded_file);
-        alert('Uploading Students from CSV file, please wait.')
+
+      let timerInterval: any;
+      await Swal.fire({
+        title: "Loading",
+        html: `Uploading Students CSV File ... <br>Estimated remaining time: <b></b> ms.`,
+        timer: 3500,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          // @ts-ignore
+          const timer = Swal.getPopup().querySelector("b");
+          timerInterval = setInterval(() => {
+            // @ts-ignore
+            timer.textContent = `${Swal.getTimerLeft()}`;
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log("Timer - SweetAlert Closed");
+        }
+      });
 
         if (uploaded_file) {
 
           let results = await this.service.uploadUnregisteredStudents(uploaded_file)
 
           if(results.studentsSuccessfullyAdded > 0){
-            alert(results.studentsSuccessfullyAdded + ' Added Successfully')
-            for (var fail of results.failedStudentsToBeAdded) {
-              alert('Student in row ' + fail + ' failed to be added.')
+
+            await Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Successful",
+              text: `Added ${results.studentsSuccessfullyAdded} Students Successfully.`,
+              showConfirmButton: false,
+              timer: 2000
+            });
+
+            let failedRecords = "";
+            for (const fail of results.failedStudentsToBeAdded) {
+              failedRecords += `Failed To Add Student in Row ${fail}.\n`;
             }
-          }
-          else{
-            alert('Error: No students were added')
+
+            if (failedRecords != "") {
+              await Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: failedRecords,
+                timer: 4000
+              });
+            }
+
+          } else{
+
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "No Students Were Added.",
+              timer: 1500
+            });
+
           }
         }
 
     } else {
-      alert('Only CSV files are allowed')
+
+      await Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Only CSV Files are Allowed !",
+      });
+
     }
   }
 
@@ -243,10 +421,20 @@ export class AdminComponent implements OnInit{
     if(control){
       const file = control?.value;
       const extension = file.split('.').pop()
-      const isCsv = extension === 'csv';
-      return isCsv;
+      return extension === 'csv';
     }
     return false
   }
 
+  async showCourses(){
+    this.courses = await this.service.getAllCourses()
+  }
+
+  async showUnregisteredInstructors(){
+    this.unregisteredInstructors = await this.service.getAllUnregisteredInstructors()
+  }
+
+  async showUnregisteredStudents(){
+    this.unregisteredStudents = await this.service.getAllUnregisteredStudents()
+  }
 }

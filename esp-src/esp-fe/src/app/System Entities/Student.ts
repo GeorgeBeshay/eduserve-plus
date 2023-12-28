@@ -1,7 +1,7 @@
 export class Student{
 
   studentId: string
-  departmentId: string
+  dptId: string
   studentLevel: string
   gpa: string
   studentName: string
@@ -13,12 +13,12 @@ export class Student{
   gender: string
   email: string
 
-  constructor(studentId: string, departmentId: string, studentLevel: string, gpa: string,
+  constructor(studentId: string, dptId: string, studentLevel: string, gpa: string,
               studentName: string, ssn: string, bdate: string, studentAddress: string, phone: string,
               landline: string, gender: string, email: string){
 
     this.studentId = studentId
-    this.departmentId = departmentId
+    this.dptId = dptId
     this.studentLevel = studentLevel
     this.gpa = gpa
     this.studentName = studentName
