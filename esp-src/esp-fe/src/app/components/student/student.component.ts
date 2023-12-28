@@ -18,7 +18,7 @@ export class StudentComponent implements OnInit{
   signUpForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private studentService:StudentService) {
-    this.student = null;
+    this.student = null
     this.selectedSection = 0;
 
     this.signInForm = this.formBuilder.group({
@@ -230,7 +230,7 @@ export class StudentComponent implements OnInit{
     let studentId = this.student?.studentId;
     let selectedCourses = this.enrolledCourses  // list of objects containing all the course data.
     let totalRegisteredHours = this.computeSelectedCoursesHrs();
-    // this.studentService.registerSelectedCourses(bla bla..)
+    this.studentService.registerCourses(studentId,selectedCourses);
     // use sweet alert function (Swal.fire()) to display the alerts in a pretty form !
 
     // TODO: Remove those statements
@@ -241,12 +241,13 @@ export class StudentComponent implements OnInit{
   /**
    * Function must be called upon navigating to the course enrollment page to fetch the suitable courses.
    */
-  loadCourses() {
+  async loadCourses() {
     let studentId = this.student?.studentId;
     // TODO: Call the appropriate end point method from the studentService.
     // let tempObj = this.studentService.loadAvailableCoursesForRegistration(this.student?.studentId);
     // this.courses = extract courses from tempObj
-
+    let available_courses: Course[]  = await this.studentService.loadAvailableCoursesForRegistration(studentId);
+    this.courses =  available_courses;
     // in case of varying # of hours uncomment the following:
     // this.totalAvailableCreditHours = extract # of hours from tempObj
   }
