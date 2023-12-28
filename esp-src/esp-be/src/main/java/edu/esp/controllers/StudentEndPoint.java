@@ -53,9 +53,8 @@ public class StudentEndPoint {
 
     @PostMapping("courseRegistrationSetup")
     @ResponseBody
-    public ResponseEntity<Map<String,Object>> getCourseRegistrationSetup(@RequestBody Map<String, Integer> requestMap) {
+    public ResponseEntity<Map<String,Object>> getCourseRegistrationSetup(@RequestBody Integer studentId) {
         // TODO use the getCourseRegistrationSetup method from the student service class
-        Integer studentId = (Integer) requestMap.get("studentId");
         Logger.logMsgFrom(this.getClass().getName(),"A Student has requested to get available courses for enrollment .. processing the request..",-1);
         Map<String,Object> registrationSetup = this.studentServices.getCourseRegistrationSetup(studentId);
         return (registrationSetup != null)
