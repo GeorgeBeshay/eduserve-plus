@@ -147,16 +147,23 @@ public class StudentServices {
         assert registrationMap.containsKey("selectedCourses") : "registrationMap had no selectedCourses <K,V> entry.";
         assert registrationMap.containsKey("totalNumberOfHours") : "registrationMap had no totalNumberOfHours <K, V> entry.";
 
+        System.out.println("in service map: " + registrationMap);
         @SuppressWarnings("unchecked")
-        List<String> selectedCoursesCodes = (List<String>) registrationMap.get("selectedCourses");
+//        ArrayList<String> selectedCoursesCodes = (ArrayList<String>) registrationMap.get("selectedCourses");
+
+        List<String> selectedCoursesCodes = (new ObjectMapper()).convertValue(registrationMap.get("selectedCourses"), new TypeReference<List<String>>() {});
+
+        System.out.println(registrationMap.keySet());
+        System.out.println(registrationMap.values());
+//        Object selectedCoursesObj = registrationMap.get("selectedCourses");
+//        System.out.println("SelectedCourses object type: " + selectedCoursesObj.getClass());
+
         int studentId = (int) registrationMap.get("studentId");
         int totalNumberOfHours = (int) registrationMap.get("totalNumberOfHours");
 
         int successfullyRegisteredCoursesCount = dbFacade.registerCourses(studentId, selectedCoursesCodes);
         Logger.logMsgFrom(this.getClass().getName(), "Number of successfully registered courses = "
                 + successfullyRegisteredCoursesCount, -1);
-
-        // TODO update the attends method using the `totalNumberOfHours` variable.
 
         return successfullyRegisteredCoursesCount;
     }
