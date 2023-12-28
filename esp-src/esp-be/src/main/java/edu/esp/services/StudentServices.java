@@ -153,15 +153,17 @@ public class StudentServices {
 
         List<String> selectedCoursesCodes = (new ObjectMapper()).convertValue(registrationMap.get("selectedCourses"), new TypeReference<List<String>>() {});
 
+        System.out.println(registrationMap.keySet());
+        System.out.println(registrationMap.values());
+//        Object selectedCoursesObj = registrationMap.get("selectedCourses");
+//        System.out.println("SelectedCourses object type: " + selectedCoursesObj.getClass());
+
         int studentId = (int) registrationMap.get("studentId");
         int totalNumberOfHours = (int) registrationMap.get("totalNumberOfHours");
 
-        System.out.println("in service: " + selectedCoursesCodes);
         int successfullyRegisteredCoursesCount = dbFacade.registerCourses(studentId, selectedCoursesCodes);
         Logger.logMsgFrom(this.getClass().getName(), "Number of successfully registered courses = "
                 + successfullyRegisteredCoursesCount, -1);
-
-        // TODO update the attends method using the `totalNumberOfHours` variable.
 
         return successfullyRegisteredCoursesCount;
     }

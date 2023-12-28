@@ -232,8 +232,30 @@ export class StudentComponent implements OnInit{
     let studentId = this.student?.studentId;
     let selectedCourses = this.getCourseCodesOnly(this.enrolledCourses);  // list of objects containing all the course data.
     let totalRegisteredHours = this.computeSelectedCoursesHrs();
-    this.studentService.registerCourses(studentId, selectedCourses, totalRegisteredHours);
-    // use sweet alert function (Swal.fire()) to display the alerts in a pretty form !
+    let resultPromise = this.studentService.registerCourses(studentId, selectedCourses, totalRegisteredHours);
+
+// Use the then method to handle the resolved value
+    resultPromise.then(result => {
+        // result is the resolved number
+        // Use sweet alert function (Swal.fire()) to display the alerts in a pretty form
+        if (result > 0) {
+            // Do something when the result is greater than 0
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Your work has been saved",
+              showConfirmButton: false,
+              timer: 1500
+            });
+        } else {
+            // Do something when the result is not greater than 0
+            Swal.fire('Error', 'Registration failed!', 'error');
+        }
+    }).catch(error => {
+        // Handle errors if the promise is rejected
+        console.error('Error during registration:', error);
+        Swal.fire('Error', 'An error occurred during registration.', 'error');
+    });
 
     // TODO: Remove those statements
     console.log(this.enrolledCourses);

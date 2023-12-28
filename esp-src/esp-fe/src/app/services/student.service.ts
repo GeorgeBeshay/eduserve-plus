@@ -103,7 +103,7 @@ export class StudentService {
     console.log("selected courses in service: ", selectedCourses)
     try {
       return await firstValueFrom(
-        this.http.post<boolean>(this.URL + 'saveRegisteredCourses',{"studentId": Number(studentId),"selectedCourses:":selectedCourses, "totalNumberOfHours": totalNumberOfHours},{responseType:'json'})
+        this.http.post<number>(this.URL + 'saveRegisteredCourses',{"studentId": Number(studentId),"selectedCourses":selectedCourses, "totalNumberOfHours": totalNumberOfHours},{responseType:'json'})
       );
     }catch (error){
       if(error instanceof HttpErrorResponse)
@@ -111,7 +111,7 @@ export class StudentService {
       else
         console.error('Error');
       }
-      return false;
+      return 0;
   }
 
 
