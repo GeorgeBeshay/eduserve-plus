@@ -6,6 +6,8 @@ import org.apache.commons.csv.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +40,7 @@ public class CSVManipulator {
     }
 
     /**
-     * Reads unregistered instructors from a .csv file uploaded to the system by an admin.
+     * Reads unregistered instructors from a .csv file uploaded to the system by an admin, then deletes the file.
      * @param filename the csv file name (without the path) which is going to be parsed.
      * @return On normal completion, A list containing at least one {@code UnregisteredInstructor} entry.
      *         When an error occurs, a {@code null} value is returned.
@@ -81,16 +83,23 @@ public class CSVManipulator {
                 instructors.add(new UnregisteredInstructor(id, otpHash, dpt));
             }
 
-            return instructors;
-
         } catch (Exception e) {
             Logger.logMsgFrom(this.getClass().getName(), "Error reading instructor CSV file: " + e.getClass() + ": " +  e.getMessage(), 1);
             return null;
+
+        } finally {
+            try {
+                Files.delete(Paths.get(csvFolderPrefix + filename));
+            } catch (IOException e) {
+                Logger.logMsgFrom(this.getClass().getName(), "Error deleting instructor CSV file after reading: " + e.getClass() + ": " + e.getMessage(), 1);
+            }
         }
+
+        return instructors;
     }
 
     /**
-     * Reads unregistered students from a .csv file uploaded to the system by an admin.
+     * Reads unregistered students from a .csv file uploaded to the system by an admin, then deletes the file.
      * @param filename the csv file name (without the path) which is going to be parsed.
      * @return On normal completion, A list containing at least one {@code UnregisteredStudent} entry.
      *         When an error occurs, a {@code null} value is returned.
@@ -135,12 +144,19 @@ public class CSVManipulator {
                 );
             }
 
-            return students;
-
         } catch (Exception e) {
             Logger.logMsgFrom(this.getClass().getName(), "Error reading student CSV file: " + e.getClass() + ": " + e.getMessage(), 1);
             return null;
+
+        } finally {
+            try {
+                Files.delete(Paths.get(csvFolderPrefix + filename));
+            } catch (IOException e) {
+                Logger.logMsgFrom(this.getClass().getName(), "Error deleting student CSV file after reading: " + e.getClass() + ": " + e.getMessage(), 1);
+            }
         }
+
+        return students;
     }
 
 }

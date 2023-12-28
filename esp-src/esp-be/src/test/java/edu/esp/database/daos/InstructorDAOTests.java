@@ -1,12 +1,15 @@
 package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Instructor;
 import edu.esp.system_entities.system_users.UnregisteredInstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -352,6 +355,48 @@ public class InstructorDAOTests {
     @DisplayName("Instructor DAO - deleting an invalid unregistered instructor")
     public void testDeleteInvalidUnregisteredInstructor() {
         assertFalse(this.instructorDAO.deleteUnregisteredInstructorById(10));
+    }
+
+    @Test
+    @DisplayName("get all unregistered Instructors where there exist instructors in the database.")
+    public void GetAllUnregisteredInstructorsExist() {
+
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash, dpt_id)
+                VALUES (34, 3333, 102);
+                 """);
+
+        jdbcTemplate.update("""
+                INSERT INTO unregistered_instructor (instructor_id, Instructor_temp_pw_hash, dpt_id)
+                VALUES (35, 3333, 102);
+                 """);
+
+        List<UnregisteredInstructor> instructors = instructorDAO.getAllUnregisteredInstructors();
+        List<Integer> Ids = new ArrayList<>();
+
+        for (UnregisteredInstructor instructor: instructors) {
+            Ids.add(instructor.getInstructorId());
+        }
+
+        assertTrue(instructors.size() >= 2);
+        assertTrue(Ids.contains(34));
+        assertTrue(Ids.contains(35));
+
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = %d;".formatted(34));
+        jdbcTemplate.update("DELETE FROM unregistered_instructor WHERE instructor_id = %d;".formatted(35));
+
+    }
+
+    @Test
+    @Disabled
+    @DisplayName("get all unregistered instructors where there don't exist instructors in the database.")
+    public void GetAllUnregisteredInstructorsNotExist() {
+
+        List<UnregisteredInstructor> instructors = instructorDAO.getAllUnregisteredInstructors();
+
+        assertNotNull(instructors);
+        assertTrue(instructors.isEmpty());
+
     }
 
     //TODO enforce DB constraint on unregistered_instructor id to be non-negative

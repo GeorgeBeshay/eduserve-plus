@@ -128,7 +128,7 @@
 
             <div class="form-group">
               <label for="gender">Gender</label>
-              <select formControlName="gender">
+              <select formControlName="gender" id="gender">
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
@@ -168,7 +168,24 @@
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 1">
-          This is the enroll in courses page!
+          <div class="course-list">
+            <div *ngFor="let course of courses" class="course-card">
+              <div class="course-details">
+                <h3>{{ course.courseName }}</h3>
+                <p>Code: {{ course.courseCode }}</p>
+                <p>Credit Hours: {{ course.creditHrs }}</p>
+                <p>Description: {{ truncateDescription(course.courseDescription, 80) }}</p>
+              </div>
+              <div class="action-buttons">
+                <button *ngIf="!isEnrolled(course)" (click)="enroll(course)">Add</button>
+                <button *ngIf="isEnrolled(course)" (click)="unEnroll(course)">Remove</button>
+              </div>
+            </div>
+          </div>
+          <div class="remaining-credit-hours">
+            Remaining Credit Hours: {{ totalAvailableCreditHours }}
+          </div>
+          <button class="register-courses-button" (click)="registerCourses()">Register Courses</button>
         </ng-container>
 
         <ng-container *ngIf="selectedSection == 2">

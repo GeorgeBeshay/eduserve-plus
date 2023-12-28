@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class CourseDAO extends DAO<Course> {
@@ -113,8 +114,61 @@ public class CourseDAO extends DAO<Course> {
 
     }
 
+    public List<Course> getAllCourses() {
+        List<Course> courses = null;
+        try {
+            courses = jdbcTemplate.query("SELECT * FROM course;", rowMapper);
+
+            for (Course course : courses) {
+                List<String> pre = getCoursePrerequisites(course.getCourseCode());
+                course.setPrerequisite(pre);
+            }
+
+            return courses;
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return courses;
+        }
+    }
+
+    private List<String> getCoursePrerequisites(String courseCode) {
+        try {
+            String sql = """
+                            SELECT preq_id
+                            FROM course_prereq
+                            WHERE course_code = ?;
+                            """;
+            System.out.println(jdbcTemplate.queryForList(sql, String.class, courseCode));
+            return jdbcTemplate.queryForList(sql, String.class, courseCode);
+        } catch (Exception e) {
+            Logger.logMsgFrom(this.getClass().getName(), e.getMessage(), 1);
+            return null;
+        }
+    }
+
     public List<Course> getAvailableCourses(int studentId) {
         // TODO get the list of courses that are available for the student to register by a stored procedure
         return null;
     }
+
+
+
+
+    /**
+     * @return A list of courses that meet the conjunction of the following criteria:
+     * <pre>1. the student has those courses </pre>
+     * <pre>2. the course is in progress ... passed IS NULL </pre>
+     * <pre>3. the course being offered this season and this year </pre>
+     */
+    public List<Course> getAvailableWithdrawCourses(int studentId) {
+        try {
+            return jdbcTemplate.query("EXEC dbo.getAvailableWithdrawCourses " + studentId, rowMapper);
+        }
+        catch (Exception error) {
+            Logger.logMsgFrom(this.getClass().getName(), error.getMessage(), 1);
+            return null;
+        }
+    }
+
 }

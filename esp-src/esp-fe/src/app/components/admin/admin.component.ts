@@ -2,7 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
 import {AdminService} from '../../services/admin.service';
 import {Admin} from "../../System Entities/Admin";
-import {Course} from 'src/app/System Entities/course';
+import { Course } from 'src/app/System Entities/Course';
+import { AbstractControl } from '@angular/forms';
+import { Instructor } from 'src/app/System Entities/Instructor';
+import { Student } from 'src/app/System Entities/Student';
 import Swal from 'sweetalert2';
 
 
@@ -18,6 +21,9 @@ export class AdminComponent implements OnInit{
   adminUploadStudentsForm: FormGroup<any>;
   admin: Admin | null
   selectedSection: number
+  unregisteredInstructors: Instructor[] = [] 
+  courses: Course[] = []
+  unregisteredStudents: Student[] = []
   unregisteredInstructorFile : File | null = null;
   unregisteredStudentFile : File | null = null;
   courseForm: FormGroup;
@@ -151,6 +157,16 @@ export class AdminComponent implements OnInit{
 
   selectSection (sectionIndex: number) {
     this.selectedSection = sectionIndex
+    if(this.selectedSection == 5){
+      this.showUnregisteredInstructors();
+    }
+    if(this.selectedSection == 6){
+      this.showUnregisteredStudents();
+    }
+    if(this.selectedSection == 7){
+      this.showCourses();
+    }
+    
     console.log(this.selectedSection)
   }
 
@@ -259,32 +275,40 @@ export class AdminComponent implements OnInit{
 
       if(uploaded_file){
 
-        let InstructorsAdded: number = 0
-        // Add the code here to send the CSV file to the backend
+        let results = await this.service.uploadUnregisteredInstructors(uploaded_file)
 
-        // the function uploadUnregisteredInstructors need to be implemented as the uploadUnregisteredstudents
-        // in the admin service
-
-        // InstructorsAdded = await this.service.uploadUnregisteredInstructors(uploaded_file)
-
-        if(InstructorsAdded > 0){
+        if(results.instructorsAdded > 0){
 
           await Swal.fire({
             position: "center",
             icon: "success",
             title: "Successful",
-            text: `Added ${InstructorsAdded} Instructors Successfully`,
+            text: `Added ${results.instructorsAdded} Instructors Successfully`,
             showConfirmButton: false,
-            timer: 1500
+            timer: 2000
           });
+
+          let failedRecords = "";
+          for (const fail of results.instructorsNotAdded) {
+            failedRecords += `Failed to add instructor in row ${fail}.\n`;
+          }
+
+          if (failedRecords != "") {
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: failedRecords,
+              timer: 4000
+            });
+          }
 
         } else {
 
           await Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Couldn't Add Instructors.",
-            timer: 1500
+            text: "No instructors were added.",
+            timer: 4000
           });
 
         }
@@ -295,6 +319,7 @@ export class AdminComponent implements OnInit{
         icon: "error",
         title: "Oops...",
         text: "Only CSV Files are Allowed !",
+        timer: 1500
       });
 
     }
@@ -359,12 +384,14 @@ export class AdminComponent implements OnInit{
               failedRecords += `Failed To Add Student in Row ${fail}.\n`;
             }
 
-            await Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: failedRecords,
-              timer: 4000
-            });
+            if (failedRecords != "") {
+              await Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: failedRecords,
+                timer: 4000
+              });
+            }
 
           } else{
 
@@ -399,4 +426,15 @@ export class AdminComponent implements OnInit{
     return false
   }
 
+  async showCourses(){
+    this.courses = await this.service.getAllCourses()
+  }
+
+  async showUnregisteredInstructors(){
+    this.unregisteredInstructors = await this.service.getAllUnregisteredInstructors()
+  }
+
+  async showUnregisteredStudents(){
+    this.unregisteredStudents = await this.service.getAllUnregisteredStudents()
+  }
 }

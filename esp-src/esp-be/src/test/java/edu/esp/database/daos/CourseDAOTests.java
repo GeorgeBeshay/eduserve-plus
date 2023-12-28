@@ -1,12 +1,14 @@
 package edu.esp.database.daos;
 
 import edu.esp.be.EspBeApplication;
+import edu.esp.database.DBFacadeImp;
 import edu.esp.system_entities.system_uni_objs.Course;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -227,5 +229,168 @@ public class CourseDAOTests {
         jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", offeringDpt);
         jdbcTemplate.update("DELETE FROM department WHERE dpt_id = ?", offeringDpt);
     }
+
+
+
+    @Test
+    @DisplayName("get all courses where there exist courses in the database.")
+    public void GetAllCoursesExist() {
+
+        String[] courseCodes = {"TEST1", "TEST2"};
+        jdbcTemplate.update("INSERT INTO course (course_code, offering_dpt) VALUES ('TEST1', 101)");
+        jdbcTemplate.update("INSERT INTO course (course_code, offering_dpt) VALUES ('TEST2', 101)");
+        List<Course> courses = courseDAO.getAllCourses();
+
+        assertTrue(courses.size() >= 2);
+
+        List<String> codes = new ArrayList<>();
+
+        for (Course course: courses){
+            codes.add(course.getCourseCode());
+        }
+
+        assertTrue(codes.contains("TEST1"));
+        assertTrue(codes.contains("TEST2"));
+
+        jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = ?", 101);
+
+    }
+
+    @Test
+    @Disabled
+    @DisplayName("get all courses where there don't exist courses in the database.")
+    public void GetAllCoursesNotExist() {
+
+        List<Course> courses = courseDAO.getAllCourses();
+
+        assertNotNull(courses);
+        assertTrue(courses.isEmpty());
+
+    }
+
+
+    @Test
+    @DisplayName("get available course for withdrawal where student_id is valid and there existed courses for withdrawal")
+    public void getCoursesToWithdrawExists() {
+
+        // setup
+        jdbcTemplate.update("""
+                INSERT INTO student (student_id, dpt_id, ssn)
+                VALUES
+                  (1, 101, 1);
+                """);
+
+        jdbcTemplate.update("""
+                INSERT INTO course (course_code, course_name, course_description, offering_dpt, credit_hrs)
+                VALUES
+                  ('TEST1', 'TEST1', 'description', 101, 3),
+                  ('TEST2', 'TEST2', 'description', 101, 3),
+                  ('TEST3', 'TEST3', 'description', 101, 3),
+                  ('TEST4', 'TEST4', 'description', 101, 3);
+                """);
+
+        Integer currentSeason = jdbcTemplate.queryForObject("SELECT current_season from system_state;", Integer.class);
+        String currentYear = jdbcTemplate.queryForObject("SELECT current_academic_year from system_state;", String.class);
+
+        jdbcTemplate.update("""
+                INSERT INTO grades (course_code, student_id, season, academic_year, passed)
+                VALUES
+                  ('TEST1', 1, ?, ?, 1),
+                  ('TEST2', 1, ?, ?, 0),
+                  ('TEST3', 1, ?, ?, NULL),
+                  ('TEST4', 1, ?, ?, NULL);
+                """, currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear);
+        // end of set up
+
+        // the first course is already passed -> will not be returned
+        // the second course is already failed -> will not be returned
+        // the third course is in progress -> will be returned
+        // the fourth course is in progress -> will be returned
+        List<Course> courses = courseDAO.getAvailableWithdrawCourses(1);
+
+        assertEquals(2, courses.size());
+
+        List<String> courseCodes = new ArrayList<>();
+
+        for (Course course: courses){
+            courseCodes.add(course.getCourseCode());
+        }
+
+
+        assertTrue(courseCodes.contains("TEST3"));
+        assertTrue(courseCodes.contains("TEST4"));
+
+        assertFalse(courseCodes.contains("TEST1"));
+        assertFalse(courseCodes.contains("TEST2"));
+
+
+        // delete the set-up
+        jdbcTemplate.update("DELETE FROM grades WHERE student_id = 1;");
+        jdbcTemplate.update("DELETE FROM student WHERE dpt_id = 101");
+        jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = 101");
+
+
+    }
+
+
+    @Test
+    @DisplayName("get available course for withdrawal where student_id is not valid or there doesn't existed courses for withdrawal")
+    public void getCoursesToWithdrawNotExists() {
+
+        // setup
+        jdbcTemplate.update("""
+                INSERT INTO student (student_id, dpt_id, ssn)
+                VALUES
+                  (1, 101, 1),
+                  (2, 101, 2);
+                """);
+
+        jdbcTemplate.update("""
+                INSERT INTO course (course_code, course_name, course_description, offering_dpt, credit_hrs)
+                VALUES
+                  ('TEST1', 'TEST1', 'description', 101, 3),
+                  ('TEST2', 'TEST2', 'description', 101, 3),
+                  ('TEST3', 'TEST3', 'description', 101, 3),
+                  ('TEST4', 'TEST4', 'description', 101, 3);
+                """);
+
+        Integer currentSeason = jdbcTemplate.queryForObject("SELECT current_season from system_state;", Integer.class);
+        String currentYear = jdbcTemplate.queryForObject("SELECT current_academic_year from system_state;", String.class);
+
+        jdbcTemplate.update("""
+                INSERT INTO grades (course_code, student_id, season, academic_year, passed)
+                VALUES
+                  ('TEST1', 1, ?, ?, 1),
+                  ('TEST2', 1, ?, ?, 0),
+                  ('TEST3', 1, ?, ?, 1),
+                  ('TEST4', 1, ?, ?, 0);
+                """, currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear, currentSeason, currentYear);
+        // end of set up
+
+        // all the grades in database for student 1
+        // so student 2 has no courses to withdraw
+        List<Course> courses = courseDAO.getAvailableWithdrawCourses(2);
+
+        assertNotNull( courses );
+        assertTrue( courses.isEmpty() );
+
+        // all the grades for student 1 is passed for failed
+        // so student 1 has no courses to withdraw
+        courses = courseDAO.getAvailableWithdrawCourses(1);
+
+        assertNotNull( courses );
+        assertTrue( courses.isEmpty() );
+
+
+        // delete the set-up
+        jdbcTemplate.update("DELETE FROM grades WHERE student_id = 1;");
+        jdbcTemplate.update("DELETE FROM student WHERE dpt_id = 101");
+        jdbcTemplate.update("DELETE FROM course WHERE offering_dpt = 101");
+
+
+    }
+
+
+
 
 }
