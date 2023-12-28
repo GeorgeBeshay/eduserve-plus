@@ -308,7 +308,6 @@ public class AdminEndPointTests {
         assertEquals(5, failedStudentsToBeAdded.get(0));
 
         jdbcTemplate.update("DELETE FROM unregistered_student WHERE student_id IN(50, 51, 52);");
-        Files.delete(Paths.get(csvManipulator.csvFolderPrefix + originalFilename));
     }
 
 
