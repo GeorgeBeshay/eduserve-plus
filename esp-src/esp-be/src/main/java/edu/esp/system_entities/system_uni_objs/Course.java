@@ -1,6 +1,7 @@
 package edu.esp.system_entities.system_uni_objs;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Course {
     private String courseCode;
@@ -79,4 +80,23 @@ public class Course {
     public void setPrerequisite(List<String> prerequisite) {
         this.prerequisite = prerequisite;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return offeringDpt == course.offeringDpt &&
+                creditHrs == course.creditHrs &&
+                Objects.equals(courseCode, course.courseCode) &&
+                Objects.equals(courseName, course.courseName) &&
+                Objects.equals(courseDescription, course.courseDescription) &&
+                Objects.equals(prerequisite, course.prerequisite);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(courseCode, courseName, courseDescription, offeringDpt, creditHrs, prerequisite);
+    }
+
 }
