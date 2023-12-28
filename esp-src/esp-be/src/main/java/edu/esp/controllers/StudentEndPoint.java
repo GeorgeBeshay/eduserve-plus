@@ -1,5 +1,7 @@
 package edu.esp.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.esp.system_entities.system_uni_objs.Course;
 import edu.esp.system_entities.system_users.Student;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.List;
 import java.util.Map;
 
 @ComponentScan(basePackages = {"edu.esp.be","edu.esp.database","edu.esp.controllers","edu.esp.system_entities"})
@@ -49,9 +53,14 @@ public class StudentEndPoint {
 
     @PostMapping("courseRegistrationSetup")
     @ResponseBody
-    public ResponseEntity<Map<String,Object>> getCourseRegistrationSetup(@RequestBody Integer studentId) {
+    public ResponseEntity<Map<String,Object>> getCourseRegistrationSetup(@RequestBody Map<String, Integer> requestMap) {
         // TODO use the getCourseRegistrationSetup method from the student service class
-        return null;
+        Integer studentId = (Integer) requestMap.get("studentId");
+        Logger.logMsgFrom(this.getClass().getName(),"A Student has requested to get available courses for enrollment .. processing the request..",-1);
+        Map<String,Object> registrationSetup = this.studentServices.getCourseRegistrationSetup(studentId);
+        return (registrationSetup != null)
+                ? new ResponseEntity<>(registrationSetup,HttpStatus.OK)
+                : new ResponseEntity<>(registrationSetup,HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -60,9 +69,13 @@ public class StudentEndPoint {
      */
     @PostMapping("saveRegisteredCourses")
     @ResponseBody
-    public ResponseEntity<Boolean> saveRegisteredCourses(@RequestBody Map<String, Object> requestMap) {
+    public ResponseEntity<Integer> saveRegisteredCourses(@RequestBody Map<String, Object> requestMap) {
         // TODO save the courses which the student has chosen
-        return null;
+        Logger.logMsgFrom(this.getClass().getName(),"A Student has requested to get the available courses for enrollment .. processing the request.. ",-1);
+        Integer registeredCourses = this.studentServices.registerCourses(requestMap);
+        return (registeredCourses > 0)
+                ? new ResponseEntity<>(registeredCourses,HttpStatus.OK)
+                : new ResponseEntity<>(registeredCourses,HttpStatus.BAD_REQUEST);
     }
 
     /**
