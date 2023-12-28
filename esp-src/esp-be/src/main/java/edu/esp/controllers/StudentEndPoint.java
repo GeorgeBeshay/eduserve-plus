@@ -79,7 +79,7 @@ public class StudentEndPoint {
         Logger.logMsgFrom(this.getClass().getName(), "A Student has requested to withdraw courses .. processing the request ..", -1);
 
         // TODO: to call the function from the studentServices
-//        return (this.studentServices.withdrawCourses(requestMap))
+//        return (this.studentServices.withdrawCourses(requestMap) > 0)
 //                ? new ResponseEntity<>(true, HttpStatus.OK)
 //                : new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         return null;
@@ -96,7 +96,7 @@ public class StudentEndPoint {
 
         // TODO: to call the function from the studentServices
 //        List<Course> enrolledCourses = this.studentServices.getStudentEnrolledCourses(studentId);
-//        return (enrolledCourses != null)
+//        return (enrolledCourses.size() != 0)
 //                ? new ResponseEntity<>(enrolledCourses, HttpStatus.OK)
 //                : new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
         return null;
