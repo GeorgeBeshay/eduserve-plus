@@ -9,6 +9,7 @@ import edu.esp.utilities.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,19 +90,74 @@ public class StudentServices {
         return false;
     }
 
+    /**
+     * Method returns one of the following:<br>
+     * 1. A map containing all the needed information for the registration process.
+     * 2. or a null object to indicate that courses registration is currently not available.
+     * @param studentId: The id of the student who is requesting to register new courses.
+     * @return courseRegistrationSetupMap or null
+     * @apiNote <br>
+     * 1. Null object indicates that the registration is not available. <br>
+     * 2. Null availableCourses list indicate that something had went wrong when executing the query on the DB. <br>
+     */
     public Map<String, Object> getCourseRegistrationSetup (int studentId) {
-        // TODO use the getAvailableCourses and getAvailableCreditHours methods to return a map
-        return null;
+        if(!dbFacade.courseRegistrationOpen()) {
+            Logger.logMsgFrom(this.getClass().getName(),
+                    "Sorry, Courses Registration is currently not available.", 1);
+            return null;
+        }
+
+        Map<String, Object> courseRegistrationSetupMap = new HashMap<>();
+        courseRegistrationSetupMap.put("availableCourses", getAvailableCourses(studentId));
+        courseRegistrationSetupMap.put("availableCreditHours", getAvailableCreditHours(studentId));
+
+        return courseRegistrationSetupMap;
     }
 
     private List<Course> getAvailableCourses(int studentId) {
-        // TODO get the list of available courses for student registration
-        return null;
+
+        List<Course> availableCourses = dbFacade.fetchAvailableRegistrationCourses(studentId);
+        if(availableCourses == null) {
+            Logger.logMsgFrom(this.getClass().getName(), "Something had went wrong when fetching the available courses .. ", 1);
+        }
+
+        return availableCourses;
     }
 
     private int getAvailableCreditHours(int studentId) {
         // TODO maybe create a new DAO for the "attends" table
         // TODO get student available credit hours
-        return 0;
+        // currently, we are assuming a static # of credit hours = 21.
+        return 21;
     }
+
+    /**
+     * Implements the procedure for registering a set of courses, given the registrationMap data structure.
+     * @param registrationMap A Map containing: <br>
+     * 1. The id of the student performing the registration. <br>
+     * 2. The total # of credit hours of the selected courses. <br>
+     * 3. A list of the selected courses codes. <br>
+     * @return The number of successful registered courses from the ones selected.
+     */
+    public int registerCourses(Map<String, Object> registrationMap) {
+        // guard check
+        assert registrationMap != null : "registrationMap was found to be null.";
+        assert registrationMap.containsKey("studentId") : "registrationMap had no studentId <K, V> entry.";
+        assert registrationMap.containsKey("selectedCourses") : "registrationMap had no selectedCourses <K,V> entry.";
+        assert registrationMap.containsKey("totalNumberOfHours") : "registrationMap had no totalNumberOfHours <K, V> entry.";
+
+        @SuppressWarnings("unchecked")
+        List<String> selectedCoursesCodes = (List<String>) registrationMap.get("selectedCourses");
+        int studentId = (int) registrationMap.get("studentId");
+        int totalNumberOfHours = (int) registrationMap.get("totalNumberOfHours");
+
+        int successfullyRegisteredCoursesCount = dbFacade.registerCourses(studentId, selectedCoursesCodes);
+        Logger.logMsgFrom(this.getClass().getName(), "Number of successfully registered courses = "
+                + successfullyRegisteredCoursesCount, -1);
+
+        // TODO update the attends method using the `totalNumberOfHours` variable.
+
+        return successfullyRegisteredCoursesCount;
+    }
+
 }
